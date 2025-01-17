@@ -1,9 +1,9 @@
 import React from 'react';
 import {SafeAreaView, useColorScheme} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import ShortList from './src/screens/feed/ShortList';
 import {ThemeProvider} from './src/context/ThemeContext';
-import ThemeToggle from './src/components/common/ThemeToggle';
+import {NavigationContainer} from '@react-navigation/native';
+import BottomTabNavigator from './src/navigation/BottomTabNavigator';
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -14,12 +14,13 @@ function App(): React.JSX.Element {
   };
 
   return (
-    <ThemeProvider>
-      <SafeAreaView style={backgroundStyle}>
-        <ThemeToggle />
-        <ShortList />
-      </SafeAreaView>
-    </ThemeProvider>
+    <SafeAreaView style={backgroundStyle}>
+      <NavigationContainer>
+        <ThemeProvider>
+          <BottomTabNavigator />
+        </ThemeProvider>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 }
 

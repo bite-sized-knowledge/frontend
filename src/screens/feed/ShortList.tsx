@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Dimensions, FlatList} from 'react-native';
 import ShortSkeleton from '../../components/common/ShortSkeleton';
 import ShortItem from './ShortItem';
-import WebViewDrawer from '../../components/common/WebViewDrawer';
 import WebViewDrawer_v2 from '../../components/common/WebViewDrawer_v2';
 const {height} = Dimensions.get('window');
 
