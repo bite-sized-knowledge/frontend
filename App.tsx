@@ -1,19 +1,19 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
 import {SafeAreaView, StatusBar} from 'react-native';
-import {TypoExample} from './src/screens/example/TypoExample';
+import {NavigationContainer} from '@react-navigation/native';
+import {BTab} from './src/components/BTab';
 
 function App(): React.JSX.Element {
+  const backgroundStyle = {
+    flex: 1,
+  };
+
   return (
-    <SafeAreaView>
+    <SafeAreaView style={backgroundStyle}>
       <StatusBar />
-      <TypoExample />
+      <NavigationContainer>
+        <BTab />
+      </NavigationContainer>
     </SafeAreaView>
   );
 }
