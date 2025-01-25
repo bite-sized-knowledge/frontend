@@ -7,7 +7,7 @@
 
 import React from 'react';
 import {SafeAreaView, useColorScheme} from 'react-native';
-import {ElevationExample} from './src/screens/example/ElevationExample';
+import {TypoExample} from './src/screens/example/TypoExample';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -20,7 +20,7 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <ElevationExample />
+      <TypoExample />
     </SafeAreaView>
   );
 }
