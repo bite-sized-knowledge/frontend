@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-import {typography} from '../../styles/typography';
+import {typography} from '../../styles/tokens/typography';
 
 export const TypoExample = () => {
   return (
