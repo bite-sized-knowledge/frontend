@@ -4,6 +4,9 @@ const FONT_FAMILY = 'pretendard';
 
 export const typography = StyleSheet.create({
   title: {
+    marginTop: 20,
+    marginStart: 20,
+    marginBottom: 4,
     fontFamily: FONT_FAMILY,
     fontSize: 24,
     fontWeight: '600',
@@ -18,6 +21,7 @@ export const typography = StyleSheet.create({
     lineHeight: 28,
   },
   subHead: {
+    marginStart: 20,
     fontFamily: FONT_FAMILY,
     fontSize: 16,
     fontWeight: '600',
