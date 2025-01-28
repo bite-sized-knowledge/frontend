@@ -1,15 +1,18 @@
-import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import React, {useState} from 'react';
+import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
 import {Article} from '../../types/Article';
+import WebViewDrawer from '../common/WebViewDrawer';
 
 interface CardBodyProps {
   article: Article;
 }
 
 export const CardBody: React.FC<CardBodyProps> = ({article}) => {
+  const [link, setLink] = useState<null | string>(null);
+
   return (
-    <>
+    <Pressable onPress={() => setLink(article.link)}>
       <Image source={{uri: article.thumbnail}} style={styles.thumbnail} />
       <View style={styles.cardContent}>
         <Text style={[styles.titleContainer, typography.head]}>
@@ -24,7 +27,12 @@ export const CardBody: React.FC<CardBodyProps> = ({article}) => {
           ))}
         </View>
       </View>
-    </>
+      <WebViewDrawer
+        isVisible={link !== null}
+        url={link}
+        onClose={() => setLink(null)}
+      />
+    </Pressable>
   );
 };
 
@@ -78,5 +86,8 @@ const styles = StyleSheet.create({
   },
   categoryName: {
     color: '#A2A2A2',
+  },
+  webview: {
+    flex: 1,
   },
 });
