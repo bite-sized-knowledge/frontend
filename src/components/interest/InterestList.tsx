@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: 18,
     justifyContent: 'space-between', // 각 줄에서 아이템 간격 균등 분배
     paddingHorizontal: 14, // 좌우 공백 추가
     paddingVertical: 14, // 상하 공백 추가
