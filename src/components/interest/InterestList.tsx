@@ -1,6 +1,6 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { InterestItem } from './InterestItem';
+import {View, StyleSheet} from 'react-native';
+import {InterestItem} from './InterestItem';
 
 interface InterestListProps {
   selectedItems: string[];
@@ -20,40 +20,37 @@ const INTERESTS = [
   'Design',
 ];
 
-export const InterestList: React.FC<InterestListProps> = ({ selectedItems, onItemSelect }) => {
+export const InterestList: React.FC<InterestListProps> = ({
+  selectedItems,
+  onItemSelect,
+}) => {
   return (
-    <FlatList
-      data={INTERESTS}
-      keyExtractor={(item, index) => `${item}-${index}`}
-      renderItem={({ item, index }) => (
-        <View
-          style={[
-            styles.itemWrapper,
-            index === INTERESTS.length - 1 && styles.lastItemWrapper,
-          ]}
-        >
+    <View style={styles.container}>
+      {INTERESTS.map((item, index) => (
+        <View key={`${item}-${index}`} style={styles.itemWrapper}>
           <InterestItem
             item={item}
             isSelected={selectedItems.includes(item)}
             onPress={() => onItemSelect(item)}
           />
         </View>
-      )}
-      numColumns={3}
-      contentContainerStyle={styles.grid}
-    />
+      ))}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  grid: {
-    margin: 10,
+  container: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    justifyContent: 'space-between', // 각 줄에서 아이템 간격 균등 분배
+    paddingHorizontal: 14, // 좌우 공백 추가
+    paddingVertical: 14, // 상하 공백 추가
   },
   itemWrapper: {
-    flex: 1, // 각 항목이 동일한 크기를 갖도록 함
-    alignItems: 'center', // 기본적으로 중앙 정렬
-  },
-  lastItemWrapper: {
-    alignItems: 'flex-start', // 마지막 항목만 왼쪽 정렬
+    width: '30%',
+    aspectRatio: 1,
+    alignItems: 'center',
   },
 });

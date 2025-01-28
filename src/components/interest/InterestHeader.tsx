@@ -1,10 +1,10 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
 
 export const InterestHeader = () => {
   return (
-    <View>
+    <View style={styles.container}>
       <Text style={typography.title}>
         안녕하세요!{'\n'}관심있는 주제는 무엇인가요?
       </Text>
@@ -12,3 +12,9 @@ export const InterestHeader = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 14, // 원하는 padding 값 설정
+  },
+});

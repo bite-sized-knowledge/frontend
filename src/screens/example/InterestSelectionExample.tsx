@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { InterestHeader } from '../../components/interest/InterestHeader';
-import { InterestList } from '../../components/interest/InterestList';
-import { StartButton } from '../../components/interest/StartButton';
+import React, {useState} from 'react';
+import {View, StyleSheet} from 'react-native';
+import {InterestHeader} from '../../components/interest/InterestHeader';
+import {InterestList} from '../../components/interest/InterestList';
+import {StartButton} from '../../components/interest/StartButton';
 
 export const InterestSelectionExample = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const handleItemSelect = (item: string) => {
-    setSelectedItems((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+    setSelectedItems(prev =>
+      prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item],
     );
   };
 
@@ -21,14 +21,21 @@ export const InterestSelectionExample = () => {
   return (
     <View style={styles.container}>
       <InterestHeader />
-      <InterestList selectedItems={selectedItems} onItemSelect={handleItemSelect} />
-      <StartButton onPress={handleStart} disabled={selectedItems.length === 0} />
+      <InterestList
+        selectedItems={selectedItems}
+        onItemSelect={handleItemSelect}
+      />
+      <StartButton
+        onPress={handleStart}
+        disabled={selectedItems.length === 0}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    
     justifyContent: 'center', // 수직 정렬
   },
 });

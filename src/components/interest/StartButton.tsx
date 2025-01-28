@@ -1,26 +1,33 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import {TouchableOpacity, Text, StyleSheet, View} from 'react-native';
+import {typography} from '../../styles/tokens/typography';
 
 interface StartButtonProps {
   onPress: () => void;
   disabled: boolean;
 }
 
-export const StartButton: React.FC<StartButtonProps> = ({ onPress, disabled }) => {
+export const StartButton: React.FC<StartButtonProps> = ({
+  onPress,
+  disabled,
+}) => {
   return (
-    <TouchableOpacity
-      style={[styles.button, disabled && styles.disabledButton]}
-      onPress={onPress}
-      disabled={disabled}
-    >
-      <Text style={styles.buttonText}>시작하기</Text>
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={[styles.button, disabled && styles.disabledButton]}
+        onPress={onPress}
+        disabled={disabled}>
+        <Text style={[typography.subHead, styles.text]}>시작하기</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    padding: 14, // 원하는 padding 값 설정
+  },
   button: {
-    margin: 20,
     padding: 15,
     borderRadius: 10,
     backgroundColor: '#191919',
@@ -30,8 +37,7 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: '#A9A9A9',
   },
-  buttonText: {
-    fontSize: 16,
-    color: '#fff',
+  text: {
+    color: '#FFFFFF', // 텍스트를 흰색으로 설정
   },
 });
