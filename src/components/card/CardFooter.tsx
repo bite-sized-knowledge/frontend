@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Article} from '../../types/Article';
+import {useTheme} from '../../context/ThemeContext';
 
 interface CardBottomProps {
   article: Article;
@@ -36,10 +37,13 @@ const ReactionButton: React.FC<ReactionButtonProps> = ({
   isReactioned,
   reactionCount = 0,
 }) => {
+  const {theme} = useTheme();
   return (
     <View style={styles.reactionButtonContainer}>
       <View style={styles.icon} />
-      {reactionCount > 0 ? <Text>{reactionCount}</Text> : null}
+      {reactionCount > 0 ? (
+        <Text style={{color: theme.text}}>{reactionCount}</Text>
+      ) : null}
     </View>
   );
 };

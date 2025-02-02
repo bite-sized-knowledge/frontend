@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 import {useModal} from '../../hooks/useModal';
 import {elevation} from '../../styles/tokens/elevation';
+import {useTheme} from '../../context/ThemeContext';
 
 // TODO(권대현): ... -> 아이콘 대체, 모달 완성
 export const MeatBallButton = () => {
   const {isVisible, openModal, closeModal} = useModal();
+  const {theme} = useTheme();
 
   const buttonRef = useRef(null);
   const [position, setPosition] = useState({x: 0, y: 0, width: 0, height: 0});
@@ -48,11 +50,11 @@ export const MeatBallButton = () => {
               ]}>
               <View style={[styles.dropDownItem]}>
                 <Image />
-                <Text>관심없음</Text>
+                <Text style={{color: theme.text}}>관심없음</Text>
               </View>
               <View style={[styles.dropDownItem]}>
                 <Image />
-                <Text>신고하기</Text>
+                <Text style={{color: theme.text}}>신고하기</Text>
               </View>
             </View>
           </View>

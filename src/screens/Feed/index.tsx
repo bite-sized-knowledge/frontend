@@ -12,8 +12,8 @@ import WebViewDrawer from '../../components/common/WebViewDrawer';
 import {SceneMap, TabView} from 'react-native-tab-view';
 import {Blog} from '../Blog';
 import {BTab} from '../../navigator/BTab';
-import {createStackNavigator} from '@react-navigation/stack';
 import {useQuery} from '@tanstack/react-query';
+import {useTheme} from '../../context/ThemeContext';
 
 const feedApiRes = [
   {
@@ -95,8 +95,15 @@ const FeedItem = ({item, handleCardBodyClick}) => {
     insets.top -
     insets.bottom;
 
+  const {theme} = useTheme();
+
   return (
-    <View style={[styles.feedSection, {height: itemHeight}]}>
+    <View
+      style={[
+        styles.feedSection,
+        {height: itemHeight},
+        {backgroundColor: theme.background},
+      ]}>
       <Card
         article={item.article}
         blog={item.blog}
@@ -121,7 +128,7 @@ export const Feed = () => {
   const {data} = useQuery({queryKey: ['feed'], queryFn: getFeed});
 
   return (
-    <View style={styles.feeds}>
+    <View style={[styles.feeds]}>
       <FlatList
         data={feedApiRes}
         renderItem={({item}) => (

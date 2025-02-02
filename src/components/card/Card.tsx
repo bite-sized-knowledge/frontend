@@ -6,6 +6,7 @@ import {Blog} from '../../types/Blog';
 import {CardBody} from './CardBody';
 import {Article} from '../../types/Article';
 import {CardFooter} from './CardFooter';
+import {useTheme} from '../../context/ThemeContext';
 
 interface CardProps {
   article: Article;
@@ -19,8 +20,14 @@ export const Card: React.FC<CardProps> = ({
   blog,
   handleCardBodyClick,
 }) => {
+  const {theme} = useTheme();
   return (
-    <View style={[styles.card, elevation.card]}>
+    <View
+      style={[
+        styles.card,
+        elevation.card,
+        {backgroundColor: theme.background},
+      ]}>
       <CardHeader blog={blog} />
       <CardBody article={article} handleCardBodyClick={handleCardBodyClick} />
       <CardFooter article={article} />
@@ -33,6 +40,5 @@ const styles = StyleSheet.create({
     width: 320,
     height: 396,
     borderRadius: 16,
-    backgroundColor: '#fff',
   },
 });
