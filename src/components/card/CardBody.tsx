@@ -1,18 +1,19 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
 import {Article} from '../../types/Article';
-import WebViewDrawer from '../common/WebViewDrawer';
 
 interface CardBodyProps {
   article: Article;
+  handleCardBodyClick: Function;
 }
 
-export const CardBody: React.FC<CardBodyProps> = ({article}) => {
-  const [link, setLink] = useState<null | string>(null);
-
+export const CardBody: React.FC<CardBodyProps> = ({
+  article,
+  handleCardBodyClick,
+}) => {
   return (
-    <Pressable onPress={() => setLink(article.link)}>
+    <Pressable onPress={() => handleCardBodyClick(article.link)}>
       <Image source={{uri: article.thumbnail}} style={styles.thumbnail} />
       <View style={styles.cardContent}>
         <Text style={[styles.titleContainer, typography.head]}>
@@ -27,11 +28,6 @@ export const CardBody: React.FC<CardBodyProps> = ({article}) => {
           ))}
         </View>
       </View>
-      <WebViewDrawer
-        isVisible={link !== null}
-        url={link}
-        onClose={() => setLink(null)}
-      />
     </Pressable>
   );
 };

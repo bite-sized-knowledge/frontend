@@ -10,14 +10,19 @@ import {CardFooter} from './CardFooter';
 interface CardProps {
   article: Article;
   blog: Blog;
+  handleCardBodyClick: Function;
 }
 
 // TODO(권대현): 다크모드 대응 필요, 이벤트 작업 필요(이벤트 작업하면서 수정할 부분이 좀 생길듯)
-export const Card: React.FC<CardProps> = ({article, blog}) => {
+export const Card: React.FC<CardProps> = ({
+  article,
+  blog,
+  handleCardBodyClick,
+}) => {
   return (
     <View style={[styles.card, elevation.card]}>
       <CardHeader blog={blog} />
-      <CardBody article={article} />
+      <CardBody article={article} handleCardBodyClick={handleCardBodyClick} />
       <CardFooter article={article} />
     </View>
   );

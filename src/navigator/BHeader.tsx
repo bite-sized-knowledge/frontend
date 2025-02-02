@@ -1,13 +1,15 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type HeaderProps = {
   title: string;
 };
 
 const BHeader = ({title}: HeaderProps) => {
+  const insets = useSafeAreaInsets();
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, {height: 56 + insets.top}]}>
       <Text style={styles.title}>{title}</Text>
     </View>
   );
