@@ -1,3 +1,4 @@
+// InterestListProps
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import {InterestItem} from './InterestItem';
@@ -25,17 +26,17 @@ export const InterestList: React.FC<InterestListProps> = ({
   onItemSelect,
 }) => {
   return (
-    <View style={styles.container}>
-      {INTERESTS.map((item, index) => (
-        <View key={`${item}-${index}`} style={styles.itemWrapper}>
-          <InterestItem
-            item={item}
-            isSelected={selectedItems.includes(item)}
-            onPress={() => onItemSelect(item)}
-          />
-        </View>
-      ))}
-    </View>
+      <View style={styles.container}>
+        {INTERESTS.map((item, index) => (
+          <View key={`${item}-${index}`} style={styles.itemWrapper}>
+            <InterestItem
+              item={item}
+              isSelected={selectedItems.includes(item)}
+              onPress={() => onItemSelect(item)}
+            />
+          </View>
+        ))}
+      </View>
   );
 };
 
@@ -43,13 +44,14 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 18,
-    justifyContent: 'space-between', // 각 줄에서 아이템 간격 균등 분배
+    flex: 1,
+    gap: 12,
+    justifyContent: 'flex-start', // 각 줄에서 아이템 간격 균등 분배
     paddingHorizontal: 14, // 좌우 공백 추가
     paddingVertical: 14, // 상하 공백 추가
   },
   itemWrapper: {
-    width: '30%',
+    width: '31%',
     aspectRatio: 1,
     alignItems: 'center',
   },

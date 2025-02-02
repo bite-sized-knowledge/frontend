@@ -1,3 +1,4 @@
+// InterestHeader
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
@@ -8,7 +9,9 @@ export const InterestHeader = () => {
       <Text style={typography.title}>
         안녕하세요!{'\n'}관심있는 주제는 무엇인가요?
       </Text>
-      <Text style={typography.subHead}>*중복 선택할 수 있어요.</Text>
+      <Text style={[typography.subHead, styles.text]}>
+        *중복 선택할 수 있어요.
+      </Text>
     </View>
   );
 };
@@ -16,5 +19,10 @@ export const InterestHeader = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 14, // 원하는 padding 값 설정
+  },
+
+  text: {
+    paddingTop: 10,
+    color: '#333333',
   },
 });

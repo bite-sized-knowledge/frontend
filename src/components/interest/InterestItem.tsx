@@ -1,3 +1,4 @@
+// InterestItem
 import React from 'react';
 import {TouchableOpacity, Text, StyleSheet, Image, View} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
@@ -34,14 +35,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   item: {
-    width: 100, // 고정 너비
-    height: 100, // 고정 높이
-    backgroundColor: '#ECECEC',
+    minWidth: 100, // 고정 너비
+    minHeight: 100, // 고정 높이,
+    aspectRatio: 1 / 1,
+    flex: 1,
+    flexGrow: 1,
+    backgroundColor: '#F0F0F0',
     borderRadius: 10,
     padding: 10, // 텍스트를 내부에서 여백
   },
   selectedItem: {
-    backgroundColor: '#000000CC',
+    backgroundColor: '#FF6E1C',
   },
   checkImage: {
     position: 'absolute',

@@ -1,3 +1,4 @@
+// StartButton
 import React from 'react';
 import {TouchableOpacity, Text, StyleSheet, View} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
@@ -17,7 +18,7 @@ export const StartButton: React.FC<StartButtonProps> = ({
         style={[styles.button, disabled && styles.disabledButton]}
         onPress={onPress}
         disabled={disabled}>
-        <Text style={[typography.subHead, styles.text]}>시작하기</Text>
+        <Text style={[typography.subHead, !disabled && styles.text]}>시작하기</Text>
       </TouchableOpacity>
     </View>
   );
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
   button: {
     padding: 15,
     borderRadius: 10,
-    backgroundColor: '#191919',
+    backgroundColor: '#FF6E1C',
     alignItems: 'center',
     justifyContent: 'center',
   },
