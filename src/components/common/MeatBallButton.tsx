@@ -21,7 +21,6 @@ export const MeatBallButton = () => {
   const [position, setPosition] = useState({x: 0, y: 0, width: 0, height: 0});
 
   const handleOpenModal = () => {
-    console.log(position);
     if (buttonRef.current) {
       buttonRef.current.measure((fx, fy, width, height, px, py) => {
         setPosition({x: px, y: py, width, height});
@@ -46,6 +45,7 @@ export const MeatBallButton = () => {
                   position: 'absolute',
                   top: position.y + position.height + 12, // 버튼 아래로 배치
                   left: position.x - 100, // 버튼 위치 기준
+                  backgroundColor: theme.background,
                 },
               ]}>
               <View style={[styles.dropDownItem]}>
@@ -71,7 +71,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dropDownBox: {
-    backgroundColor: 'white',
     color: 'white',
     zIndex: 10,
     borderRadius: 8,

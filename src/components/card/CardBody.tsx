@@ -16,21 +16,26 @@ export const CardBody: React.FC<CardBodyProps> = ({
   const {theme} = useTheme();
 
   return (
-    <Pressable onPress={() => handleCardBodyClick(article.link)}>
+    <Pressable onPress={() => handleCardBodyClick(article.url)}>
       <Image source={{uri: article.thumbnail}} style={styles.thumbnail} />
       <View style={styles.cardContent}>
         <Text
-          style={[styles.titleContainer, typography.head, {color: theme.text}]}>
+          style={[styles.titleContainer, typography.head, {color: theme.text}]}
+          numberOfLines={2}
+          ellipsizeMode="tail">
           {article.title}
         </Text>
         <Text
-          style={[styles.bodyContainer, typography.body, {color: theme.gray1}]}>
+          style={[styles.bodyContainer, typography.body, {color: theme.gray1}]}
+          numberOfLines={3}
+          ellipsizeMode="tail">
           {article.description}
         </Text>
         <View style={styles.categoryContainer}>
-          {article.category.map((tag, idx) => (
-            <HashTag key={idx} tagName={tag} />
-          ))}
+          {article.categories &&
+            article.categories.map((tag, idx) => (
+              <HashTag key={idx} tagName={tag} />
+            ))}
         </View>
       </View>
     </Pressable>
@@ -52,12 +57,12 @@ const HashTag = ({tagName}: HashTagProps) => {
 
 const styles = StyleSheet.create({
   thumbnail: {
-    width: 320,
-    height: 160,
+    minWidth: 320,
+    minHeight: 160,
   },
   cardContent: {
-    width: 320,
-    height: 128,
+    minWidth: 320,
+    minHeight: 128,
     paddingTop: 16,
     paddingBottom: 12,
     paddingHorizontal: 12,

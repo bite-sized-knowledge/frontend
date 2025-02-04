@@ -115,6 +115,7 @@ const FeedItem = ({item, handleCardBodyClick}) => {
 
 export const Feed = () => {
   const [link, setLink] = useState<null | string>(null);
+  const {theme} = useTheme();
 
   const handleCardBodyClick = (data: string) => setLink(data);
 
@@ -128,7 +129,7 @@ export const Feed = () => {
   const {data} = useQuery({queryKey: ['feed'], queryFn: getFeed});
 
   return (
-    <View style={[styles.feeds]}>
+    <View style={[styles.feeds, {backgroundColor: theme.background}]}>
       <FlatList
         data={feedApiRes}
         renderItem={({item}) => (
@@ -178,5 +179,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 20,
   },
 });

@@ -1,5 +1,11 @@
 // src/ThemeContext.tsx
-import React, {createContext, useContext, useState, ReactNode} from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from 'react';
 import {Appearance} from 'react-native';
 import {darkTheme, lightTheme} from '../styles/themes';
 
@@ -27,10 +33,23 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({children}) => {
-  const systemTheme = Appearance.getColorScheme(); // 시스템 설정 가져오기
+  const systemTheme = Appearance.getColorScheme(); // 앱 시작 시 시스템 설정 가져오기
   const [themeMode, setThemeMode] = useState<'light' | 'dark'>(
     systemTheme || 'light',
   );
+
+  // 시스템 테마 변경 시 자동 업데이트
+  useEffect(() => {
+    const subscription = Appearance.addChangeListener(({colorScheme}) => {
+      if (colorScheme) {
+        setThemeMode(colorScheme);
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const toggleTheme = () => {
     setThemeMode(prev => (prev === 'light' ? 'dark' : 'light'));

@@ -20,13 +20,16 @@ export const Card: React.FC<CardProps> = ({
   blog,
   handleCardBodyClick,
 }) => {
-  const {theme} = useTheme();
+  const {theme, themeMode} = useTheme();
   return (
     <View
       style={[
         styles.card,
         elevation.card,
-        {backgroundColor: theme.background},
+        {
+          backgroundColor:
+            themeMode === 'light' ? theme.background : theme.gray4,
+        },
       ]}>
       <CardHeader blog={blog} />
       <CardBody article={article} handleCardBodyClick={handleCardBodyClick} />
@@ -37,8 +40,8 @@ export const Card: React.FC<CardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    width: 320,
-    height: 396,
+    minWidth: 320,
+    minHeight: 396,
     borderRadius: 16,
   },
 });
