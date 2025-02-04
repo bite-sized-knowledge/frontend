@@ -12,7 +12,7 @@ const INTERESTS = [
   'Web',
   'Mobile',
   'Hardware & IoT',
-  'Ai & MI & Data',
+  'AI & ML & Data',
   'Security & Network',
   'DB',
   'DevOps & Infra',
