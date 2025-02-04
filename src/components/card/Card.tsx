@@ -31,7 +31,7 @@ export const Card: React.FC<CardProps> = ({
             themeMode === 'light' ? theme.background : theme.gray4,
         },
       ]}>
-      <CardHeader blog={blog} />
+      <CardHeader article={article} blog={blog} />
       <CardBody article={article} handleCardBodyClick={handleCardBodyClick} />
       <CardFooter article={article} />
     </View>

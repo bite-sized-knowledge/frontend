@@ -2,6 +2,7 @@ import React, {useRef, useState} from 'react';
 import {
   Image,
   Modal,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,9 +12,11 @@ import {
 import {useModal} from '../../hooks/useModal';
 import {elevation} from '../../styles/tokens/elevation';
 import {useTheme} from '../../context/ThemeContext';
+import {useMutation} from '@tanstack/react-query';
+import {unInterest} from '../../api/articleApi';
 
 // TODO(권대현): ... -> 아이콘 대체, 모달 완성
-export const MeatBallButton = () => {
+export const MeatBallButton = ({article}) => {
   const {isVisible, openModal, closeModal} = useModal();
   const {theme} = useTheme();
 
@@ -28,6 +31,11 @@ export const MeatBallButton = () => {
       });
     }
   };
+
+  const {mutate: uninterestMutation} = useMutation({
+    mutationFn: () => unInterest(article.id),
+    onSuccess: () => closeModal(),
+  });
 
   return (
     <>
@@ -48,10 +56,19 @@ export const MeatBallButton = () => {
                   backgroundColor: theme.background,
                 },
               ]}>
-              <View style={[styles.dropDownItem]}>
-                <Image />
-                <Text style={{color: theme.text}}>관심없음</Text>
-              </View>
+              <Pressable
+                onPress={() => uninterestMutation()}
+                android_ripple={{color: '#dddddd'}}
+                style={({pressed}) => [
+                  {
+                    opacity: pressed ? '0.5' : '1',
+                  },
+                ]}>
+                <View style={[styles.dropDownItem]}>
+                  <Image />
+                  <Text style={{color: theme.text}}>관심없음</Text>
+                </View>
+              </Pressable>
               <View style={[styles.dropDownItem]}>
                 <Image />
                 <Text style={{color: theme.text}}>신고하기</Text>

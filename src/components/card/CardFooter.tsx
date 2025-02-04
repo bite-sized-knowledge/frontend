@@ -8,7 +8,6 @@ import {
   deleteBookmark,
   like,
   share,
-  unInterest,
   unlike,
 } from '../../api/articleApi';
 import {typography} from '../../styles/tokens/typography';

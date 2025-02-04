@@ -5,19 +5,21 @@ import {MeatBallButton} from '../common/MeatBallButton';
 import {typography} from '../../styles/tokens/typography';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../../context/ThemeContext';
+import {Article} from '../../types/Article';
 
 interface CardHeaderProps {
+  article: Article;
   blog: Blog;
 }
 
-export const CardHeader: React.FC<CardHeaderProps> = ({blog}) => {
+export const CardHeader: React.FC<CardHeaderProps> = ({article, blog}) => {
   const navigation = useNavigation();
 
   return (
     <Pressable onPress={() => navigation.navigate('blog')}>
       <View style={styles.cardHeaderContainer}>
         <Profile key={blog.id} profile={blog} />
-        <MeatBallButton />
+        <MeatBallButton article={article} />
       </View>
     </Pressable>
   );
