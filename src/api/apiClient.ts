@@ -1,6 +1,7 @@
 import {BASE_URL} from '@env';
 import {getAccessToken, refreshAccessToken} from './authApi';
 
+// TODO: 에러 형식 맞추기
 class ApiClient {
   private baseUrl: string;
   private defaultHeaders: Record<string, string>;
