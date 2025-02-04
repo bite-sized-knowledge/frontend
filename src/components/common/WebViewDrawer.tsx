@@ -2,6 +2,7 @@ import React from 'react';
 import {View, StyleSheet, Dimensions, Modal} from 'react-native';
 import WebView from 'react-native-webview';
 import DrawerAnimator from './DrawerAnimator';
+import {useTheme} from '../../context/ThemeContext';
 
 const {height} = Dimensions.get('window');
 export const DRAWER_HEIGHT = height * 0.9;
@@ -13,10 +14,11 @@ interface WebViewDrawerProps {
 }
 
 const WebViewDrawer = ({isVisible, url, onClose}: WebViewDrawerProps) => {
+  const {theme} = useTheme();
   return (
     <Modal visible={isVisible} transparent>
       <DrawerAnimator isVisible={isVisible} onClose={onClose}>
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: theme.background}]}>
           <View style={styles.header}>
             <View style={styles.handle} />
           </View>
@@ -44,7 +46,7 @@ const WebViewDrawer = ({isVisible, url, onClose}: WebViewDrawerProps) => {
 const styles = StyleSheet.create({
   container: {
     height: DRAWER_HEIGHT,
-    backgroundColor: 'white',
+
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     overflow: 'hidden',
