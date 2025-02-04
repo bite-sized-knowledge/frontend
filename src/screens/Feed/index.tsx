@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   StyleSheet,
+  Text,
   useWindowDimensions,
   View,
 } from 'react-native';
@@ -14,72 +16,73 @@ import {Blog} from '../Blog';
 import {BTab} from '../../navigator/BTab';
 import {useQuery} from '@tanstack/react-query';
 import {useTheme} from '../../context/ThemeContext';
+import {getFeed} from '../../api/feedApi';
 
-const feedApiRes = [
-  {
-    backgroundColor: 'black',
-    article: {
-      id: 1,
-      title: '타이틀 텍스트',
-      description: '서브 텍스트_한줄 요약',
-      link: 'https://www.naver.com',
-      thumbnail: 'https://picsum.photos/800/400?random=1',
-      like_count: 1,
-      archive_count: 1,
-      isLike: true,
-      isArchived: true,
-      isSubscribed: true,
-      category: ['Mobile', 'Web', 'DB'],
-    },
-    blog: {
-      id: 0,
-      favicon: 'https://picsum.photos/800/400?random=2',
-      title: '작성자 정보',
-    },
-  },
-  {
-    backgroundColor: 'red',
-    article: {
-      id: 2,
-      title: '타이틀 텍스트',
-      description: '서브 텍스트_한줄 요약',
-      link: '345',
-      thumbnail: 'https://picsum.photos/800/400?random=1',
-      like_count: 1,
-      archive_count: 1,
-      isLike: true,
-      isArchived: true,
-      isSubscribed: true,
-      category: ['Mobile', 'Web', 'DB'],
-    },
-    blog: {
-      id: 1,
-      favicon: 'https://picsum.photos/800/400?random=2',
-      title: '작성자 정보',
-    },
-  },
-  {
-    backgroundColor: 'white',
-    article: {
-      id: 3,
-      title: '타이틀 텍스트',
-      description: '서브 텍스트_한줄 요약',
-      link: '',
-      thumbnail: 'https://picsum.photos/800/400?random=1',
-      like_count: 1,
-      archive_count: 1,
-      isLike: true,
-      isArchived: true,
-      isSubscribed: true,
-      category: ['Mobile', 'Web', 'DB'],
-    },
-    blog: {
-      id: 2,
-      favicon: 'https://picsum.photos/800/400?random=2',
-      title: '작성자 정보',
-    },
-  },
-];
+// const feedApiRes = [
+//   {
+//     backgroundColor: 'black',
+//     article: {
+//       id: 1,
+//       title: '타이틀 텍스트',
+//       description: '서브 텍스트_한줄 요약',
+//       link: 'https://www.naver.com',
+//       thumbnail: 'https://picsum.photos/800/400?random=1',
+//       like_count: 1,
+//       archive_count: 1,
+//       isLike: true,
+//       isArchived: true,
+//       isSubscribed: true,
+//       category: ['Mobile', 'Web', 'DB'],
+//     },
+//     blog: {
+//       id: 0,
+//       favicon: 'https://picsum.photos/800/400?random=2',
+//       title: '작성자 정보',
+//     },
+//   },
+//   {
+//     backgroundColor: 'red',
+//     article: {
+//       id: 2,
+//       title: '타이틀 텍스트',
+//       description: '서브 텍스트_한줄 요약',
+//       link: '345',
+//       thumbnail: 'https://picsum.photos/800/400?random=1',
+//       like_count: 1,
+//       archive_count: 1,
+//       isLike: true,
+//       isArchived: true,
+//       isSubscribed: true,
+//       category: ['Mobile', 'Web', 'DB'],
+//     },
+//     blog: {
+//       id: 1,
+//       favicon: 'https://picsum.photos/800/400?random=2',
+//       title: '작성자 정보',
+//     },
+//   },
+//   {
+//     backgroundColor: 'white',
+//     article: {
+//       id: 3,
+//       title: '타이틀 텍스트',
+//       description: '서브 텍스트_한줄 요약',
+//       link: '',
+//       thumbnail: 'https://picsum.photos/800/400?random=1',
+//       like_count: 1,
+//       archive_count: 1,
+//       isLike: true,
+//       isArchived: true,
+//       isSubscribed: true,
+//       category: ['Mobile', 'Web', 'DB'],
+//     },
+//     blog: {
+//       id: 2,
+//       favicon: 'https://picsum.photos/800/400?random=2',
+//       title: '작성자 정보',
+//     },
+//   },
+// ];
 
 export const BOTTOM_TAB_HEIGHT = 56;
 export const HEADER_HEIGHT = 64;
@@ -105,7 +108,7 @@ const FeedItem = ({item, handleCardBodyClick}) => {
         {backgroundColor: theme.background},
       ]}>
       <Card
-        article={item.article}
+        article={{...item}}
         blog={item.blog}
         handleCardBodyClick={handleCardBodyClick}
       />
@@ -119,19 +122,33 @@ export const Feed = () => {
 
   const handleCardBodyClick = (data: string) => setLink(data);
 
-  const getFeed = async () => {
-    const data = await fetch('https://api.bite-knowledge.com/v1/feed').then(
-      res => res.json(),
-    );
-    return data;
-  };
+  // React Query로 데이터 가져오기
+  const {data, isLoading, isError, error} = useQuery({
+    queryKey: ['feed'],
+    queryFn: getFeed,
+  });
 
-  const {data} = useQuery({queryKey: ['feed'], queryFn: getFeed});
+  // 로딩, 에러 처리
+  if (isLoading) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.feeds, {backgroundColor: theme.background}]}>
       <FlatList
-        data={feedApiRes}
+        data={data?.data?.result ?? []}
         renderItem={({item}) => (
           <FeedItem item={item} handleCardBodyClick={handleCardBodyClick} />
         )}
