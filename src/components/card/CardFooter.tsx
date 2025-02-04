@@ -11,6 +11,7 @@ import {
   unInterest,
   unlike,
 } from '../../api/articleApi';
+import {typography} from '../../styles/tokens/typography';
 
 interface CardBottomProps {
   article: Article;
@@ -97,7 +98,9 @@ const ReactionButton: React.FC<ReactionButtonProps> = ({
         <View style={styles.icon} />
       </Pressable>
       {reactionCount > 0 ? (
-        <Text style={{color: theme.text}}>{reactionCount}</Text>
+        <Text style={[typography.body, {color: theme.text}]}>
+          {reactionCount}
+        </Text>
       ) : null}
     </View>
   );
