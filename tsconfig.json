@@ -10,6 +10,6 @@
     "resolveJsonModule": true, // JSON 파일 임포트 허용
     "jsx": "react-jsx" // React 17 JSX 처리 방식
   },
-  "include": ["env.d.ts", "src/**/*"],
+  "include": ["env.d.ts", "src/**/*", "declarations.d.ts"],
   "extends": "@react-native/typescript-config/tsconfig.json"
 }
