@@ -8,7 +8,19 @@
     "skipLibCheck": true, // 라이브러리 타입 체크 건너뛰기
     "forceConsistentCasingInFileNames": true, // 파일 이름 대소문자 일관성 유지
     "resolveJsonModule": true, // JSON 파일 임포트 허용
-    "jsx": "react-jsx" // React 17 JSX 처리 방식
+    "jsx": "react-jsx", // React 17 JSX 처리 방식
+    "baseUrl": "./src",
+    "paths": {
+      "@assets/*": ["assets/*"],
+      "@api/*": ["api/*"],
+      "@components/*": ["components/*"],
+      "@context/*": ["context/*"],
+      "@hooks/*": ["hooks/*"],
+      "@navigator/*": ["navigator/*"],
+      "@screens/*": ["screens/*"],
+      "@styles/*": ["styles/*"]
+      // "@types/*": ["types/*"]
+    }
   },
   "include": ["env.d.ts", "src/**/*", "declarations.d.ts"],
   "extends": "@react-native/typescript-config/tsconfig.json"
