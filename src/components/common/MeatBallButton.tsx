@@ -14,6 +14,7 @@ import {elevation} from '../../styles/tokens/elevation';
 import {useTheme} from '../../context/ThemeContext';
 import {useMutation} from '@tanstack/react-query';
 import {unInterest} from '../../api/articleApi';
+import Icons from '@/assets/icons';
 
 // TODO(권대현): ... -> 아이콘 대체, 모달 완성
 export const MeatBallButton = ({article}) => {
@@ -40,7 +41,7 @@ export const MeatBallButton = ({article}) => {
   return (
     <>
       <TouchableOpacity ref={buttonRef} onPress={handleOpenModal}>
-        <Text>...</Text>
+        <Icons.Dots />
       </TouchableOpacity>
 
       <Modal visible={isVisible} transparent animationType="fade">
