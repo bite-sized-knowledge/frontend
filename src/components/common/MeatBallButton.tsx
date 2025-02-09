@@ -1,6 +1,5 @@
 import React, {useRef, useState} from 'react';
 import {
-  Image,
   Modal,
   Pressable,
   StyleSheet,
@@ -9,14 +8,13 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {useModal} from '../../hooks/useModal';
-import {elevation} from '../../styles/tokens/elevation';
-import {useTheme} from '../../context/ThemeContext';
+import {useModal} from '@/hooks/useModal';
+import {elevation} from '@/styles/tokens/elevation';
+import {useTheme} from '@/context/ThemeContext';
 import {useMutation} from '@tanstack/react-query';
-import {unInterest} from '../../api/articleApi';
+import {unInterest} from '@/api/articleApi';
 import Icons from '@/assets/icons';
 
-// TODO(권대현): ... -> 아이콘 대체, 모달 완성
 export const MeatBallButton = ({article}) => {
   const {isVisible, openModal, closeModal} = useModal();
   const {theme} = useTheme();
@@ -66,12 +64,12 @@ export const MeatBallButton = ({article}) => {
                   },
                 ]}>
                 <View style={[styles.dropDownItem]}>
-                  <Image />
+                  <Icons.Bad />
                   <Text style={{color: theme.text}}>관심없음</Text>
                 </View>
               </Pressable>
               <View style={[styles.dropDownItem]}>
-                <Image />
+                <Icons.Complain />
                 <Text style={{color: theme.text}}>신고하기</Text>
               </View>
             </View>
@@ -103,5 +101,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 16,
     paddingVertical: 5,
+    alignItems: 'center',
   },
 });
