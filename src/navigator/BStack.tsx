@@ -1,9 +1,8 @@
 import React from 'react';
-import {Blog} from '../screens/Blog';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {FeedTab} from '../screens/Feed';
 import {useTheme} from '../context/ThemeContext';
+import {BTab} from './BTab';
 
 const Stack = createStackNavigator();
 
@@ -23,16 +22,8 @@ export const BStack = () => {
       }}>
       <Stack.Screen
         name="tabNav"
-        component={FeedTab}
+        component={BTab}
         options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="blog"
-        component={Blog}
-        options={{
-          headerBackButtonDisplayMode: 'minimal',
-          headerTitle: '작성자 게시글',
-        }}
       />
     </Stack.Navigator>
   );

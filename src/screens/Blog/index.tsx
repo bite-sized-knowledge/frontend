@@ -2,6 +2,7 @@ import React from 'react';
 import {View, Text, Image, StyleSheet, FlatList} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
 import {elevation} from '../../styles/tokens/elevation';
+import CustomHeader from '@/components/common/CustomHeader';
 
 const Article = () => {
   return (
@@ -16,9 +17,18 @@ const Article = () => {
 
 const data = [1, 2, 3, 4];
 
-export const Blog = () => {
+interface BlogProps {
+  navigateToFeed: Function;
+}
+
+export const Blog = ({navigateToFeed}: BlogProps) => {
   return (
     <View>
+      <CustomHeader
+        title={'작성자 게시글'}
+        showBackButton={true}
+        onBackPress={() => navigateToFeed()}
+      />
       <View style={styles.blogSection}>
         <Image style={styles.blogImage} />
         <Text style={typography.head}>123</Text>

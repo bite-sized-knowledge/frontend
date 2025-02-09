@@ -3,20 +3,22 @@ import {StyleSheet, View, Image, Text, Pressable} from 'react-native';
 import {Blog} from '../../types/Blog';
 import {MeatBallButton} from '../common/MeatBallButton';
 import {typography} from '../../styles/tokens/typography';
-import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../../context/ThemeContext';
 import {Article} from '../../types/Article';
 
 interface CardHeaderProps {
   article: Article;
   blog: Blog;
+  handleCardHeaderClick: Function;
 }
 
-export const CardHeader: React.FC<CardHeaderProps> = ({article, blog}) => {
-  const navigation = useNavigation();
-
+export const CardHeader: React.FC<CardHeaderProps> = ({
+  article,
+  blog,
+  handleCardHeaderClick,
+}) => {
   return (
-    <Pressable onPress={() => navigation.navigate('blog')}>
+    <Pressable onPress={() => handleCardHeaderClick()}>
       <View style={styles.cardHeaderContainer}>
         <Profile key={blog.id} profile={blog} />
         <MeatBallButton article={article} />

@@ -5,90 +5,31 @@ import {
   FlatList,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
 } from 'react-native';
-import {Card} from '../../components/card/Card';
+import {Card} from '@/components/card/Card';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import WebViewDrawer from '../../components/common/WebViewDrawer';
-import {SceneMap, TabView} from 'react-native-tab-view';
-import {Blog} from '../Blog';
-import {BTab} from '../../navigator/BTab';
+import WebViewDrawer from '@/components/common/WebViewDrawer';
 import {useQuery} from '@tanstack/react-query';
-import {useTheme} from '../../context/ThemeContext';
-import {getFeed} from '../../api/feedApi';
-
-// const feedApiRes = [
-//   {
-//     backgroundColor: 'black',
-//     article: {
-//       id: 1,
-//       title: '타이틀 텍스트',
-//       description: '서브 텍스트_한줄 요약',
-//       link: 'https://www.naver.com',
-//       thumbnail: 'https://picsum.photos/800/400?random=1',
-//       like_count: 1,
-//       archive_count: 1,
-//       isLike: true,
-//       isArchived: true,
-//       isSubscribed: true,
-//       category: ['Mobile', 'Web', 'DB'],
-//     },
-//     blog: {
-//       id: 0,
-//       favicon: 'https://picsum.photos/800/400?random=2',
-//       title: '작성자 정보',
-//     },
-//   },
-//   {
-//     backgroundColor: 'red',
-//     article: {
-//       id: 2,
-//       title: '타이틀 텍스트',
-//       description: '서브 텍스트_한줄 요약',
-//       link: '345',
-//       thumbnail: 'https://picsum.photos/800/400?random=1',
-//       like_count: 1,
-//       archive_count: 1,
-//       isLike: true,
-//       isArchived: true,
-//       isSubscribed: true,
-//       category: ['Mobile', 'Web', 'DB'],
-//     },
-//     blog: {
-//       id: 1,
-//       favicon: 'https://picsum.photos/800/400?random=2',
-//       title: '작성자 정보',
-//     },
-//   },
-//   {
-//     backgroundColor: 'white',
-//     article: {
-//       id: 3,
-//       title: '타이틀 텍스트',
-//       description: '서브 텍스트_한줄 요약',
-//       link: '',
-//       thumbnail: 'https://picsum.photos/800/400?random=1',
-//       like_count: 1,
-//       archive_count: 1,
-//       isLike: true,
-//       isArchived: true,
-//       isSubscribed: true,
-//       category: ['Mobile', 'Web', 'DB'],
-//     },
-//     blog: {
-//       id: 2,
-//       favicon: 'https://picsum.photos/800/400?random=2',
-//       title: '작성자 정보',
-//     },
-//   },
-// ];
+import {useTheme} from '@/context/ThemeContext';
+import {getFeed} from '@/api/feedApi';
+import CustomHeader from '@/components/common/CustomHeader';
 
 export const BOTTOM_TAB_HEIGHT = 56;
 export const HEADER_HEIGHT = 64;
 const screenHeight = Dimensions.get('window').height;
 
-const FeedItem = ({item, handleCardBodyClick}) => {
+interface FeedItemProps {
+  item: any;
+  handleCardBodyClick: Function;
+  handleCardHeaderClick: Function;
+}
+
+const FeedItem = ({
+  item,
+  handleCardBodyClick,
+  handleCardHeaderClick,
+}: FeedItemProps) => {
   const insets = useSafeAreaInsets();
 
   const itemHeight =
@@ -111,12 +52,17 @@ const FeedItem = ({item, handleCardBodyClick}) => {
         article={{...item}}
         blog={item.blog}
         handleCardBodyClick={handleCardBodyClick}
+        handleCardHeaderClick={handleCardHeaderClick}
       />
     </View>
   );
 };
 
-export const Feed = () => {
+interface FeedProps {
+  navigateToBlog: Function;
+}
+
+export const Feed = ({navigateToBlog}: FeedProps) => {
   const [link, setLink] = useState<null | string>(null);
   const {theme} = useTheme();
 
@@ -147,10 +93,15 @@ export const Feed = () => {
 
   return (
     <View style={[styles.feeds, {backgroundColor: theme.background}]}>
+      <CustomHeader title={'Feed'} />
       <FlatList
         data={data?.data?.result ?? []}
         renderItem={({item}) => (
-          <FeedItem item={item} handleCardBodyClick={handleCardBodyClick} />
+          <FeedItem
+            item={item}
+            handleCardBodyClick={handleCardBodyClick}
+            handleCardHeaderClick={navigateToBlog}
+          />
         )}
         pagingEnabled
         showsVerticalScrollIndicator={false}
@@ -162,31 +113,6 @@ export const Feed = () => {
         onClose={() => setLink(null)}
       />
     </View>
-  );
-};
-
-const renderScene = SceneMap({
-  feed: BTab, // Feed 탭에 해당하는 컴포넌트
-  blog: Blog, // Blog 탭에 Stack Navigator를 사용
-});
-
-const routes = [
-  {key: 'feed', title: 'Feed'},
-  {key: 'blog', title: 'Blog'},
-];
-
-export const FeedTab = () => {
-  const layout = useWindowDimensions();
-  const [index, setIndex] = useState(0);
-
-  return (
-    <TabView
-      navigationState={{index, routes}}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{width: layout.width}}
-      renderTabBar={() => null}
-    />
   );
 };
 
