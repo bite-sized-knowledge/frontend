@@ -1,48 +1,98 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {Article} from '../../types/Article';
+import React, {ReactNode, useState} from 'react';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {useTheme} from '@context/ThemeContext';
+import {typography} from '@styles/tokens/typography';
+import Icons from '../../assets/icons';
+import {Article} from 'types/Article';
+import {
+  useLikeMutation,
+  useUnlikeMutation,
+  useShareMutation,
+  useBookmarkMutation,
+  useCancelBookmarkMutation,
+} from '@hooks/useArticleMutations';
 
 interface CardBottomProps {
   article: Article;
 }
 
 export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
+  // 로컬 상태(낙관적 업데이트 용)
+  const [liked, setLiked] = useState<boolean>(article.liked);
+  const [num, setNum] = useState<number>(article.likeCount);
+  const [bookmarked, setBookmarked] = useState<boolean>(article.archived);
+
+  // 훅을 통한 API 호출
+  const {mutate: likeMutation} = useLikeMutation(article.id, () => {
+    setLiked(true);
+    setNum(prev => prev + 1);
+  });
+  const {mutate: unlikeMutation} = useUnlikeMutation(article.id, () => {
+    setLiked(false);
+    setNum(prev => prev - 1);
+  });
+  const {mutate: shareMutation} = useShareMutation(article.id, () => {});
+  const {mutate: bookmarkMutation} = useBookmarkMutation(article.id, () =>
+    setBookmarked(true),
+  );
+  const {mutate: cancelBookmarkMutation} = useCancelBookmarkMutation(
+    article.id,
+    () => setBookmarked(false),
+  );
+
   return (
     <View style={styles.bottomContainer}>
       <View style={styles.leftSection}>
         <ReactionButton
-          icon={'좋아요'}
-          isReactioned={article.isLike}
-          reactionCount={article.like_count}
+          icon={liked ? <Icons.HeartFill /> : <Icons.HeartDefault />}
+          reactionCount={num}
+          handlePress={async () => (liked ? unlikeMutation() : likeMutation())}
         />
-        <ReactionButton icon={'공유'} />
+        <ReactionButton
+          icon={<Icons.Share />}
+          handlePress={() => shareMutation}
+        />
       </View>
       <View style={styles.rightSection}>
-        <ReactionButton icon={'아카이빙'} isReactioned={article.isArchived} />
+        <ReactionButton
+          icon={bookmarked ? <Icons.CookieFill /> : <Icons.CookieDefault />}
+          handlePress={async () =>
+            bookmarked ? cancelBookmarkMutation() : bookmarkMutation()
+          }
+        />
       </View>
     </View>
   );
 };
 
 interface ReactionButtonProps {
-  icon: string;
-  isReactioned?: boolean;
+  icon: ReactNode;
   reactionCount?: number;
+  handlePress: () => {};
 }
 
-// TODO(권대현): 아이콘 대체
-const ReactionButton: React.FC<ReactionButtonProps> = ({
-  icon,
-  isReactioned,
-  reactionCount = 0,
-}) => {
-  return (
-    <View style={styles.reactionButtonContainer}>
-      <View style={styles.icon} />
-      {reactionCount > 0 ? <Text>{reactionCount}</Text> : null}
-    </View>
-  );
-};
+/**
+ * ReactionButton 컴포넌트는 아이콘과 반응(좋아요 개수 등)을 표시하며,
+ * React.memo로 감싸 불필요한 리렌더링을 방지합니다.
+ */
+const ReactionButton: React.FC<ReactionButtonProps> = React.memo(
+  ({icon, reactionCount = 0, handlePress}) => {
+    const {theme} = useTheme();
+
+    return (
+      <View style={styles.reactionButtonContainer}>
+        <Pressable onPress={handlePress} style={styles.icon}>
+          {icon}
+        </Pressable>
+        {reactionCount > 0 ? (
+          <Text style={[typography.body, {color: theme.text}]}>
+            {reactionCount}
+          </Text>
+        ) : null}
+      </View>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   bottomContainer: {
@@ -69,7 +119,6 @@ const styles = StyleSheet.create({
   icon: {
     width: 24,
     height: 24,
-    backgroundColor: '#505050',
   },
   reactionButtonContainer: {
     flexDirection: 'row',

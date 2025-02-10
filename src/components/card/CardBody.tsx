@@ -1,30 +1,44 @@
 import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
 import {Article} from '../../types/Article';
+import {useTheme} from '../../context/ThemeContext';
 
 interface CardBodyProps {
   article: Article;
+  handleCardBodyClick: Function;
 }
 
-export const CardBody: React.FC<CardBodyProps> = ({article}) => {
+export const CardBody: React.FC<CardBodyProps> = ({
+  article,
+  handleCardBodyClick,
+}) => {
+  const {theme} = useTheme();
+
   return (
-    <>
+    <Pressable onPress={() => handleCardBodyClick(article.url)}>
       <Image source={{uri: article.thumbnail}} style={styles.thumbnail} />
       <View style={styles.cardContent}>
-        <Text style={[styles.titleContainer, typography.head]}>
+        <Text
+          style={[styles.titleContainer, typography.head, {color: theme.text}]}
+          numberOfLines={2}
+          ellipsizeMode="tail">
           {article.title}
         </Text>
-        <Text style={[styles.bodyContainer, typography.body]}>
+        <Text
+          style={[styles.bodyContainer, typography.body, {color: theme.gray1}]}
+          numberOfLines={3}
+          ellipsizeMode="tail">
           {article.description}
         </Text>
         <View style={styles.categoryContainer}>
-          {article.category.map((tag, idx) => (
-            <HashTag key={idx} tagName={tag} />
-          ))}
+          {article.categories &&
+            article.categories.map((tag, idx) => (
+              <HashTag key={idx} tagName={tag} />
+            ))}
         </View>
       </View>
-    </>
+    </Pressable>
   );
 };
 
@@ -33,21 +47,22 @@ interface HashTagProps {
 }
 
 const HashTag = ({tagName}: HashTagProps) => {
+  const {theme} = useTheme();
   return (
-    <View style={styles.categoryWrapper}>
-      <Text style={[typography.caption, styles.categoryName]}>#{tagName}</Text>
+    <View style={[styles.categoryWrapper, {backgroundColor: theme.gray4}]}>
+      <Text style={[typography.caption, {color: theme.sub}]}>#{tagName}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   thumbnail: {
-    width: 320,
-    height: 160,
+    minWidth: 320,
+    minHeight: 160,
   },
   cardContent: {
-    width: 320,
-    height: 128,
+    minWidth: 320,
+    minHeight: 128,
     paddingTop: 16,
     paddingBottom: 12,
     paddingHorizontal: 12,
@@ -73,10 +88,9 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     alignSelf: 'baseline',
-    backgroundColor: '#E5E5E5',
     borderRadius: 16,
   },
-  categoryName: {
-    color: '#A2A2A2',
+  webview: {
+    flex: 1,
   },
 });

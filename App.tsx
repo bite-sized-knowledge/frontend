@@ -1,27 +1,26 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import {SafeAreaView, useColorScheme} from 'react-native';
-import {TypoExample} from './src/screens/example/TypoExample';
+import {StatusBar} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {BStack} from './src/navigator/BStack';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import 'react-native-gesture-handler';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {ThemeProvider} from './src/context/ThemeContext';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+const queryClient = new QueryClient();
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <TypoExample />
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <StatusBar />
+        <QueryClientProvider client={queryClient}>
+          <NavigationContainer>
+            <BStack />
+          </NavigationContainer>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
 

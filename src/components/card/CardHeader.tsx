@@ -1,19 +1,29 @@
 import React from 'react';
-import {StyleSheet, View, Image, Text} from 'react-native';
+import {StyleSheet, View, Image, Text, Pressable} from 'react-native';
 import {Blog} from '../../types/Blog';
 import {MeatBallButton} from '../common/MeatBallButton';
 import {typography} from '../../styles/tokens/typography';
+import {useTheme} from '../../context/ThemeContext';
+import {Article} from '../../types/Article';
 
 interface CardHeaderProps {
+  article: Article;
   blog: Blog;
+  handleCardHeaderClick: Function;
 }
 
-export const CardHeader: React.FC<CardHeaderProps> = ({blog}) => {
+export const CardHeader: React.FC<CardHeaderProps> = ({
+  article,
+  blog,
+  handleCardHeaderClick,
+}) => {
   return (
-    <View style={styles.cardHeaderContainer}>
-      <Profile key={blog.id} profile={blog} />
-      <MeatBallButton />
-    </View>
+    <Pressable onPress={() => handleCardHeaderClick()}>
+      <View style={styles.cardHeaderContainer}>
+        <Profile key={blog.id} profile={blog} />
+        <MeatBallButton article={article} />
+      </View>
+    </Pressable>
   );
 };
 
@@ -22,12 +32,16 @@ interface ProfileProps {
 }
 
 const Profile: React.FC<ProfileProps> = ({profile}) => {
+  const {theme} = useTheme();
+
   return (
     <View style={styles.profileContainer}>
       <View style={styles.faviconWrapper}>
         <Image source={{uri: profile.favicon}} style={styles.favicon} />
       </View>
-      <Text style={[typography.body, styles.profileName]}>{profile.title}</Text>
+      <Text style={[typography.body, {color: theme.gray1}]}>
+        {profile.title}
+      </Text>
     </View>
   );
 };
@@ -56,8 +70,5 @@ const styles = StyleSheet.create({
   favicon: {
     width: '100%',
     height: '100%',
-  },
-  profileName: {
-    color: '#b1b1b1',
   },
 });
