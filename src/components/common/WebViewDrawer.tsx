@@ -105,6 +105,7 @@ export const WebViewDrawer: React.FC<WebViewDrawerProps> = ({
     setWebviewError('웹페이지를 불러오지 못했습니다.');
   }, []);
 
+  // TODO: useAnimatedGestureHandler 버전업
   // 손잡이 영역에서만 드래그 가능하도록 제스처 핸들러 구현
   const gestureHandler = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent,
