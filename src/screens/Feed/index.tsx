@@ -9,11 +9,12 @@ import {
 } from 'react-native';
 import {Card} from '@/components/card/Card';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import WebViewDrawer from '@/components/common/WebViewDrawer';
+
 import {useQuery} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
 import {getFeed} from '@/api/feedApi';
 import CustomHeader from '@/components/common/CustomHeader';
+import {WebViewDrawer} from '@/components/common/WebViewDrawer';
 
 export const BOTTOM_TAB_HEIGHT = 56;
 export const HEADER_HEIGHT = 64;
@@ -108,9 +109,9 @@ export const Feed = ({navigateToBlog}: FeedProps) => {
         decelerationRate="fast"
       />
       <WebViewDrawer
-        isVisible={link !== null}
-        url={link}
+        visible={link !== null}
         onClose={() => setLink(null)}
+        uri={link}
       />
     </View>
   );

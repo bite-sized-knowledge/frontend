@@ -9,8 +9,6 @@ import {ThemeProvider} from './src/context/ThemeContext';
 
 const queryClient = new QueryClient();
 
-const queryClient = new QueryClient();
-
 function App(): React.JSX.Element {
   return (
     <SafeAreaProvider>
