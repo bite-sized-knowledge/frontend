@@ -64,6 +64,7 @@ interface FeedProps {
 }
 
 export const Feed = ({navigateToBlog}: FeedProps) => {
+  const [visible, setVisible] = useState<boolean>(false);
   const [link, setLink] = useState<null | string>(null);
   const {theme} = useTheme();
 
@@ -109,8 +110,8 @@ export const Feed = ({navigateToBlog}: FeedProps) => {
         decelerationRate="fast"
       />
       <WebViewDrawer
-        visible={link !== null}
-        onClose={() => setLink(null)}
+        visible={visible}
+        onClose={() => setVisible(false)}
         uri={link}
       />
     </View>

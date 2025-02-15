@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
+import {Portal} from 'react-native-portalize';
 import {WebView} from 'react-native-webview';
 import Animated, {
   useSharedValue,
@@ -24,7 +25,7 @@ import {typography} from '@/styles/tokens/typography';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 // Drawer 높이: 전체 화면의 80%
-const DRAWER_HEIGHT = SCREEN_HEIGHT * 0.8;
+const DRAWER_HEIGHT = SCREEN_HEIGHT * 0.9;
 const ANIMATION_DURATION = 300; // 애니메이션 지속시간 (ms)
 
 interface WebViewDrawerProps {
@@ -138,67 +139,71 @@ export const WebViewDrawer: React.FC<WebViewDrawerProps> = ({
   });
 
   // 내부 렌더링 상태가 false면 실제로 렌더링하지 않음 (애니메이션 완료 후)
-  if (!shouldRender) return null;
+  // if (!shouldRender) return null;
 
   return (
-    <View style={StyleSheet.absoluteFill}>
-      {/* Overlay: 터치 시 Drawer 닫힘 (TouchableWithoutFeedback으로 터치 효과 제거) */}
-      <TouchableWithoutFeedback onPress={closeDrawer}>
-        <Animated.View style={[styles.overlay, overlayAnimatedStyle]} />
-      </TouchableWithoutFeedback>
+    <Portal>
+      <View style={StyleSheet.absoluteFill}>
+        {/* Overlay: 터치 시 Drawer 닫힘 (TouchableWithoutFeedback으로 터치 효과 제거) */}
+        <TouchableWithoutFeedback onPress={closeDrawer}>
+          <Animated.View style={[styles.overlay, overlayAnimatedStyle]} />
+        </TouchableWithoutFeedback>
 
-      {/* Drawer 컨테이너 */}
-      <Animated.View
-        style={[
-          styles.drawerContainer,
-          animatedStyle,
-          {backgroundColor: theme.background},
-        ]}>
-        {/* 손잡이 영역 (여기서만 드래그 가능) */}
-        <PanGestureHandler onGestureEvent={gestureHandler}>
-          <Animated.View style={styles.handle}>
-            <View
-              style={[styles.handleIndicator, {backgroundColor: theme.gray1}]}
+        {/* Drawer 컨테이너 */}
+
+        <Animated.View
+          style={[
+            styles.drawerContainer,
+            animatedStyle,
+            {backgroundColor: theme.background},
+          ]}>
+          {/* 손잡이 영역 (여기서만 드래그 가능) */}
+          <PanGestureHandler onGestureEvent={gestureHandler}>
+            <Animated.View style={styles.handle}>
+              <View
+                style={[styles.handleIndicator, {backgroundColor: theme.gray1}]}
+              />
+            </Animated.View>
+          </PanGestureHandler>
+          {/* WebView 또는 에러 메시지 영역 */}
+          {uri && !webviewError ? (
+            <WebView
+              key={uri}
+              // 웹뷰 에러 발생용 uri
+              // source={{uri: uri ? 'https://thisurldoesnotexist.example.com' : ''}}
+              source={{uri}}
+              style={styles.webview}
+              startInLoadingState
+              onError={handleWebViewError}
+              onHttpError={handleWebViewError}
             />
-          </Animated.View>
-        </PanGestureHandler>
-        {/* WebView 또는 에러 메시지 영역 */}
-        {uri && !webviewError ? (
-          <WebView
-            // 웹뷰 에러 발생용 uri
-            // source={{uri: uri ? 'https://thisurldoesnotexist.example.com' : ''}}
-            source={{uri}}
-            style={styles.webview}
-            startInLoadingState
-            onError={handleWebViewError}
-            onHttpError={handleWebViewError}
-          />
-        ) : (
-          webviewError && (
-            <View style={styles.errorContainer}>
-              <Text
-                style={[
-                  styles.errorText,
-                  typography.body,
-                  {color: theme.text},
-                ]}>
-                {webviewError || 'URL이 제공되지 않았습니다.'}
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  // 재시도: 에러 상태 초기화하여 WebView를 재마운트함
-                  setWebviewError(null);
-                }}
-                style={[styles.retryButton, {backgroundColor: theme.main}]}>
-                <Text style={[typography.body, {color: theme.background}]}>
-                  재시도
+          ) : (
+            webviewError && (
+              <View style={styles.errorContainer}>
+                <Text
+                  style={[
+                    styles.errorText,
+                    typography.body,
+                    {color: theme.text},
+                  ]}>
+                  {webviewError || 'URL이 제공되지 않았습니다.'}
                 </Text>
-              </TouchableOpacity>
-            </View>
-          )
-        )}
-      </Animated.View>
-    </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    // 재시도: 에러 상태 초기화하여 WebView를 재마운트함
+                    setWebviewError(null);
+                  }}
+                  style={[styles.retryButton, {backgroundColor: theme.main}]}>
+                  <Text style={[typography.body, {color: theme.background}]}>
+                    재시도
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )
+          )}
+        </Animated.View>
+      </View>
+    </Portal>
   );
 };
 
