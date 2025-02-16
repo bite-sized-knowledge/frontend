@@ -19,19 +19,28 @@ interface CardBottomProps {
 export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
   // 로컬 상태(낙관적 업데이트 용)
   const [liked, setLiked] = useState<boolean>(article.liked);
-  const [num, setNum] = useState<number>(article.likeCount);
+  const [likeCount, setLikeCount] = useState<number>(article.likeCount);
   const [bookmarked, setBookmarked] = useState<boolean>(article.archived);
+  const [shareCount, setShareCount] = useState<number>(article.shareCount);
+  const [isShared, setIsShared] = useState<boolean>(false);
 
   // 훅을 통한 API 호출
   const {mutate: likeMutation} = useLikeMutation(article.id, () => {
     setLiked(true);
-    setNum(prev => prev + 1);
+    setLikeCount(prev => prev + 1);
   });
   const {mutate: unlikeMutation} = useUnlikeMutation(article.id, () => {
     setLiked(false);
-    setNum(prev => prev - 1);
+    setLikeCount(prev => prev - 1);
   });
-  const {mutate: shareMutation} = useShareMutation(article.id, () => {});
+  const {mutate: shareMutation} = useShareMutation(article.id, {
+    onSuccess: () => {
+      if (!isShared) {
+        setShareCount(prev => prev + 1);
+        setIsShared(true);
+      }
+    },
+  });
   const {mutate: bookmarkMutation} = useBookmarkMutation(article.id, () =>
     setBookmarked(true),
   );
@@ -45,11 +54,12 @@ export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
       <View style={styles.leftSection}>
         <ReactionButton
           icon={liked ? <Icons.HeartFill /> : <Icons.HeartDefault />}
-          reactionCount={num}
+          reactionCount={likeCount}
           handlePress={async () => (liked ? unlikeMutation() : likeMutation())}
         />
         <ReactionButton
           icon={<Icons.Share />}
+          reactionCount={shareCount}
           handlePress={() => shareMutation}
         />
       </View>
