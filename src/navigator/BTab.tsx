@@ -29,15 +29,26 @@ export const BTab = () => {
         tabBarIcon: ({focused}) => {
           switch (route.name) {
             case 'HOME':
-              return focused ? <Icons.HomeFill /> : <Icons.HomeDefault />;
+              return focused ? (
+                <Icons.HomeFill color={theme.text} />
+              ) : (
+                <Icons.HomeDefault color={theme.text} />
+              );
             case 'BITE':
               return focused ? (
-                <Icons.CookieBoxFill />
+                <Icons.CookieBoxFill
+                  color={theme.text}
+                  fillSecondary={theme.background}
+                />
               ) : (
-                <Icons.CookieBoxDefault />
+                <Icons.CookieBoxDefault color={theme.text} />
               );
             case 'MY':
-              return focused ? <Icons.MyFill /> : <Icons.MyDefault />;
+              return focused ? (
+                <Icons.MyFill color={theme.text} />
+              ) : (
+                <Icons.MyDefault color={theme.text} />
+              );
           }
         },
       })}>
