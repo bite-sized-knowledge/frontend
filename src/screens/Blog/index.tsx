@@ -26,6 +26,8 @@ const BlogArticle = ({
   next,
 }: ArticleProps) => {
   const navigation = useNavigation();
+  const {theme, themeMode} = useTheme();
+
   return (
     <Pressable
       style={{flex: 1}}
@@ -36,7 +38,14 @@ const BlogArticle = ({
           next,
         })
       }>
-      <View style={elevation.card}>
+      <View
+        style={[
+          elevation.card,
+          {
+            backgroundColor:
+              themeMode === 'light' ? theme.background : theme.gray4,
+          },
+        ]}>
         <View style={styles.article}>
           <Image
             style={styles.articleImage}
@@ -44,7 +53,7 @@ const BlogArticle = ({
           />
           <View style={[styles.articleTitle]}>
             <Text
-              style={typography.body}
+              style={[typography.body, {color: theme.text}]}
               numberOfLines={2}
               ellipsizeMode="tail">
               {blogArticle.title}
@@ -120,31 +129,32 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
           style={styles.blogImage}
           source={{uri: blog?.data?.result?.favicon}}
         />
-        <Text style={typography.head}>{blog?.data?.result?.title}</Text>
+        <Text style={[typography.head, {color: theme.text}]}>
+          {blog?.data?.result?.title}
+        </Text>
       </View>
-      <View style={styles.articleSection}>
-        <FlatList
-          keyExtractor={item => item.id}
-          data={blogArticles}
-          numColumns={2}
-          contentContainerStyle={styles.gap}
-          columnWrapperStyle={styles.gap}
-          renderItem={article => (
-            <BlogArticle
-              blogArticle={article.item}
-              totalArticles={blogArticles.map(article => {
-                return {...article, blog: blog?.data?.result as BlogType};
-              })}
-              currentIndex={article.index}
-              next={next}
-            />
-          )}
-          onEndReached={onEndReached}
-          onEndReachedThreshold={0.6}
-          decelerationRate="fast"
-          showsVerticalScrollIndicator={false} // 스크롤 표시 제거
-        />
-      </View>
+      <FlatList
+        style={styles.articleSection}
+        keyExtractor={item => item.id}
+        data={blogArticles}
+        numColumns={2}
+        contentContainerStyle={styles.gap}
+        columnWrapperStyle={styles.gap}
+        renderItem={article => (
+          <BlogArticle
+            blogArticle={article.item}
+            totalArticles={blogArticles.map(article => {
+              return {...article, blog: blog?.data?.result as BlogType};
+            })}
+            currentIndex={article.index}
+            next={next}
+          />
+        )}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.6}
+        decelerationRate="fast"
+        showsVerticalScrollIndicator={false} // 스크롤 표시 제거
+      />
     </View>
   );
 };
@@ -182,7 +192,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 8,
     justifyContent: 'center',
-    backgroundColor: 'white',
   },
   gap: {
     gap: 10,
