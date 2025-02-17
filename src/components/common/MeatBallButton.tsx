@@ -14,10 +14,12 @@ import {useTheme} from '@/context/ThemeContext';
 import {useMutation} from '@tanstack/react-query';
 import {unInterest} from '@/api/articleApi';
 import Icons from '@/assets/icons';
+import {useToast} from 'react-native-toast-notifications';
 
 export const MeatBallButton = ({article}) => {
   const {isVisible, openModal, closeModal} = useModal();
   const {theme} = useTheme();
+  const toast = useToast();
 
   const buttonRef = useRef(null);
   const [position, setPosition] = useState({x: 0, y: 0, width: 0, height: 0});
@@ -33,7 +35,10 @@ export const MeatBallButton = ({article}) => {
 
   const {mutate: uninterestMutation} = useMutation({
     mutationFn: () => unInterest(article.id),
-    onSuccess: () => closeModal(),
+    onSuccess: () => {
+      closeModal();
+      toast.show('앞으로 비슷한 게시물이 더 적게 추천돼요.');
+    },
   });
 
   return (
@@ -68,10 +73,10 @@ export const MeatBallButton = ({article}) => {
                   <Text style={{color: theme.text}}>관심없음</Text>
                 </View>
               </Pressable>
-              <View style={[styles.dropDownItem]}>
+              {/* <View style={[styles.dropDownItem]}>
                 <Icons.Complain />
                 <Text style={{color: theme.text}}>신고하기</Text>
-              </View>
+              </View> */}
             </View>
           </View>
         </TouchableWithoutFeedback>

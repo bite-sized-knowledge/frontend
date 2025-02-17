@@ -1,17 +1,9 @@
 import React, {useCallback, useRef, useState} from 'react';
-import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  ViewToken,
-} from 'react-native';
+import {Dimensions, FlatList, StyleSheet, View, ViewToken} from 'react-native';
 import {Card} from '@/components/card/Card';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useMutation, useQuery} from '@tanstack/react-query';
+import {useMutation} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
-import {getFeed} from '@/api/feedApi';
 import CustomHeader from '@/components/common/CustomHeader';
 import {WebViewDrawer} from '@/components/common/WebViewDrawer';
 import {Article} from '@/types/Article';
