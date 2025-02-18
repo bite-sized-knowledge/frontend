@@ -89,20 +89,26 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     insets.bottom;
 
   // React Query로 데이터 가져오기
-  const {data, isLoading, isError, error, refetch} = useQuery({
+  const {
+    data: feed,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ['feed'],
     queryFn: getFeed,
   });
 
   // 새로운 데이터가 로드되면 기존 데이터에 추가
   useEffect(() => {
-    if (data) {
+    if (feed) {
       setArticle(prev => {
         setIsFetchingNewAriticles(false);
-        return [...prev, ...(data?.data?.result ?? [])];
+        return [...prev, ...(feed.data ?? [])];
       });
     }
-  }, [data]);
+  }, [feed]);
 
   const onViewableItemsChanged = useCallback(
     ({viewableItems}: {viewableItems: Array<ViewToken<Article>>}) => {
@@ -128,13 +134,6 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     [article, isFetchingNewAriticles, refetch, setBlogId],
   );
 
-  // FlatList에 전달할 공통 props (onViewableItemsChanged는 항상 함수여야 함)
-  const flatListProps = {
-    pagingEnabled: true,
-    showsVerticalScrollIndicator: false,
-    onViewableItemsChanged: isLoading ? noop : onViewableItemsChanged,
-  };
-
   // 로딩 중에는 피드 아이템과 동일한 레이아웃의 스켈레톤 UI들을 렌더링
   if (isLoading) {
     const skeletonItems = [1, 2, 3];
@@ -153,7 +152,9 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
               <SkeletonCard />
             </View>
           )}
-          {...flatListProps}
+          pagingEnabled={true}
+          showsVerticalScrollIndicator={false}
+          onViewableItemsChanged={noop}
         />
       </View>
     );
@@ -196,7 +197,9 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
             </View>
           ) : null
         }
-        {...flatListProps}
+        pagingEnabled={true}
+        showsVerticalScrollIndicator={false}
+        onViewableItemsChanged={onViewableItemsChanged}
       />
       <WebViewDrawer
         visible={visible}

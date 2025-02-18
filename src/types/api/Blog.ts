@@ -1,5 +1,4 @@
 import {Article} from '../Article';
-import {ApiResponse} from './ApiResponse';
 
 interface Blog {
   id: string;
@@ -13,5 +12,5 @@ interface BlogArticle {
   articles: Omit<Article, 'blog'>[];
   next: string;
 }
-export type BlogResponse = ApiResponse<Blog>;
-export type BlogArticleResponse = ApiResponse<BlogArticle>;
+export type BlogResponse = Blog;
+export type BlogArticleResponse = BlogArticle;

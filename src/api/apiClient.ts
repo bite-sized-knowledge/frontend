@@ -1,5 +1,6 @@
 import {BASE_URL} from '@env';
 import {getAccessToken, refreshAccessToken} from './authApi';
+import {ApiResponse} from '@/types/api/ApiResponse';
 
 // TODO: 에러 형식 맞추기
 class ApiClient {
@@ -67,15 +68,19 @@ class ApiClient {
         });
       }
 
-      const data = await response.json().catch(() => null);
+      const data = (await response.json().catch(() => null)) as ApiResponse<T>;
+
+      if (data && data.success) {
+        return {
+          data: data.result,
+          error: null,
+          status: response.status,
+        };
+      }
 
       return {
-        data: response.ok ? (data as T) : null,
-        error: response.ok
-          ? null
-          : new Error(
-              (data?.message as string) || '네트워크 에러가 발생했습니다',
-            ),
+        data: null,
+        error: new Error('네트워크 에러가 발생했습니다'),
         status: response.status,
       };
     } catch (error) {

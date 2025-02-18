@@ -30,7 +30,7 @@ const BlogArticle = ({
 
   return (
     <Pressable
-      style={{flex: 1}}
+      style={styles.flex1}
       onPress={() =>
         navigation.navigate('BlogFeed', {
           totalArticles,
@@ -74,7 +74,7 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
   const {theme} = useTheme();
   // 해당 쿼리키만 따로 관리하는 이유는 블로그 ID가 바뀔 때 next를 초기화시키고 재조회하기 위해 따로 관리함. 그냥 사용하면 재조회 이후 next값이 수정됨.
   const [queryKey, setQueryKey] = useState(['blogArticles', blogId]);
-  const [blogArticles, setBlogArticles] = useState<Article[]>([]);
+  const [blogArticles, setBlogArticles] = useState<Omit<Article, 'blog'>[]>([]);
   const [next, setNext] = useState<string | null>(null);
 
   useEffect(() => {
@@ -105,9 +105,9 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
     if (newBlogArticles) {
       setBlogArticles(prev => [
         ...prev,
-        ...(newBlogArticles?.data?.articles ?? []),
+        ...(newBlogArticles.data?.articles ?? []),
       ]);
-      setNext(newBlogArticles.data?.next);
+      setNext(newBlogArticles.data?.next ?? null);
     }
   }, [newBlogArticles]);
 
@@ -118,19 +118,16 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
   };
 
   return (
-    <View style={{backgroundColor: theme.background, flex: 1}}>
+    <View style={[styles.flex1, {backgroundColor: theme.background}]}>
       <CustomHeader
         title={'작성자 게시글'}
         showBackButton={true}
         onBackPress={() => navigateToFeed()}
       />
       <View style={styles.blogSection}>
-        <Image
-          style={styles.blogImage}
-          source={{uri: blog?.data?.result?.favicon}}
-        />
+        <Image style={styles.blogImage} source={{uri: blog?.data?.favicon}} />
         <Text style={[typography.head, {color: theme.text}]}>
-          {blog?.data?.result?.title}
+          {blog?.data?.title}
         </Text>
       </View>
       <FlatList
@@ -143,8 +140,8 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
         renderItem={article => (
           <BlogArticle
             blogArticle={article.item}
-            totalArticles={blogArticles.map(article => {
-              return {...article, blog: blog?.data?.result as BlogType};
+            totalArticles={blogArticles.map(blogArticle => {
+              return {...blogArticle, blog: blog?.data as BlogType};
             })}
             currentIndex={article.index}
             next={next}
@@ -160,6 +157,9 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
 };
 
 const styles = StyleSheet.create({
+  flex1: {
+    flex: 1,
+  },
   blogSection: {
     paddingHorizontal: 16,
     paddingVertical: 20,
