@@ -55,7 +55,7 @@ export const BlogFeed: React.FC = ({route}) => {
   const {totalArticles, currentIndex, next} = route.params;
   const [article, setArticle] = useState<Article[]>(totalArticles);
   const [visible, setVisible] = useState<boolean>(false);
-  const [link, setLink] = useState<null | string>(null);
+  const [articleId, setArticleId] = useState<null | string>(null);
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
   const blogId = totalArticles[0].blog.id;
@@ -64,7 +64,7 @@ export const BlogFeed: React.FC = ({route}) => {
 
   const handleCardBodyClick = useCallback((data: string) => {
     setVisible(true);
-    setLink(data);
+    setArticleId(data);
   }, []);
 
   // 전체 아이템 높이를 계산 (피드 아이템과 스켈레톤 UI 모두 동일하게 사용)
@@ -163,7 +163,7 @@ export const BlogFeed: React.FC = ({route}) => {
       <WebViewDrawer
         visible={visible}
         onClose={() => setVisible(false)}
-        uri={link}
+        uri={articleId}
       />
     </View>
   );

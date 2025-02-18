@@ -16,7 +16,7 @@ export const CardBody: React.FC<CardBodyProps> = ({
   const {theme} = useTheme();
 
   return (
-    <Pressable onPress={() => handleCardBodyClick(article.url)}>
+    <Pressable onPress={() => handleCardBodyClick(article.id)}>
       <Image source={{uri: article.thumbnail}} style={styles.thumbnail} />
       <View style={styles.cardContent}>
         <Text

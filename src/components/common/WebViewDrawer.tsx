@@ -22,6 +22,7 @@ import {
 } from 'react-native-gesture-handler';
 import {useTheme} from '@/context/ThemeContext';
 import {typography} from '@/styles/tokens/typography';
+import {BASE_URL} from '@env';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 // Drawer 높이: 전체 화면의 80%
@@ -171,7 +172,7 @@ export const WebViewDrawer: React.FC<WebViewDrawerProps> = ({
               key={uri}
               // 웹뷰 에러 발생용 uri
               // source={{uri: uri ? 'https://thisurldoesnotexist.example.com' : ''}}
-              source={{uri}}
+              source={{uri: `${BASE_URL}/v1/links/${uri}`}}
               style={styles.webview}
               startInLoadingState
               onError={handleWebViewError}

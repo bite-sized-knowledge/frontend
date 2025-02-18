@@ -71,13 +71,13 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
   const [isFetchingNewAriticles, setIsFetchingNewAriticles] =
     useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-  const [link, setLink] = useState<null | string>(null);
+  const [articleId, setArticleId] = useState<null | string>(null);
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
 
   const handleCardBodyClick = useCallback((data: string) => {
     setVisible(true);
-    setLink(data);
+    setArticleId(data);
   }, []);
 
   // 전체 아이템 높이를 계산 (피드 아이템과 스켈레톤 UI 모두 동일하게 사용)
@@ -201,7 +201,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
       <WebViewDrawer
         visible={visible}
         onClose={() => setVisible(false)}
-        uri={link}
+        uri={articleId}
       />
     </View>
   );
