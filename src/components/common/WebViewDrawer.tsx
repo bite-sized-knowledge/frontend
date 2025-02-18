@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  NativeSyntheticEvent,
 } from 'react-native';
 import {Portal} from 'react-native-portalize';
 import {WebView} from 'react-native-webview';
@@ -23,6 +24,10 @@ import {
 import {useTheme} from '@/context/ThemeContext';
 import {typography} from '@/styles/tokens/typography';
 import {BASE_URL} from '@env';
+import {
+  WebViewError,
+  WebViewHttpError,
+} from 'react-native-webview/lib/WebViewTypes';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 // Drawer 높이: 전체 화면의 80%
@@ -101,11 +106,14 @@ export const WebViewDrawer: React.FC<WebViewDrawerProps> = ({
   }));
 
   // 웹뷰 에러 처리: 에러 발생 시 에러 메시지 설정 (메모리 누수를 방지하기 위해 useCallback 사용)
-  const handleWebViewError = useCallback(syntheticEvent => {
-    const {nativeEvent} = syntheticEvent;
-    console.warn('WebView error: ', nativeEvent);
-    setWebviewError('웹페이지를 불러오지 못했습니다.');
-  }, []);
+  const handleWebViewError = useCallback(
+    (syntheticEvent: NativeSyntheticEvent<WebViewError | WebViewHttpError>) => {
+      const {nativeEvent} = syntheticEvent;
+      console.warn('WebView error: ', nativeEvent);
+      setWebviewError('웹페이지를 불러오지 못했습니다.');
+    },
+    [],
+  );
 
   // TODO: useAnimatedGestureHandler 버전업
   // 손잡이 영역에서만 드래그 가능하도록 제스처 핸들러 구현

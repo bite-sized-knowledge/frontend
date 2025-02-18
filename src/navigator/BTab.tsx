@@ -2,12 +2,49 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Text} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useTheme} from '../context/ThemeContext';
-import {FeedStack, FeedTab} from './FeedTab';
+import {Theme, useTheme} from '../context/ThemeContext';
+import {FeedStack} from './FeedTab';
 import Icons from '@/assets/icons';
 import {elevation} from '@/styles/tokens/elevation';
+import {Bookmark} from '@/screens/Bookmark';
 
 const Tab = createBottomTabNavigator();
+
+interface TabBarIconProps {
+  routeName: string;
+  focused: boolean;
+  theme: Theme;
+}
+
+const TabBarIcon = React.memo(
+  ({routeName, focused, theme}: TabBarIconProps) => {
+    switch (routeName) {
+      case 'HOME':
+        return focused ? (
+          <Icons.HomeFill color={theme.text} />
+        ) : (
+          <Icons.HomeDefault color={theme.text} />
+        );
+      case 'BITE':
+        return focused ? (
+          <Icons.CookieBoxFill
+            color={theme.text}
+            fillSecondary={theme.background}
+          />
+        ) : (
+          <Icons.CookieBoxDefault color={theme.text} />
+        );
+      case 'MY':
+        return focused ? (
+          <Icons.MyFill color={theme.text} />
+        ) : (
+          <Icons.MyDefault color={theme.text} />
+        );
+      default:
+        return null;
+    }
+  },
+);
 
 export const BTab = () => {
   const insets = useSafeAreaInsets();
@@ -30,35 +67,14 @@ export const BTab = () => {
           borderWidth: themeMode === 'dark' ? 0 : 1, // 다크 모드에서 보더 제거
           ...(themeMode === 'light' ? elevation.gnb : {}), // 라이트 모드일 때만 GNB 스타일 적용
         },
-        tabBarIcon: ({focused}) => {
-          switch (route.name) {
-            case 'HOME':
-              return focused ? (
-                <Icons.HomeFill color={theme.text} />
-              ) : (
-                <Icons.HomeDefault color={theme.text} />
-              );
-            case 'BITE':
-              return focused ? (
-                <Icons.CookieBoxFill
-                  color={theme.text}
-                  fillSecondary={theme.background}
-                />
-              ) : (
-                <Icons.CookieBoxDefault color={theme.text} />
-              );
-            case 'MY':
-              return focused ? (
-                <Icons.MyFill color={theme.text} />
-              ) : (
-                <Icons.MyDefault color={theme.text} />
-              );
-          }
-        },
+        // eslint-disable-next-line react/no-unstable-nested-components
+        tabBarIcon: ({focused}) => (
+          <TabBarIcon routeName={route.name} focused={focused} theme={theme} />
+        ),
       })}>
       {/* <Tab.Screen name="HOME" component={FeedTab} /> */}
       <Tab.Screen name="HOME" component={FeedStack} />
-      <Tab.Screen name="BITE" component={() => <Text>BITE</Text>} />
+      <Tab.Screen name="BITE" component={Bookmark} />
       <Tab.Screen name="MY" component={() => <Text>MY</Text>} />
     </Tab.Navigator>
   );

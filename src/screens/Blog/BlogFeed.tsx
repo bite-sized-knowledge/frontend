@@ -15,9 +15,6 @@ export const BOTTOM_TAB_HEIGHT = 56;
 export const HEADER_HEIGHT = 64;
 const screenHeight = Dimensions.get('window').height;
 
-// 빈(no-op) 함수
-const noop = () => {};
-
 interface FeedItemProps {
   item: Article;
   handleCardBodyClick: (data: string) => void;
@@ -51,7 +48,7 @@ const FeedItem = ({item, handleCardBodyClick}: FeedItemProps) => {
 };
 
 export const BlogFeed: React.FC = ({route}) => {
-  const flatListRef = useRef(null); // FlatList에 대한 ref
+  const flatListRef = useRef<FlatList>(null); // FlatList에 대한 ref
   const {totalArticles, currentIndex, next} = route.params;
   const [article, setArticle] = useState<Article[]>(totalArticles);
   const [visible, setVisible] = useState<boolean>(false);
@@ -80,14 +77,14 @@ export const BlogFeed: React.FC = ({route}) => {
     onSuccess: newValue => {
       setArticle(prev => [
         ...prev,
-        ...newValue?.data?.articles.map(newArticle => {
+        ...(newValue?.data?.articles.map(newArticle => {
           return {
             ...newArticle,
             blog: totalArticles[0].blog,
           };
-        }),
+        }) ?? []),
       ]);
-      setNext2(newValue?.data?.next);
+      setNext2(newValue?.data?.next ?? null);
       setIsLoading(false);
     },
   });
@@ -112,21 +109,18 @@ export const BlogFeed: React.FC = ({route}) => {
     [article.length, isLoading, mutate],
   );
 
-  // FlatList에 전달할 공통 props (onViewableItemsChanged는 항상 함수여야 함)
-  const flatListProps = {
-    pagingEnabled: true,
-    showsVerticalScrollIndicator: false,
-    onViewableItemsChanged: isLoading ? noop : onViewableItemsChanged, //onViewableItemsChanged,
-  };
-
-  const onScrollToIndexFailed = info => {
+  const onScrollToIndexFailed = (info: {
+    index: number;
+    highestMeasuredFrameIndex: number;
+    averageItemLength: number;
+  }) => {
     const wait = new Promise(resolve => setTimeout(resolve, 500));
     wait.then(() => {
       flatListRef.current?.scrollToIndex({index: info.index, animated: true});
     });
   };
 
-  const getItemLayout = (data, index) => ({
+  const getItemLayout = (_: unknown, index: number) => ({
     length: itemHeight, // 항목의 높이 (앞서 계산한 값 사용)
     offset: itemHeight * index, // 해당 항목의 위치
     index, // 인덱스 값
@@ -158,7 +152,9 @@ export const BlogFeed: React.FC = ({route}) => {
             </View>
           ) : null
         }
-        {...flatListProps}
+        pagingEnabled={true}
+        showsVerticalScrollIndicator={false}
+        onViewableItemsChanged={onViewableItemsChanged}
       />
       <WebViewDrawer
         visible={visible}

@@ -16,12 +16,16 @@ import {unInterest} from '@/api/articleApi';
 import Icons from '@/assets/icons';
 import {useToast} from 'react-native-toast-notifications';
 
-export const MeatBallButton = ({article}) => {
+interface MeatBallButtonProps {
+  articleId: string;
+}
+
+export const MeatBallButton = ({articleId}: MeatBallButtonProps) => {
   const {isVisible, openModal, closeModal} = useModal();
   const {theme} = useTheme();
   const toast = useToast();
 
-  const buttonRef = useRef(null);
+  const buttonRef = useRef<View>(null);
   const [position, setPosition] = useState({x: 0, y: 0, width: 0, height: 0});
 
   const handleOpenModal = () => {
@@ -34,7 +38,7 @@ export const MeatBallButton = ({article}) => {
   };
 
   const {mutate: uninterestMutation} = useMutation({
-    mutationFn: () => unInterest(article.id),
+    mutationFn: () => unInterest(articleId),
     onSuccess: () => {
       closeModal();
       toast.show('앞으로 비슷한 게시물이 더 적게 추천돼요.');
@@ -54,7 +58,6 @@ export const MeatBallButton = ({article}) => {
               style={[
                 styles.dropDownBox,
                 {
-                  position: 'absolute',
                   top: position.y + position.height + 12, // 버튼 아래로 배치
                   left: position.x - 100, // 버튼 위치 기준
                   backgroundColor: theme.background,
@@ -65,7 +68,7 @@ export const MeatBallButton = ({article}) => {
                 android_ripple={{color: '#dddddd'}}
                 style={({pressed}) => [
                   {
-                    opacity: pressed ? '0.5' : '1',
+                    opacity: pressed ? 0.5 : 1,
                   },
                 ]}>
                 <View style={[styles.dropDownItem]}>
@@ -73,10 +76,6 @@ export const MeatBallButton = ({article}) => {
                   <Text style={{color: theme.text}}>관심없음</Text>
                 </View>
               </Pressable>
-              {/* <View style={[styles.dropDownItem]}>
-                <Icons.Complain />
-                <Text style={{color: theme.text}}>신고하기</Text>
-              </View> */}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dropDownBox: {
-    color: 'white',
+    position: 'absolute',
     zIndex: 10,
     borderRadius: 8,
     flexDirection: 'column',

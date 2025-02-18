@@ -7,7 +7,7 @@ import {Shimmer} from '../common/Shimmer';
 
 export const SkeletonCard: React.FC = () => {
   const {theme, themeMode} = useTheme();
-  const skeletonColor = theme?.skeleton || theme.background;
+  const skeletonColor = theme.background;
 
   return (
     <View

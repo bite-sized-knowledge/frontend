@@ -19,7 +19,9 @@ export const getBlogArticle = async (
   limit: number,
   from: string | null,
 ) => {
-  if (!blogId) return;
+  if (!blogId) {
+    return;
+  }
 
   let url = `/v1/blogs/${blogId}/articles?limit=${limit}`;
 

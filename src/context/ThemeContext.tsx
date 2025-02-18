@@ -9,7 +9,7 @@ import React, {
 import {Appearance} from 'react-native';
 import {darkTheme, lightTheme} from '../styles/themes';
 
-interface Theme {
+export interface Theme {
   background: string;
   text: string;
   gray1: string;

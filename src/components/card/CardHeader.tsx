@@ -24,7 +24,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
       }>
       <View style={styles.cardHeaderContainer}>
         <Profile key={blog.id} profile={blog} />
-        <MeatBallButton article={article} />
+        <MeatBallButton articleId={article.id} />
       </View>
     </Pressable>
   );
