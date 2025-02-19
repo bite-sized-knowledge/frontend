@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#FF6E1C',
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   disabledButton: {
     backgroundColor: '#A9A9A9',

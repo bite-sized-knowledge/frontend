@@ -2,41 +2,37 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import {InterestItem} from './InterestItem';
+import {useQuery} from '@tanstack/react-query';
+import { getInterest } from '@/api/InterestApi';
 
-interface InterestListProps {
+
+export interface InterestListProps {
   selectedItems: string[];
   onItemSelect: (item: string) => void;
 }
-
-const INTERESTS = [
-  'Web',
-  'Mobile',
-  'Hardware & IoT',
-  'AI & ML & Data',
-  'Security & Network',
-  'DB',
-  'DevOps & Infra',
-  'Game',
-  '기획',
-  'Design',
-];
 
 export const InterestList: React.FC<InterestListProps> = ({
   selectedItems,
   onItemSelect,
 }) => {
+   // React Query로 데이터 가져오기
+   const {data, isLoading, isError, error} = useQuery({
+    queryKey: ['interest'],
+    queryFn: getInterest,
+  });
+
   return (
-      <View style={styles.container}>
-        {INTERESTS.map((item, index) => (
-          <View key={`${item}-${index}`} style={styles.itemWrapper}>
-            <InterestItem
-              item={item}
-              isSelected={selectedItems.includes(item)}
-              onPress={() => onItemSelect(item)}
-            />
-          </View>
-        ))}
-      </View>
+    <View style={styles.container}>
+      {data?.data?.result.map((item, index) => (
+        <View key={`${item}-${index}`} style={styles.itemWrapper}>
+          <InterestItem
+            item={item.name}
+            isSelected={selectedItems.includes(item.name)}
+            onPress={() => onItemSelect(item.name)}
+          />
+        </View>
+      ))}
+    </View>
   );
 };
 
