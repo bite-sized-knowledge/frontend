@@ -1,14 +1,12 @@
-// InterestListProps
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
-import {InterestItem} from './InterestItem';
+import { InterestItem } from './InterestItem';
 import { Interest } from '@/types/Interest';
 import { getInterests } from '@/api/InterestApi';
 
-
 interface InterestListProps {
-  selectedItems: string[];
-  onItemSelect: (item: string) => void;
+  selectedItems: number[]; 
+  onItemSelect: (item: Interest) => void; 
 }
 
 export const InterestList: React.FC<InterestListProps> = ({ selectedItems, onItemSelect }) => {
@@ -44,9 +42,9 @@ export const InterestList: React.FC<InterestListProps> = ({ selectedItems, onIte
       {interests.map((item) => (
         <View key={item.id} style={styles.itemWrapper}>
           <InterestItem
-            item={item.name}
-            isSelected={selectedItems.includes(item.name)}
-            onPress={() => onItemSelect(item.name)}
+            item={item} // InterestItem이 name을 필요로 한다고 가정
+            isSelected={selectedItems.includes(item.id)} // id 기반으로 선택 상태 확인
+            onPress={() => onItemSelect(item)} // 전체 객체 전달
           />
         </View>
       ))}
