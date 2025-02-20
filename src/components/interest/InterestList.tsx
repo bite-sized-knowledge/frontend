@@ -1,8 +1,9 @@
 // InterestListProps
-import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import {InterestItem} from './InterestItem';
-import {useQuery} from '@tanstack/react-query';
+import { Interest } from '@/types/Interest';
+import { getInterests } from '@/api/InterestApi';
 
 
 interface InterestListProps {
@@ -10,37 +11,46 @@ interface InterestListProps {
   onItemSelect: (item: string) => void;
 }
 
-const INTERESTS = [
-  'Web',
-  'Mobile',
-  'Hardware & IoT',
-  'AI & ML & Data',
-  'Security & Network',
-  'DB',
-  'DevOps & Infra',
-  'Game',
-  '기획',
-  'Design',
-];
+export const InterestList: React.FC<InterestListProps> = ({ selectedItems, onItemSelect }) => {
+  const [interests, setInterests] = useState<Interest[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getInterests();
+        setInterests(data);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-export const InterestList: React.FC<InterestListProps> = ({
-  selectedItems,
-  onItemSelect,
-}) => {
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#007AFF" />;
+  }
+
+  if (error) {
+    return <View><Text style={{ color: 'red' }}>{error}</Text></View>;
+  }
 
   return (
     <View style={styles.container}>
-    {INTERESTS.map((item, index) => (
-      <View key={`${item}-${index}`} style={styles.itemWrapper}>
-        <InterestItem
-          item={item}
-          isSelected={selectedItems.includes(item)}
-          onPress={() => onItemSelect(item)}
-        />
-      </View>
-    ))}
-  </View>
+      {interests.map((item) => (
+        <View key={item.id} style={styles.itemWrapper}>
+          <InterestItem
+            item={item.name}
+            isSelected={selectedItems.includes(item.name)}
+            onPress={() => onItemSelect(item.name)}
+          />
+        </View>
+      ))}
+    </View>
   );
 };
 
@@ -50,9 +60,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flex: 1,
     gap: 12,
-    justifyContent: 'flex-start', // 각 줄에서 아이템 간격 균등 분배
-    paddingHorizontal: 14, // 좌우 공백 추가
-    paddingVertical: 14, // 상하 공백 추가
+    justifyContent: 'flex-start',
+    paddingHorizontal: 14,
+    paddingVertical: 14,
   },
   itemWrapper: {
     width: '31%',

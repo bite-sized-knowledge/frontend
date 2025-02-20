@@ -1,11 +1,11 @@
 //Interest.ts
 
-export interface InterestRequest {
+export interface MembersRequest {
   interestIds: number[];
 }
 
 // 관심사 API 응답 타입
-export interface InterestResponse {
+export interface MembersResponse {
   success: boolean;
   result: {
     memberId: number;
@@ -14,4 +14,15 @@ export interface InterestResponse {
       refreshToken: string;
     };
   };
+}
+
+// 관심사 데이터 요청 API 함수
+export interface Interest {
+  id: number;
+  name: string;
+}
+
+export interface InterestResponse {
+  success: boolean;
+  result: Interest[];
 }

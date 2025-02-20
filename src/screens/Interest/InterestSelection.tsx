@@ -4,6 +4,7 @@ import { InterestHeader } from '../../components/interest/InterestHeader';
 import { InterestList } from '../../components/interest/InterestList';
 import { StartButton } from '../../components/interest/StartButton';
 import { usePostInterest } from '@/hooks/useInterestMutations';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const InterestSelection = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -37,6 +38,7 @@ export const InterestSelection = () => {
   };
 
   return (
+  <SafeAreaView style={styles.container}>
     <View style={styles.container}>
       <InterestHeader />
       <InterestList
@@ -48,6 +50,7 @@ export const InterestSelection = () => {
         disabled={isPending || selectedItems.length === 0}
       />
     </View>
+    </SafeAreaView>
   );
 };
 
