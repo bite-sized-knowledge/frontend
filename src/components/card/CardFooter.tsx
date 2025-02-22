@@ -60,7 +60,7 @@ export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
         <ReactionButton
           icon={<Icons.Share />}
           reactionCount={shareCount}
-          handlePress={() => shareMutation}
+          handlePress={async () => shareMutation()}
         />
       </View>
       <View style={styles.rightSection}>
