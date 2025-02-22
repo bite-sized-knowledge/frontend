@@ -9,7 +9,7 @@ import {Article} from '../../types/Article';
 interface CardHeaderProps {
   article: Article;
   blog: Blog;
-  handleCardHeaderClick: Function;
+  handleCardHeaderClick?: Function;
 }
 
 export const CardHeader: React.FC<CardHeaderProps> = ({
@@ -18,10 +18,13 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
   handleCardHeaderClick,
 }) => {
   return (
-    <Pressable onPress={() => handleCardHeaderClick()}>
+    <Pressable
+      onPress={
+        handleCardHeaderClick ? () => handleCardHeaderClick() : () => {}
+      }>
       <View style={styles.cardHeaderContainer}>
         <Profile key={blog.id} profile={blog} />
-        <MeatBallButton article={article} />
+        <MeatBallButton articleId={article.id} />
       </View>
     </Pressable>
   );

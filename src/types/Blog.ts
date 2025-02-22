@@ -1,5 +1,5 @@
 export interface Blog {
-  id: number;
+  id: string;
   favicon: string;
   title: string;
 }

@@ -1,40 +1,27 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  ViewToken,
-} from 'react-native';
+import React, {useCallback, useRef, useState} from 'react';
+import {Dimensions, FlatList, StyleSheet, View, ViewToken} from 'react-native';
 import {Card} from '@/components/card/Card';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useQuery} from '@tanstack/react-query';
+import {useMutation} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
-import {getFeed} from '@/api/feedApi';
 import CustomHeader from '@/components/common/CustomHeader';
 import {WebViewDrawer} from '@/components/common/WebViewDrawer';
 import {Article} from '@/types/Article';
 import {SkeletonCard} from '@/components/card/CardSkeleton';
+import {ROWS_PER_PAGE} from '.';
+import {getBlogArticle} from '@/api/blogApi';
 
 export const BOTTOM_TAB_HEIGHT = 56;
 export const HEADER_HEIGHT = 64;
 const screenHeight = Dimensions.get('window').height;
 
-// 빈(no-op) 함수
-const noop = () => {};
-
 interface FeedItemProps {
   item: Article;
   handleCardBodyClick: (data: string) => void;
-  handleCardHeaderClick: (blog: string) => void;
+  handleCardHeaderClick?: (blog: string) => void;
 }
 
-const FeedItem = ({
-  item,
-  handleCardBodyClick,
-  handleCardHeaderClick,
-}: FeedItemProps) => {
+const FeedItem = ({item, handleCardBodyClick}: FeedItemProps) => {
   const insets = useSafeAreaInsets();
   const {theme} = useTheme();
 
@@ -55,25 +42,22 @@ const FeedItem = ({
         article={{...item}}
         blog={item.blog}
         handleCardBodyClick={handleCardBodyClick}
-        handleCardHeaderClick={handleCardHeaderClick}
       />
     </View>
   );
 };
 
-interface FeedProps {
-  navigateToBlog: () => void;
-  setBlogId: (id: string | null) => void;
-}
-
-export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
-  const [article, setArticle] = useState<Article[]>([]);
-  const [isFetchingNewAriticles, setIsFetchingNewAriticles] =
-    useState<boolean>(false);
+export const BlogFeed: React.FC = ({route}) => {
+  const flatListRef = useRef<FlatList>(null); // FlatList에 대한 ref
+  const {totalArticles, currentIndex, next} = route.params;
+  const [article, setArticle] = useState<Article[]>(totalArticles);
   const [visible, setVisible] = useState<boolean>(false);
   const [articleId, setArticleId] = useState<null | string>(null);
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
+  const blogId = totalArticles[0].blog.id;
+  const [next2, setNext2] = useState<string | null>(next);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCardBodyClick = useCallback((data: string) => {
     setVisible(true);
@@ -88,36 +72,27 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     insets.top -
     insets.bottom;
 
-  // React Query로 데이터 가져오기
-  const {
-    data: feed,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ['feed'],
-    queryFn: getFeed,
+  const {mutate} = useMutation({
+    mutationFn: () => getBlogArticle(blogId, ROWS_PER_PAGE, next2),
+    onSuccess: newValue => {
+      setArticle(prev => [
+        ...prev,
+        ...(newValue?.data?.articles.map(newArticle => {
+          return {
+            ...newArticle,
+            blog: totalArticles[0].blog,
+          };
+        }) ?? []),
+      ]);
+      setNext2(newValue?.data?.next ?? null);
+      setIsLoading(false);
+    },
   });
-
-  // 새로운 데이터가 로드되면 기존 데이터에 추가
-  useEffect(() => {
-    if (feed) {
-      setArticle(prev => {
-        setIsFetchingNewAriticles(false);
-        return [...prev, ...(feed.data ?? [])];
-      });
-    }
-  }, [feed]);
 
   const onViewableItemsChanged = useCallback(
     ({viewableItems}: {viewableItems: Array<ViewToken<Article>>}) => {
       if (!viewableItems.length) {
-        setBlogId(null);
         return;
-      }
-      if (viewableItems[0].item) {
-        setBlogId(viewableItems[0].item.blog.id);
       }
 
       const lastVisibleIndex = viewableItems[viewableItems.length - 1].index;
@@ -125,69 +100,49 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
       if (
         lastVisibleIndex &&
         article.length - lastVisibleIndex <= 3 &&
-        !isFetchingNewAriticles
+        !isLoading
       ) {
-        setIsFetchingNewAriticles(true);
-        refetch();
+        setIsLoading(true);
+        mutate();
       }
     },
-    [article, isFetchingNewAriticles, refetch, setBlogId],
+    [article.length, isLoading, mutate],
   );
 
-  // 로딩 중에는 피드 아이템과 동일한 레이아웃의 스켈레톤 UI들을 렌더링
-  if (isLoading) {
-    const skeletonItems = [1, 2, 3];
-    return (
-      <View style={[styles.feeds, {backgroundColor: theme.background}]}>
-        <CustomHeader title={'Feed'} />
-        <FlatList
-          data={skeletonItems}
-          keyExtractor={item => item.toString()}
-          renderItem={() => (
-            <View
-              style={[
-                styles.feedSection,
-                {height: itemHeight, backgroundColor: theme.background},
-              ]}>
-              <SkeletonCard />
-            </View>
-          )}
-          pagingEnabled={true}
-          showsVerticalScrollIndicator={false}
-          onViewableItemsChanged={noop}
-        />
-      </View>
-    );
-  }
+  const onScrollToIndexFailed = (info: {
+    index: number;
+    highestMeasuredFrameIndex: number;
+    averageItemLength: number;
+  }) => {
+    const wait = new Promise(resolve => setTimeout(resolve, 500));
+    wait.then(() => {
+      flatListRef.current?.scrollToIndex({index: info.index, animated: true});
+    });
+  };
 
-  if (isError) {
-    return (
-      <View style={styles.centered}>
-        <Text>Error: {error.message}</Text>
-      </View>
-    );
-  }
+  const getItemLayout = (_: unknown, index: number) => ({
+    length: itemHeight, // 항목의 높이 (앞서 계산한 값 사용)
+    offset: itemHeight * index, // 해당 항목의 위치
+    index, // 인덱스 값
+  });
 
   return (
     <View style={[styles.feeds, {backgroundColor: theme.background}]}>
-      <CustomHeader title={'Feed'} />
+      <CustomHeader title={totalArticles[0].blog.title} showBackButton={true} />
       <FlatList
+        ref={flatListRef}
         keyExtractor={item => item.id}
+        initialScrollIndex={currentIndex}
         data={article}
+        getItemLayout={getItemLayout} // 항목의 위치를 계산해주는 함수 추가
+        onScrollToIndexFailed={onScrollToIndexFailed} // Handling failure
         renderItem={({item}) => (
-          <FeedItem
-            item={item}
-            handleCardBodyClick={handleCardBodyClick}
-            handleCardHeaderClick={() => {
-              setBlogId(item.blog.id);
-              navigateToBlog();
-            }}
-          />
+          <FeedItem item={item} handleCardBodyClick={handleCardBodyClick} />
         )}
         decelerationRate="fast"
         // 스크롤이 끝나면 스켈레톤 UI가 하단에 표시되어 새로운 데이터를 로딩 중임을 보여줍니다.
         ListFooterComponent={
-          isFetchingNewAriticles ? (
+          isLoading ? (
             <View
               style={[
                 styles.feedSection,

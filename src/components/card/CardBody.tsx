@@ -14,9 +14,10 @@ export const CardBody: React.FC<CardBodyProps> = ({
   handleCardBodyClick,
 }) => {
   const {theme} = useTheme();
+  const testHashTags = ['DB', 'Backend', 'AI'];
 
   return (
-    <Pressable onPress={() => handleCardBodyClick(article.url)}>
+    <Pressable onPress={() => handleCardBodyClick(article.id)}>
       <Image source={{uri: article.thumbnail}} style={styles.thumbnail} />
       <View style={styles.cardContent}>
         <Text
@@ -32,10 +33,13 @@ export const CardBody: React.FC<CardBodyProps> = ({
           {article.description}
         </Text>
         <View style={styles.categoryContainer}>
-          {article.categories &&
+          {/* {article.categories &&
             article.categories.map((tag, idx) => (
               <HashTag key={idx} tagName={tag} />
-            ))}
+            ))} */}
+          {testHashTags.map((tag, idx) => (
+            <HashTag key={idx} tagName={tag} />
+          ))}
         </View>
       </View>
     </Pressable>
