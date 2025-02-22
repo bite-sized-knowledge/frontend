@@ -61,7 +61,10 @@ export const BTab = () => {
           justifyContent: 'center',
           height: 64 + insets.bottom,
           paddingTop: 20,
-          borderRadius: themeMode === 'light' ? 20 : 0, // 라이트 모드에서만 둥글게
+          // borderRadius: themeMode === 'light' ? 20 : 0, // 라이트 모드에서만 둥글게
+          borderTopLeftRadius: themeMode === 'light' ? 20 : 0,
+          borderTopRightRadius: themeMode === 'light' ? 20 : 0,
+
           borderColor: themeMode === 'dark' ? theme.background : 'transparent', // 다크 모드에서는 테두리 제거
           backgroundColor: theme.background, // 배경색 명확하게 설정
           borderWidth: themeMode === 'dark' ? 0 : 1, // 다크 모드에서 보더 제거
