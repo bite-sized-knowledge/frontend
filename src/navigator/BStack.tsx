@@ -1,9 +1,10 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useTheme} from '../context/ThemeContext';
-import {BTab} from './BTab';
-import {Login} from '@/screens/Login';
+import {useTheme} from '@/context/ThemeContext.tsx';
+import {BTab} from '@/navigator/BTab.tsx';
+import {Login} from '@/screens/Login/index.tsx';
+import {SignUp} from '@/screens/SignUp/index.tsx';
 
 const Stack = createStackNavigator();
 
@@ -13,7 +14,6 @@ export const BStack = () => {
 
   return (
     <Stack.Navigator
-      // initialRouteName="tabNav"
       initialRouteName="login"
       screenOptions={{
         headerStyle: {
@@ -30,6 +30,11 @@ export const BStack = () => {
       <Stack.Screen
         name="login"
         component={Login}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="signUp"
+        component={SignUp}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
