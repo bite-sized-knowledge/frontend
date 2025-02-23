@@ -19,6 +19,8 @@ import MyFill from './my_fill.svg';
 import PictureDefault from './picture_default.svg';
 import Share from './share.svg';
 import Trash from './trash.svg';
+import Eye from './eye.svg';
+import Blind from './blind.svg';
 
 export default {
   ArrowLeft,
@@ -42,4 +44,6 @@ export default {
   PictureDefault,
   Share,
   Trash,
+  Eye,
+  Blind,
 };
