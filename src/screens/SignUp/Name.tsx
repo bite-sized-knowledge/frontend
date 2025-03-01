@@ -1,7 +1,7 @@
 import CustomHeader from '@/components/common/CustomHeader.tsx';
 import {useTheme} from '@/context/ThemeContext.tsx';
 import React, {useState} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {ProgressBar} from './ProgressBar.tsx';
 import {typography} from '@/styles/tokens/typography.ts';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
