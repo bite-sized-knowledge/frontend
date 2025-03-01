@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BASE_URL} from '@env';
+import {api} from './apiClient';
 
 // accessToken을 AsyncStorage에서 가져오는 함수
 export const getAccessToken = async (): Promise<string | null> => {
@@ -40,5 +41,35 @@ export const refreshAccessToken = async (): Promise<string | null> => {
   } catch (error) {
     console.error('Error refreshing access token', error);
     throw new Error('Failed to refresh token');
+  }
+};
+
+interface loginApiRes {
+  accessToken: string;
+  refreshToken: string;
+}
+
+/**
+ * 로그인
+ * @param email 이메일
+ * @param password 비밀번호
+ */
+export const login = async (email: string, password: string) => {
+  try {
+    const {data, error} = await api.post<loginApiRes>('v1/auth/login', {
+      email,
+      password,
+    });
+
+    if (!error && data) {
+      await AsyncStorage.setItem('accessToken', data.accessToken);
+      await AsyncStorage.setItem('refreshToken', data.refreshToken);
+
+      return true;
+    }
+
+    return false;
+  } catch (e) {
+    return false;
   }
 };

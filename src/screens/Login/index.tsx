@@ -3,11 +3,12 @@ import CustomHeader from '@/components/common/CustomHeader';
 import {useTheme} from '@/context/ThemeContext';
 import {typography} from '@/styles/tokens/typography';
 import {useState} from 'react';
-import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
 import Sso from '@/assets/sso';
 import {BaseInput} from '@/components/input';
 import {BaseButton} from '@/components/button';
 import {useNavigation} from '@react-navigation/native';
+import {login} from '@/api/authApi';
 
 interface LoginProps {
   onBackPress?: () => void;
@@ -18,6 +19,16 @@ export const Login = ({onBackPress}: LoginProps) => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const navigate = useNavigation();
+
+  const handleLoginButtonClick = async () => {
+    if (email.trim().length <= 1 || password.trim().length <= 1) return;
+
+    const isSuccess = await login(email, password);
+
+    if (!isSuccess) {
+      Alert.alert('이메일 또는 비밀번호가 틀립니다.');
+    }
+  };
 
   return (
     <View style={[styles.loginWrapper, {backgroundColor: theme.background}]}>
@@ -50,6 +61,7 @@ export const Login = ({onBackPress}: LoginProps) => {
 
           <BaseButton
             title={'로그인'}
+            onPress={handleLoginButtonClick}
             style={[
               styles.loginButton,
               {
