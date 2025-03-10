@@ -45,8 +45,10 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 };
 
 interface loginApiRes {
-  accessToken: string;
-  refreshToken: string;
+  token: {
+    accessToken: string;
+    refreshToken: string;
+  };
 }
 
 /**
@@ -56,18 +58,26 @@ interface loginApiRes {
  */
 export const login = async (email: string, password: string) => {
   try {
-    const {data, error} = await api.post<loginApiRes>('v1/auth/login', {
+    const {data, error} = await api.post<loginApiRes>('/v1/auth/login', {
       email,
       password,
     });
 
     if (!error && data) {
-      await AsyncStorage.setItem('accessToken', data.accessToken);
-      await AsyncStorage.setItem('refreshToken', data.refreshToken);
+      await AsyncStorage.setItem('accessToken', data.token.accessToken);
+      await AsyncStorage.setItem('refreshToken', data.token.refreshToken);
 
       return true;
     }
 
+    await AsyncStorage.removeItem('accessToken');
+    await AsyncStorage.removeItem('refreshToken');
+
+    return false;
+  } catch (e) {
+    return false;
+  }
+};
     return false;
   } catch (e) {
     return false;
