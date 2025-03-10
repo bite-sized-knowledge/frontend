@@ -13,6 +13,7 @@ import {
   비밀번호입력,
 } from './signUpContext.ts';
 import {BaseButton} from '@/components/button/index.tsx';
+import {useCheckNameDuplication} from '@/hooks/useAuth.ts';
 
 interface NameProps {
   onNext: Function;
@@ -27,10 +28,17 @@ export const Name = ({onNext, onBack}: NameProps) => {
   const useFunnelState = route.params?.[navigationParamName]?.signUp?.context;
 
   const [name, setName] = useState<string>(useFunnelState?.name ?? '');
+  const [errMsg, setErrMsg] = useState<string>('');
 
   const handleBackPress = () => {
     onBack({email: useFunnelState.email, name: ''});
   };
+
+  const {mutate} = useCheckNameDuplication(
+    name,
+    () => onNext(name),
+    err => setErrMsg(err),
+  );
 
   return (
     <View style={[styles.container, {backgroundColor: theme.background}]}>
@@ -56,7 +64,7 @@ export const Name = ({onNext, onBack}: NameProps) => {
             msg={
               '2~16글자를 입력해주세요.\n사람들에게 보여지는 이름으로, 불쾌함을 줄 수 있는 이름은 경고없이 변경돼요.'
             }
-            error={'이미 사용중인 이름이에요.'}
+            error={errMsg}
           />
         </View>
         {name.length > 0 && (
@@ -69,7 +77,7 @@ export const Name = ({onNext, onBack}: NameProps) => {
               },
             ]}
             textStyle={{color: 'white'}}
-            onPress={() => onNext(name)}
+            onPress={() => mutate()}
           />
         )}
       </View>
