@@ -24,12 +24,26 @@ export const Password = ({onNext, onBack}: PasswordProps) => {
   const insets = useSafeAreaInsets();
   const [password, setPassword] = useState<string>('');
   const [secondPassword, setSecondPassword] = useState<string>('');
+  const [isValid, setIsValid] = useState<boolean>(true);
 
   const route = useRoute<RouteProp<NativeFunnelParamList>>();
   const useFunnelState = route.params?.[navigationParamName]?.signUp?.context;
 
   const handleBackPress = () => {
     onBack({email: useFunnelState.email});
+  };
+
+  // 정규식 설명:
+  // (?=.*[a-z]) : 소문자 최소 1개 포함
+  // (?=.*[A-Z]) : 대문자 최소 1개 포함
+  // (?=.*\d)    : 숫자 최소 1개 포함
+  // (?=.*[\W_]) : 특수문자 최소 1개 포함 (여기서 '_' 도 포함)
+  // .{8,16}     : 전체 길이가 8자 이상 16자 이하
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
+
+  const validatePassword = (newValue: string) => {
+    setPassword(newValue);
+    setIsValid(passwordRegex.test(newValue));
   };
 
   return (
@@ -49,7 +63,7 @@ export const Password = ({onNext, onBack}: PasswordProps) => {
           <BaseInput
             placeholder="비밀번호를 입력해주세요."
             value={password}
-            onChangeText={setPassword}
+            onChangeText={validatePassword}
             autoCapitalize="none"
             secureTextEntry={true}
           />
@@ -67,7 +81,8 @@ export const Password = ({onNext, onBack}: PasswordProps) => {
                 : ''
             }
             error={
-              secondPassword.length > 0 && password !== secondPassword
+              (secondPassword.length > 0 && password !== secondPassword) ||
+              !isValid
                 ? '비밀번호가 일치하지 않아요.'
                 : ''
             }
