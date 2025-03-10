@@ -78,7 +78,24 @@ export const login = async (email: string, password: string) => {
     return false;
   }
 };
+
+export const authenticationEmail = async (email: string) => {
+  try {
+    const {error} = await api.post('/v1/auth/email/request-verify', {
+      email,
+    });
+
+    return error === null;
+  } catch (e) {
     return false;
+  }
+};
+
+export const checkNameDuplication = async (name: string) => {
+  try {
+    const {error} = await api.get(`/v1/members/name/check?name=${name}`);
+    console.log(error);
+    return error === null;
   } catch (e) {
     return false;
   }

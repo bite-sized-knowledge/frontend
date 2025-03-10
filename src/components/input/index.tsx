@@ -18,6 +18,7 @@ export const BaseInput = ({
   secureTextEntry = false,
   error,
   msg,
+  ...props
 }: BaseInputProps) => {
   const {theme} = useTheme();
   const [isSecureText, setIsSecureText] = useState(false);
@@ -37,6 +38,7 @@ export const BaseInput = ({
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           secureTextEntry={secureTextEntry && !isSecureText}
+          {...props}
         />
         {secureTextEntry ? (
           isSecureText ? (
@@ -56,7 +58,7 @@ export const BaseInput = ({
           )
         ) : null}
       </View>
-      {error && (
+      {error && error.length > 0 && (
         <Text style={[typography.label, styles.errorMsg]}>{error}</Text>
       )}
       {msg && (
