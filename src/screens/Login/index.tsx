@@ -18,7 +18,7 @@ export const Login = ({onBackPress}: LoginProps) => {
   const {theme, themeMode} = useTheme();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const navigate = useNavigation();
+  const navigation = useNavigation();
 
   const handleLoginButtonClick = async () => {
     if (email.trim().length <= 1 || password.trim().length <= 1) return;
@@ -27,7 +27,10 @@ export const Login = ({onBackPress}: LoginProps) => {
 
     if (!isSuccess) {
       Alert.alert('이메일 또는 비밀번호가 틀립니다.');
+      return;
     }
+
+    navigation.navigate('tabNav');
   };
 
   return (
@@ -81,7 +84,7 @@ export const Login = ({onBackPress}: LoginProps) => {
             }}
           />
           <View style={styles.signUpAndforgotPw}>
-            <Pressable onPress={() => navigate.navigate('signUp')}>
+            <Pressable onPress={() => navigation.navigate('signUp')}>
               <Text style={[typography.label, {color: theme.gray3}]}>
                 회원가입
               </Text>
