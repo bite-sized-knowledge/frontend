@@ -1,7 +1,7 @@
 import CustomHeader from '@/components/common/CustomHeader.tsx';
 import {useTheme} from '@/context/ThemeContext.tsx';
 import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Keyboard, Pressable, StyleSheet, Text, View} from 'react-native';
 import {ProgressBar} from './ProgressBar.tsx';
 import {typography} from '@/styles/tokens/typography.ts';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -12,6 +12,7 @@ import {
   navigationParamName,
   이름입력,
 } from './signUpContext.ts';
+import YearSpinner from '@/components/yearSpinner/index.tsx';
 import {BaseButton} from '@/components/button/index.tsx';
 
 interface BirthYearProps {
@@ -22,7 +23,8 @@ interface BirthYearProps {
 export const BirthYear = ({onNext, onBack}: BirthYearProps) => {
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
-  const [name, setName] = useState<string>('');
+  const [year, setYear] = useState<number>();
+  const [isYearSpinnerVisible, setIsYearSpinnerVisible] = useState(false);
 
   const route = useRoute<RouteProp<NativeFunnelParamList>>();
   const useFunnelState = route.params?.[navigationParamName]?.signUp?.context;
@@ -33,6 +35,22 @@ export const BirthYear = ({onNext, onBack}: BirthYearProps) => {
       password: '',
       name: useFunnelState.name,
     });
+  };
+
+  // 모달 열기
+  const openYearSpinner = () => {
+    setIsYearSpinnerVisible(true);
+  };
+
+  // 모달 닫기
+  const closeYearSpinner = () => {
+    setIsYearSpinnerVisible(false);
+  };
+
+  // 모달에서 연도 선택 시 호출
+  const handleSelectYear = (selectedValue: number) => {
+    setYear(selectedValue);
+    closeYearSpinner();
   };
 
   return (
@@ -51,31 +69,32 @@ export const BirthYear = ({onNext, onBack}: BirthYearProps) => {
           <Text style={[typography.title, {color: theme.text}]}>
             태어난 연도를 선택해주세요.
           </Text>
-          <BaseInput
-            placeholder="비밀번호 확인"
-            value={name}
-            onChangeText={setName}
-            autoCapitalize="none"
-            msg={
-              '2~16글자를 입력해주세요.\n사람들에게 보여지는 이름으로, 불쾌함을 줄 수 있는 이름은 경고없이 변경돼요.'
-            }
-            error={'이미 사용중인 이름이에요.'}
-          />
+          <Pressable onPress={() => openYearSpinner}>
+            <BaseInput
+              placeholder="YYYY"
+              value={year?.toString()}
+              autoCapitalize="none"
+              // editable={false}
+              onFocus={() => {
+                Keyboard.dismiss();
+                openYearSpinner();
+              }}
+            />
+          </Pressable>
         </View>
-        {name.length > 0 && (
-          <BaseButton
-            title={'확인'}
-            style={[
-              styles.loginButton,
-              {
-                backgroundColor: theme.main,
-              },
-            ]}
-            textStyle={{color: 'white'}}
-            onPress={() => onNext(name)}
-          />
-        )}
+        <BaseButton
+          title={'확인'}
+          style={{backgroundColor: theme.main}}
+          textStyle={{color: 'white'}}
+          onPress={() => onNext(year)}
+        />
       </View>
+      <YearSpinner
+        initialYear={year || 2000}
+        visible={isYearSpinnerVisible}
+        onClose={closeYearSpinner}
+        onSelect={handleSelectYear}
+      />
     </View>
   );
 };
