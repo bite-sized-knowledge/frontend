@@ -14,7 +14,6 @@ export const CardBody: React.FC<CardBodyProps> = ({
   handleCardBodyClick,
 }) => {
   const {theme} = useTheme();
-  const testHashTags = ['DB', 'Backend', 'AI'];
 
   return (
     <Pressable onPress={() => handleCardBodyClick(article.id)}>
@@ -33,13 +32,10 @@ export const CardBody: React.FC<CardBodyProps> = ({
           {article.description}
         </Text>
         <View style={styles.categoryContainer}>
-          {/* {article.categories &&
-            article.categories.map((tag, idx) => (
+          {article.keywords.length > 0 &&
+            article.keywords.map((tag, idx) => (
               <HashTag key={idx} tagName={tag} />
-            ))} */}
-          {testHashTags.map((tag, idx) => (
-            <HashTag key={idx} tagName={tag} />
-          ))}
+            ))}
         </View>
       </View>
     </Pressable>
@@ -51,9 +47,13 @@ interface HashTagProps {
 }
 
 const HashTag = ({tagName}: HashTagProps) => {
-  const {theme} = useTheme();
+  const {theme, themeMode} = useTheme();
   return (
-    <View style={[styles.categoryWrapper, {backgroundColor: theme.gray4}]}>
+    <View
+      style={[
+        styles.categoryWrapper,
+        {backgroundColor: themeMode === 'dark' ? theme.gray2 : theme.gray4},
+      ]}>
       <Text style={[typography.caption, {color: theme.sub}]}>#{tagName}</Text>
     </View>
   );

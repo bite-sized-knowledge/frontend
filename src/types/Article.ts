@@ -10,7 +10,7 @@ export interface Article {
   archiveCount: number;
   shareCount: number;
   publishedAt: string;
-  categories: string[];
+  keywords: string[];
   liked: boolean;
   archived: boolean;
   blog: Blog;
