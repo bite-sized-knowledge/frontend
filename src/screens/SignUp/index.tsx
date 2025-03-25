@@ -10,9 +10,11 @@ import {
   비밀번호입력,
   이름입력,
   생년입력,
-  약관동의,
+  // 약관동의,
+  가입환영,
 } from './signUpContext.ts';
 import {TermsAgreementDrawer} from './TermsAgreementDrawer.tsx';
+import {Welcome} from './Welcome.tsx';
 
 export const SignUp = () => {
   const funnel = useFunnel<{
@@ -20,7 +22,8 @@ export const SignUp = () => {
     비밀번호입력: 비밀번호입력;
     이름입력: 이름입력;
     생년입력: 생년입력;
-    약관동의: 약관동의;
+    가입환영: 가입환영;
+    // 약관동의: 약관동의;
   }>({
     id: 'signUp',
     initial: {
@@ -50,15 +53,16 @@ export const SignUp = () => {
       )}
       생년입력={({history}) => (
         <BirthYear
-          onNext={(birthYear: number) => history.push('약관동의', {birthYear})}
+          onNext={(birthYear: number) => history.push('가입환영', {birthYear})}
           onBack={context => history.push('이름입력', context)}
         />
       )}
-      약관동의={funnel.Render.overlay({
-        render({history, close}) {
-          return <TermsAgreementDrawer visible={true} onClose={close} />;
-        },
-      })}
+      가입환영={() => <Welcome />}
+      // 약관동의={funnel.Render.overlay({
+      //   render({history, close}) {
+      //     return <TermsAgreementDrawer visible={true} onClose={close} />;
+      //   },
+      // })}
     />
   );
 };

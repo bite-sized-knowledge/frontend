@@ -14,6 +14,7 @@ import {
 } from './signUpContext.ts';
 import YearSpinner from '@/components/yearSpinner/index.tsx';
 import {BaseButton} from '@/components/button/index.tsx';
+import {signUp} from '@/api/authApi.ts';
 
 interface BirthYearProps {
   onNext: Function;
@@ -53,6 +54,15 @@ export const BirthYear = ({onNext, onBack}: BirthYearProps) => {
     closeYearSpinner();
   };
 
+  const signUpWithparams = async () => {
+    const isSuccess = await signUp({...useFunnelState, birth: year});
+    if (!isSuccess) {
+      return;
+    }
+
+    onNext(year);
+  };
+
   return (
     <View style={[styles.container, {backgroundColor: theme.background}]}>
       <CustomHeader
@@ -86,7 +96,7 @@ export const BirthYear = ({onNext, onBack}: BirthYearProps) => {
           title={'확인'}
           style={{backgroundColor: theme.main}}
           textStyle={{color: 'white'}}
-          onPress={() => onNext(year)}
+          onPress={signUpWithparams}
         />
       </View>
       <YearSpinner

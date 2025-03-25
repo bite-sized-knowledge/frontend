@@ -80,12 +80,18 @@ export const login = async (email: string, password: string) => {
 };
 
 export const authenticationEmail = async (email: string) => {
-  try {
-    const {error} = await api.post('/v1/auth/email/request-verify', {
-      email,
-    });
+  return await api.post('/v1/auth/email/request-verify', {
+    email,
+  });
+};
 
-    return error === null;
+export const verifyEmail = async (email: string): Promise<boolean> => {
+  try {
+    const {data} = await api.get<boolean>(
+      `/v1/auth/email/is-verified?email=${email}`,
+    );
+
+    return data ?? false;
   } catch (e) {
     return false;
   }
@@ -96,6 +102,38 @@ export const checkNameDuplication = async (name: string) => {
     const {error} = await api.get(`/v1/members/name/check?name=${name}`);
     console.log(error);
     return error === null;
+  } catch (e) {
+    return false;
+  }
+};
+
+interface signUpParam {
+  email: string;
+  password: string;
+  name: string;
+  birth: number;
+}
+
+export const signUp = async ({email, password, name, birth}: signUpParam) => {
+  try {
+    const {data, error} = await api.post('/v1/members/join', {
+      email,
+      password,
+      name,
+      birth,
+    });
+
+    if (!error && data) {
+      await AsyncStorage.setItem('accessToken', data.token.accessToken);
+      await AsyncStorage.setItem('refreshToken', data.token.refreshToken);
+
+      return true;
+    }
+
+    await AsyncStorage.removeItem('accessToken');
+    await AsyncStorage.removeItem('refreshToken');
+
+    return false;
   } catch (e) {
     return false;
   }

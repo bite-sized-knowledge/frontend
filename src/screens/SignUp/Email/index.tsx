@@ -1,6 +1,6 @@
 import CustomHeader from '@/components/common/CustomHeader.tsx';
 import {useTheme} from '@/context/ThemeContext.tsx';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {ProgressBar} from '../ProgressBar.tsx';
 import {typography} from '@/styles/tokens/typography.ts';
@@ -10,7 +10,8 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeFunnelParamList, navigationParamName} from '../signUpContext.ts';
 import {BaseButton} from '@/components/button/index.tsx';
 import {createStackNavigator} from '@react-navigation/stack';
-import {useAuthenticateEmail} from '@/hooks/useAuth.ts';
+import {useAuthenticateEmail, useVerifyEmail} from '@/hooks/useAuth.ts';
+import {useToast} from 'react-native-toast-notifications';
 
 interface EmailProps {
   onNext: Function;
@@ -20,7 +21,7 @@ export const Email = ({onNext}: EmailProps) => {
   const EmailStack = createStackNavigator();
 
   return (
-    <EmailStack.Navigator initialRouteName={'emailAuth'}>
+    <EmailStack.Navigator initialRouteName={'emailInput'}>
       <EmailStack.Screen
         name="emailInput"
         component={() => <EmailInput />}
@@ -64,8 +65,14 @@ export const EmailInput = () => {
 
   const {mutate: sendEmailMutation} = useAuthenticateEmail(
     email,
-    () => {
-      navigation.navigate('emailAuth');
+    ({data}) => {
+      console.log(data);
+      if (!data.status) {
+        setErrMsg(data.message);
+        return;
+      }
+
+      navigation.navigate('emailAuth', {email});
     },
     err => {
       setErrMsg(err);
@@ -84,6 +91,7 @@ export const EmailInput = () => {
           </Text>
           <BaseInput
             placeholder="이메일을 입력해주세요."
+            // value={'0510antonio@naver.com'}
             value={email}
             onChangeText={changeEmail}
             keyboardType="email-address"
@@ -112,9 +120,29 @@ export const EmailInput = () => {
 export const EmailAuth = ({onNext}: EmailProps) => {
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
-  const route = useRoute<RouteProp<NativeFunnelParamList>>();
-  const useFunnelState = route.params?.[navigationParamName]?.signUp?.context;
-  const email = useFunnelState?.email ?? '';
+  const route = useRoute();
+  const [email, setEmail] = useState('');
+  const toast = useToast();
+
+  useEffect(() => {
+    if (route.params?.email) {
+      setEmail(route.params.email);
+    }
+  }, []);
+
+  const {mutate: verifyEmail} = useVerifyEmail(
+    email,
+    data => {
+      if (data) {
+        onNext(email);
+      } else {
+        toast.show('이메일 인증이 완료되지 않았습니다.');
+      }
+    },
+    _ => {
+      toast.show('이메일 인증이 완료되지 않았습니다.');
+    },
+  );
 
   return (
     <View style={[styles.container, {backgroundColor: theme.background}]}>
@@ -139,7 +167,7 @@ export const EmailAuth = ({onNext}: EmailProps) => {
             },
           ]}
           textStyle={{color: 'white'}}
-          onPress={() => onNext(email)}
+          onPress={() => verifyEmail()}
         />
       </View>
     </View>

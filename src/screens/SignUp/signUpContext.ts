@@ -28,6 +28,12 @@ export type 약관동의 = {
   name: string;
   birthYear?: number;
 };
+export type 가입환영 = {
+  email: string;
+  password: string;
+  name: string;
+  birthYear: number;
+};
 
 export const navigationParamName = '__useFunnelState';
 
