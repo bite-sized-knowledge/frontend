@@ -21,6 +21,8 @@ import Share from './share.svg';
 import Trash from './trash.svg';
 import Eye from './eye.svg';
 import Blind from './blind.svg';
+import Box from './box.svg';
+import BoxChecked from './box_checked.svg';
 
 export default {
   ArrowLeft,
@@ -46,4 +48,6 @@ export default {
   Trash,
   Eye,
   Blind,
+  Box,
+  BoxChecked,
 };
