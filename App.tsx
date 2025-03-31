@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StatusBar, StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {BStack} from './src/navigator/BStack';
@@ -11,10 +11,17 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {ToastProvider} from 'react-native-toast-notifications';
 import {typography} from './src/styles/tokens/typography';
 import {lightTheme} from './src/styles/themes';
+import SplashScreen from 'react-native-splash-screen';
 
 const queryClient = new QueryClient();
 
 function App(): React.JSX.Element {
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 10000); //스플래시 활성화 시간
+  });
+
   return (
     <SafeAreaProvider>
       <ThemeProvider>
