@@ -26,12 +26,12 @@ export const BaseButton = ({
       style={({pressed}): StyleProp<ViewStyle> =>
         [
           styles.button,
-          style,
           pressed && styles.pressed,
+          style,
         ] as StyleProp<ViewStyle>
       }
       {...props}>
-      <Text style={[textStyle, typography.subHead]}>{title}</Text>
+      <Text style={[typography.subHead, textStyle]}>{title}</Text>
     </Pressable>
   );
 };

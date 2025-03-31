@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Text, StyleSheet, Pressable} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icons from '@/assets/icons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -10,12 +17,14 @@ interface CustomHeaderProps {
   title: string;
   showBackButton?: boolean;
   onBackPress?: () => void;
+  style?: StyleProp<ViewStyle>;
 }
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
   title,
   showBackButton = false,
   onBackPress,
+  style,
 }) => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -37,6 +46,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
           marginTop: insets.top,
           backgroundColor: theme.background,
         },
+        style,
       ]}>
       {showBackButton && (
         <Pressable onPress={handleBackPress} style={styles.backButton}>
