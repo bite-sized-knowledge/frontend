@@ -7,6 +7,8 @@ import {FeedStack} from './FeedTab';
 import Icons from '@/assets/icons';
 import {elevation} from '@/styles/tokens/elevation';
 import {Bookmark} from '@/screens/Bookmark';
+import {My} from '@/screens/My';
+import {MyStack} from './MyStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -78,7 +80,7 @@ export const BTab = () => {
       {/* <Tab.Screen name="HOME" component={FeedTab} /> */}
       <Tab.Screen name="HOME" component={FeedStack} />
       <Tab.Screen name="BITE" component={Bookmark} />
-      <Tab.Screen name="MY" component={() => <Text>MY</Text>} />
+      <Tab.Screen name="MY" component={MyStack} />
     </Tab.Navigator>
   );
 };

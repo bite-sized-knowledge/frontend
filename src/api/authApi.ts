@@ -15,6 +15,7 @@ export const getRefreshToken = async (): Promise<string | null> => {
 // refreshToken을 이용하여 새로운 accessToken을 발급받는 함수
 export const refreshAccessToken = async (): Promise<string | null> => {
   const refreshToken = await getRefreshToken();
+
   if (!refreshToken) {
     throw new Error('Refresh token not available');
   }
@@ -58,6 +59,7 @@ interface loginApiRes {
  */
 export const login = async (email: string, password: string) => {
   try {
+    console.log(email, password);
     const {data, error} = await api.post<loginApiRes>('/v1/auth/login', {
       email,
       password,
@@ -77,6 +79,11 @@ export const login = async (email: string, password: string) => {
   } catch (e) {
     return false;
   }
+};
+
+export const logout = async () => {
+  await AsyncStorage.removeItem('accessToken');
+  await AsyncStorage.removeItem('refreshToken');
 };
 
 export const authenticationEmail = async (email: string) => {
@@ -100,7 +107,7 @@ export const verifyEmail = async (email: string): Promise<boolean> => {
 export const checkNameDuplication = async (name: string) => {
   try {
     const {error} = await api.get(`/v1/members/name/check?name=${name}`);
-    console.log(error);
+
     return error === null;
   } catch (e) {
     return false;

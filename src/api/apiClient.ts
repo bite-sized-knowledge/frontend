@@ -38,7 +38,7 @@ class ApiClient {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
-  ): Promise<{data: T | null; error: Error | null; status: number}> {
+  ): Promise<{data: T | null; error: Error | null; status: boolean}> {
     try {
       const url = `${this.baseUrl}${endpoint}`;
       const accessToken = await getAccessToken();
@@ -70,18 +70,20 @@ class ApiClient {
 
       const data = (await response.json().catch(() => null)) as ApiResponse<T>;
 
-      if (data && data.success) {
+      console.log(url);
+
+      if (data) {
         return {
           data: data.result,
           error: null,
-          status: response.status,
+          status: data.success,
         };
       }
 
       return {
         data: null,
         error: new Error('네트워크 에러가 발생했습니다'),
-        status: response.status,
+        status: false,
       };
     } catch (error) {
       return {
@@ -90,7 +92,7 @@ class ApiClient {
           error instanceof Error
             ? error
             : new Error('알 수 없는 에러가 발생했습니다'),
-        status: 500,
+        status: false,
       };
     }
   }
