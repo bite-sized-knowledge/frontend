@@ -13,9 +13,12 @@ export default function MemberModal() {
   const {theme} = useTheme();
 
   const handleLogin = () => {
-    navigation.reset({
-      routes: [{name: ROOT_SCREENS.AUTH}],
-    });
+    // navigation.reset({
+    //   routes: [{name: ROOT_SCREENS.AUTH}],
+    // });
+    navigation.goBack();
+
+    navigation.navigate(ROOT_SCREENS.AUTH);
   };
 
   const handleCancel = () => {

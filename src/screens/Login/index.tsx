@@ -39,11 +39,13 @@ export const Login = ({onBackPress}: LoginProps) => {
     navigation.navigate(ROOT_SCREENS.MAIN);
   };
 
+  console.log(navigation.getState());
+
   return (
     <View style={[styles.loginWrapper, {backgroundColor: theme.background}]}>
       <CustomHeader
         title={'로그인'}
-        showBackButton={false}
+        showBackButton={navigation.canGoBack()}
         onBackPress={onBackPress}
       />
       <View style={styles.loginContainer}>
