@@ -16,7 +16,7 @@ import CustomHeader from '@/components/common/CustomHeader';
 import {WebViewDrawer} from '@/components/common/WebViewDrawer';
 import {Article} from '@/types/Article';
 import {SkeletonCard} from '@/components/card/CardSkeleton';
-import {EVENT_TYPE, sendEvent, TARGET_TYPE, TargetType} from '@/api/eventApi';
+import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
 import {mergeWithoutDuplicates} from '@/util/utils';
 
 export const BOTTOM_TAB_HEIGHT = 56;

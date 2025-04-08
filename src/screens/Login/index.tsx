@@ -11,6 +11,7 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {login} from '@/api/authApi';
 import {ROOT_SCREENS, RootStackParamList} from '@/types/constants/rootScreens';
 import {useAuth} from '@/hooks/useAuth';
+import {AUTH_SCREENS, AuthStackParamList} from '@/types/constants/authScreens';
 
 interface LoginProps {
   onBackPress?: () => void;
@@ -20,7 +21,8 @@ export const Login = ({onBackPress}: LoginProps) => {
   const {theme, themeMode} = useTheme();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NavigationProp<RootStackParamList & AuthStackParamList>>();
   const {setLoggedIn} = useAuth();
 
   const handleLoginButtonClick = async () => {
@@ -88,7 +90,8 @@ export const Login = ({onBackPress}: LoginProps) => {
             }}
           />
           <View style={styles.signUpAndforgotPw}>
-            <Pressable onPress={() => navigation.navigate(ROOT_SCREENS.AUTH)}>
+            <Pressable
+              onPress={() => navigation.navigate(AUTH_SCREENS.SIGN_UP)}>
               <Text style={[typography.label, {color: theme.gray3}]}>
                 회원가입
               </Text>

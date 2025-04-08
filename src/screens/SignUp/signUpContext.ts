@@ -1,3 +1,9 @@
+export type 관심주제선택 = {
+  email?: string;
+  password?: string;
+  name?: string;
+  birthYear?: number;
+};
 export type 이메일입력 = {
   email?: string;
   password?: string;

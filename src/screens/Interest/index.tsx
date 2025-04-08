@@ -11,7 +11,11 @@ import {Loading} from '../Loading';
 import {RootStackParamList, ROOT_SCREENS} from '@/types/constants/rootScreens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const Interest = () => {
+interface InterestProps {
+  onNext?: Function;
+}
+
+export const Interest = ({onNext}: InterestProps) => {
   const {theme} = useTheme();
   const [selectedItem, setSelectedItem] = useState<number[]>([]);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -42,6 +46,12 @@ export const Interest = () => {
     if (selectedItem.length < 1) {
       return;
     }
+
+    if (onNext) {
+      onNext();
+      return;
+    }
+
     setLoading(true);
     try {
       // 서버로 데이터 전송 (예시 URL 사용)
@@ -65,7 +75,7 @@ export const Interest = () => {
   }
 
   // 피드로 넘어가기전 뷰
-  if (loading) {
+  if (!onNext && loading) {
     return <Loading />;
   }
 

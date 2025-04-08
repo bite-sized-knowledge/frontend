@@ -28,11 +28,13 @@ export const RootStack = () => {
       try {
         const accessToken = await AsyncStorage.getItem('accessToken');
         const refreshToken = await AsyncStorage.getItem('refreshToken');
+
         if (accessToken && refreshToken) {
           await refreshAccessToken();
         } else {
           // setLoggedIn(false);
           setInitialRouteName(ROOT_SCREENS.INTEREST);
+          return;
         }
 
         // setLoggedIn(true);
