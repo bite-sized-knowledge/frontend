@@ -7,8 +7,10 @@ import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
 import Sso from '@/assets/sso';
 import {BaseInput} from '@/components/input';
 import {BaseButton} from '@/components/button';
-import {useNavigation} from '@react-navigation/native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {login} from '@/api/authApi';
+import {ROOT_SCREENS, RootStackParamList} from '@/types/constants/rootScreens';
+import {useAuth} from '@/hooks/useAuth';
 
 interface LoginProps {
   onBackPress?: () => void;
@@ -18,7 +20,8 @@ export const Login = ({onBackPress}: LoginProps) => {
   const {theme, themeMode} = useTheme();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const {setLoggedIn} = useAuth();
 
   const handleLoginButtonClick = async () => {
     if (email.trim().length <= 1 || password.trim().length <= 1) return;
@@ -30,14 +33,15 @@ export const Login = ({onBackPress}: LoginProps) => {
       return;
     }
 
-    navigation.navigate('tabNav');
+    setLoggedIn(true);
+    navigation.navigate(ROOT_SCREENS.MAIN);
   };
 
   return (
     <View style={[styles.loginWrapper, {backgroundColor: theme.background}]}>
       <CustomHeader
         title={'로그인'}
-        showBackButton={true}
+        showBackButton={false}
         onBackPress={onBackPress}
       />
       <View style={styles.loginContainer}>
@@ -84,7 +88,7 @@ export const Login = ({onBackPress}: LoginProps) => {
             }}
           />
           <View style={styles.signUpAndforgotPw}>
-            <Pressable onPress={() => navigation.navigate('signUp')}>
+            <Pressable onPress={() => navigation.navigate(ROOT_SCREENS.AUTH)}>
               <Text style={[typography.label, {color: theme.gray3}]}>
                 회원가입
               </Text>
@@ -120,7 +124,7 @@ export const Login = ({onBackPress}: LoginProps) => {
               <Sso.Github width={25} height={25} />
             </Pressable>
           </View>
-          <Pressable>
+          <Pressable onPress={() => navigation.navigate(ROOT_SCREENS.INTEREST)}>
             <Text
               style={[
                 typography.label,

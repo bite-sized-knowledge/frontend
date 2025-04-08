@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {StatusBar, StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import {BStack} from './src/navigator/BStack';
+import {RootStack} from './src/navigator/RootStack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import 'react-native-gesture-handler';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
@@ -12,6 +12,7 @@ import {ToastProvider} from 'react-native-toast-notifications';
 import {typography} from './src/styles/tokens/typography';
 import {lightTheme} from './src/styles/themes';
 import SplashScreen from 'react-native-splash-screen';
+import {AuthProvider} from './src/hooks/useAuth';
 
 const queryClient = new QueryClient();
 
@@ -32,9 +33,11 @@ function App(): React.JSX.Element {
             <Host>
               <StatusBar />
               <QueryClientProvider client={queryClient}>
-                <NavigationContainer>
-                  <BStack />
-                </NavigationContainer>
+                <AuthProvider>
+                  <NavigationContainer>
+                    <RootStack />
+                  </NavigationContainer>
+                </AuthProvider>
               </QueryClientProvider>
             </Host>
           </ToastProvider>

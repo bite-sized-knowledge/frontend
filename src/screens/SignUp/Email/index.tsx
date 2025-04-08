@@ -10,7 +10,7 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeFunnelParamList, navigationParamName} from '../signUpContext.ts';
 import {BaseButton} from '@/components/button/index.tsx';
 import {createStackNavigator} from '@react-navigation/stack';
-import {useAuthenticateEmail, useVerifyEmail} from '@/hooks/useAuth.ts';
+import {useAuthenticateEmail, useVerifyEmail} from '@/hooks/useSignUp.ts';
 import {useToast} from 'react-native-toast-notifications';
 
 interface EmailProps {

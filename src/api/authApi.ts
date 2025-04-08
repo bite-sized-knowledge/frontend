@@ -12,6 +12,13 @@ export const getRefreshToken = async (): Promise<string | null> => {
   return await AsyncStorage.getItem('refreshToken');
 };
 
+export const setAccessToken = async (accessToken: string) => {
+  return await AsyncStorage.setItem('accessToken', accessToken);
+};
+export const setRefreshToken = async (refreshToken: string) => {
+  return await AsyncStorage.setItem('refreshToken', refreshToken);
+};
+
 // refreshToken을 이용하여 새로운 accessToken을 발급받는 함수
 export const refreshAccessToken = async (): Promise<string | null> => {
   const refreshToken = await getRefreshToken();
@@ -45,7 +52,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
   }
 };
 
-interface loginApiRes {
+export interface IToken {
   token: {
     accessToken: string;
     refreshToken: string;
@@ -60,7 +67,7 @@ interface loginApiRes {
 export const login = async (email: string, password: string) => {
   try {
     console.log(email, password);
-    const {data, error} = await api.post<loginApiRes>('/v1/auth/login', {
+    const {data, error} = await api.post<IToken>('/v1/auth/login', {
       email,
       password,
     });
@@ -84,6 +91,7 @@ export const login = async (email: string, password: string) => {
 export const logout = async () => {
   await AsyncStorage.removeItem('accessToken');
   await AsyncStorage.removeItem('refreshToken');
+  await AsyncStorage.removeItem('interestIds');
 };
 
 export const authenticationEmail = async (email: string) => {

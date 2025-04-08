@@ -13,7 +13,7 @@ import {
   비밀번호입력,
 } from './signUpContext.ts';
 import {BaseButton} from '@/components/button/index.tsx';
-import {useCheckNameDuplication} from '@/hooks/useAuth.ts';
+import {useCheckNameDuplication} from '@/hooks/useSignUp.ts';
 
 interface NameProps {
   onNext: Function;

@@ -3,16 +3,18 @@ import {BaseButton} from '@/components/button';
 import CustomHeader from '@/components/common/CustomHeader';
 import {useTheme} from '@/context/ThemeContext';
 import {typography} from '@/styles/tokens/typography';
-import {useNavigation} from '@react-navigation/native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {useQuery} from '@tanstack/react-query';
 import React, {useState} from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {Loading} from '../Loading';
+import {RootStackParamList, ROOT_SCREENS} from '@/types/constants/rootScreens';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Interest = () => {
   const {theme} = useTheme();
   const [selectedItem, setSelectedItem] = useState<number[]>([]);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   // 관심 주제 선택 후 피드 화면 나오기 전 로딩 화면 플래그
   const [loading, setLoading] = useState(false);
@@ -32,31 +34,40 @@ export const Interest = () => {
     );
   };
 
+  const navigateLogin = () => {
+    navigation.navigate(ROOT_SCREENS.AUTH);
+  };
+
   const startWithGuest = async () => {
-    if (selectedItem.length < 1) return;
+    if (selectedItem.length < 1) {
+      return;
+    }
     setLoading(true);
     try {
       // 서버로 데이터 전송 (예시 URL 사용)
-      const res = await getGuestAccount(selectedItem);
-      console.log(res);
+      await getGuestAccount(selectedItem);
+      await AsyncStorage.setItem('interestIds', JSON.stringify(selectedItem));
 
       // 2초 후에 로딩 종료 및 화면 전환
       setTimeout(() => {
         setLoading(false);
-        navigation.navigate('tabNav');
+        navigation.navigate(ROOT_SCREENS.MAIN);
       }, 2000);
     } catch (error) {
       console.error('전송 실패:', error);
       setLoading(false);
-      // 실패 시 에러 처리 (예: alert)
     }
   };
 
   // 관심목록 조회동안 보여주는 뷰
-  if (isLoading) return <></>;
+  if (isLoading) {
+    return <></>;
+  }
 
   // 피드로 넘어가기전 뷰
-  if (loading) return <Loading />;
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <View style={[styles.container, {backgroundColor: theme.background}]}>
@@ -111,6 +122,7 @@ export const Interest = () => {
             ...typography.label,
             textDecorationLine: 'underline',
           }}
+          onPress={navigateLogin}
         />
         {selectedItem.length > 0 ? (
           <BaseButton
