@@ -1,10 +1,12 @@
-import { useMutation } from '@tanstack/react-query';
-import {InterestRequest, InterestResponse} from '../types/api/Interest'
+import {useMutation} from '@tanstack/react-query';
+import {InterestRequest, InterestResponse} from '../types/api/Interest';
 
-const API_URL = 'https://api.bite-knowledge.com/v1/members'; 
+const API_URL = 'https://api.bite-knowledge.com/v1/members';
 
 // 관심사 데이터 전송 API 요청
-const postInterest = async (data: InterestRequest): Promise<InterestResponse> => {
+export const postInterest = async (
+  data: InterestRequest,
+): Promise<InterestResponse> => {
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
@@ -21,8 +23,8 @@ const postInterest = async (data: InterestRequest): Promise<InterestResponse> =>
 };
 
 // React Query의 useMutation 사용
-export const usePostInterest = () => {
+export const usePostInterest = data => {
   return useMutation({
-    mutationFn: postInterest,
+    mutationFn: () => postInterest(data),
   });
 };

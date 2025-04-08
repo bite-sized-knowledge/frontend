@@ -1,3 +1,4 @@
+import {Article} from '@/types/Article';
 import {api} from './apiClient';
 
 export const like = async (articleId: string) => {
@@ -32,6 +33,21 @@ export const addBookmark = async (articleId: string) => {
 
 export const deleteBookmark = async (articleId: string) => {
   const data = await api.delete(`/v1/articles/${articleId}/bookmarks`);
+
+  return data;
+};
+
+export const getBookmarkedArticles = async (
+  limit: number,
+  from: string | null,
+) => {
+  let url = `/v1/articles/bookmarks?limit=${limit}`;
+
+  if (from) {
+    url += `&from=${from}`;
+  }
+
+  const {data} = await api.get<{articles: Article[]; next: string}>(url);
 
   return data;
 };

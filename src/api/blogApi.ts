@@ -29,7 +29,7 @@ export const getBlogArticle = async (
     url += `&from=${from}`;
   }
 
-  const data = await api.get<BlogArticleResponse>(url);
+  const {data} = await api.get<BlogArticleResponse>(url);
 
   return data;
 };

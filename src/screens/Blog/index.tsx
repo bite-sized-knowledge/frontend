@@ -9,6 +9,8 @@ import {useTheme} from '@/context/ThemeContext';
 import {Article} from '@/types/Article';
 import {useNavigation} from '@react-navigation/native';
 import {Blog as BlogType} from '@/types/Blog';
+import {mergeWithoutDuplicates} from '@/util/utils';
+import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
 
 export const ROWS_PER_PAGE = 10;
 
@@ -16,7 +18,7 @@ interface ArticleProps {
   totalArticles: Article[];
   currentIndex: number;
   next: string | null;
-  blogArticle: {thumbnail: string; title: string};
+  blogArticle: Article;
 }
 
 const BlogArticle = ({
@@ -28,16 +30,18 @@ const BlogArticle = ({
   const navigation = useNavigation();
   const {theme, themeMode} = useTheme();
 
+  const navigateToFeed = () => {
+    navigation.navigate('BlogFeed', {
+      totalArticles,
+      currentIndex,
+      next,
+    });
+
+    sendEvent(TARGET_TYPE.BLOG, blogArticle.id, EVENT_TYPE.BLOG_TO_ARTICLE);
+  };
+
   return (
-    <Pressable
-      style={styles.flex1}
-      onPress={() =>
-        navigation.navigate('BlogFeed', {
-          totalArticles,
-          currentIndex,
-          next,
-        })
-      }>
+    <Pressable style={styles.flex1} onPress={navigateToFeed}>
       <View
         style={[
           elevation.card,
@@ -74,7 +78,7 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
   const {theme} = useTheme();
   // 해당 쿼리키만 따로 관리하는 이유는 블로그 ID가 바뀔 때 next를 초기화시키고 재조회하기 위해 따로 관리함. 그냥 사용하면 재조회 이후 next값이 수정됨.
   const [queryKey, setQueryKey] = useState(['blogArticles', blogId]);
-  const [blogArticles, setBlogArticles] = useState<Omit<Article, 'blog'>[]>([]);
+  const [blogArticles, setBlogArticles] = useState<Article[]>([]);
   const [next, setNext] = useState<string | null>(null);
 
   useEffect(() => {
@@ -103,16 +107,15 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
   // 새로운 데이터가 로드되면 기존 데이터에 추가
   useEffect(() => {
     if (newBlogArticles) {
-      setBlogArticles(prev => [
-        ...prev,
-        ...(newBlogArticles.data?.articles ?? []),
-      ]);
-      setNext(newBlogArticles.data?.next ?? null);
+      setBlogArticles(
+        mergeWithoutDuplicates(blogArticles, newBlogArticles?.articles),
+      );
+      setNext(newBlogArticles?.next ?? null);
     }
   }, [newBlogArticles]);
 
   const onEndReached = () => {
-    if (!isRefetching && !isLoading) {
+    if (!isRefetching && !isLoading && next) {
       refetch();
     }
   };
@@ -140,9 +143,7 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
         renderItem={article => (
           <BlogArticle
             blogArticle={article.item}
-            totalArticles={blogArticles.map(blogArticle => {
-              return {...blogArticle, blog: blog?.data as BlogType};
-            })}
+            totalArticles={blogArticles}
             currentIndex={article.index}
             next={next}
           />

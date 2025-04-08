@@ -3,12 +3,14 @@ import {View, Text, Image, StyleSheet, FlatList, Pressable} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
 import {elevation} from '../../styles/tokens/elevation';
 import CustomHeader from '@/components/common/CustomHeader';
-import {getBlog, getBlogArticle} from '@/api/blogApi';
 import {useQuery} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
 import {Article} from '@/types/Article';
 import {useNavigation} from '@react-navigation/native';
-import {Blog as BlogType} from '@/types/Blog';
+import {getBookmarkedArticles} from '@/api/articleApi';
+import {jwtDecode} from 'jwt-decode';
+import {getAccessToken} from '@/api/authApi';
+import {mergeWithoutDuplicates} from '@/util/utils';
 
 export const ROWS_PER_PAGE = 10;
 
@@ -16,10 +18,10 @@ interface ArticleProps {
   totalArticles: Article[];
   currentIndex: number;
   next: string | null;
-  blogArticle: {thumbnail: string; title: string};
+  blogArticle: Article;
 }
 
-const BlogArticle = ({
+const BookmarkedArticle = ({
   blogArticle,
   totalArticles,
   currentIndex,
@@ -32,7 +34,7 @@ const BlogArticle = ({
     <Pressable
       style={{flex: 1}}
       onPress={() =>
-        navigation.navigate('BlogFeed', {
+        navigation.navigate('bookmarkFeed', {
           totalArticles,
           currentIndex,
           next,
@@ -47,6 +49,9 @@ const BlogArticle = ({
           },
         ]}>
         <View style={styles.article}>
+          <View style={styles.articleHeader}>
+            <Text style={[typography.body]}>{blogArticle.blog.title}</Text>
+          </View>
           <Image
             style={styles.articleImage}
             source={{uri: blogArticle.thumbnail}}
@@ -68,64 +73,64 @@ const BlogArticle = ({
 export const Bookmark = () => {
   const {theme} = useTheme();
   // 해당 쿼리키만 따로 관리하는 이유는 블로그 ID가 바뀔 때 next를 초기화시키고 재조회하기 위해 따로 관리함. 그냥 사용하면 재조회 이후 next값이 수정됨.
-  const [queryKey, setQueryKey] = useState(['blogArticles', blogId]);
+  const [queryKey, setQueryKey] = useState(['bookmarkArticles']);
   const [blogArticles, setBlogArticles] = useState<Article[]>([]);
   const [next, setNext] = useState<string | null>(null);
 
-  useEffect(() => {
-    setNext(null);
-    setBlogArticles([]);
-    setQueryKey(['blogArticles', blogId]);
-  }, [blogId]);
+  const [jwtPayload, setJwtPayload] = useState();
 
-  // React Query로 데이터 가져오기
-  const {data: blog} = useQuery({
-    queryKey: ['blog', blogId],
-    queryFn: () => getBlog(blogId),
-  });
+  useEffect(() => {
+    const fetchAndDecodeJWT = async () => {
+      try {
+        // AsyncStorage에 저장된 JWT 토큰 가져오기 (저장 키는 'jwtToken'으로 가정)
+        const token = await getAccessToken();
+        if (token) {
+          // jwt-decode를 사용해 토큰 디코딩
+          const decoded = jwtDecode(token);
+
+          setJwtPayload(decoded!);
+        }
+      } catch (error) {
+        console.error('JWT 디코딩 에러:', error);
+      }
+    };
+
+    fetchAndDecodeJWT();
+  }, []);
 
   const {
-    data: newBlogArticles,
+    data: newBookmarkedArticles,
     isLoading,
     isRefetching,
     refetch,
   } = useQuery({
     queryKey,
-    queryFn: () => getBlogArticle(blogId, ROWS_PER_PAGE, next),
-    enabled: blogId !== null,
+    queryFn: () => getBookmarkedArticles(ROWS_PER_PAGE, next),
   });
 
   // 새로운 데이터가 로드되면 기존 데이터에 추가
   useEffect(() => {
-    if (newBlogArticles) {
-      setBlogArticles(prev => [
-        ...prev,
-        ...(newBlogArticles?.data?.articles ?? []),
-      ]);
-      setNext(newBlogArticles.data?.next);
+    if (newBookmarkedArticles) {
+      setBlogArticles(
+        mergeWithoutDuplicates(blogArticles, newBookmarkedArticles.articles),
+      );
+      setNext(newBookmarkedArticles?.next ?? null);
     }
-  }, [newBlogArticles]);
+  }, [newBookmarkedArticles]);
 
   const onEndReached = () => {
-    if (!isRefetching && !isLoading) {
+    if (!isRefetching && !isLoading && next) {
       refetch();
     }
   };
 
   return (
     <View style={{backgroundColor: theme.background, flex: 1}}>
-      <CustomHeader
-        title={'Bookmark'}
-        showBackButton={true}
-        onBackPress={() => navigateToFeed()}
-      />
+      <CustomHeader title={'Bookmark'} showBackButton={false} />
       <View style={styles.blogSection}>
-        <Image
-          style={styles.blogImage}
-          source={{uri: blog?.data?.result?.favicon}}
-        />
+        <Image style={styles.blogImage} />
         <Text style={[typography.head, {color: theme.text}]}>
-          {blog?.data?.result?.title}
+          {jwtPayload?.name}
         </Text>
       </View>
       <FlatList
@@ -136,10 +141,10 @@ export const Bookmark = () => {
         contentContainerStyle={styles.gap}
         columnWrapperStyle={styles.gap}
         renderItem={article => (
-          <BlogArticle
+          <BookmarkedArticle
             blogArticle={article.item}
             totalArticles={blogArticles.map(article => {
-              return {...article, blog: blog?.data?.result as BlogType};
+              return {...article};
             })}
             currentIndex={article.index}
             next={next}
@@ -175,9 +180,14 @@ const styles = StyleSheet.create({
   },
   article: {
     minWidth: 160,
-    minHeight: 160,
+    minHeight: 192,
     borderRadius: 8,
     overflow: 'hidden',
+  },
+  articleHeader: {
+    minHeight: 32,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
   },
   articleImage: {
     height: 80,
