@@ -11,6 +11,7 @@ import {
   useBookmarkMutation,
   useCancelBookmarkMutation,
 } from '@hooks/useArticleMutations';
+import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
 
 interface CardBottomProps {
   article: Article;
@@ -28,10 +29,12 @@ export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
   const {mutate: likeMutation} = useLikeMutation(article.id, () => {
     setLiked(true);
     setLikeCount(prev => prev + 1);
+    sendEvent(TARGET_TYPE.ARTICLE, article.id, EVENT_TYPE.LIKE);
   });
   const {mutate: unlikeMutation} = useUnlikeMutation(article.id, () => {
     setLiked(false);
     setLikeCount(prev => prev - 1);
+    sendEvent(TARGET_TYPE.ARTICLE, article.id, EVENT_TYPE.LIKE_CANCEL);
   });
   const {mutate: shareMutation} = useShareMutation(article.id, {
     onSuccess: () => {
@@ -39,14 +42,19 @@ export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
         setShareCount(prev => prev + 1);
         setIsShared(true);
       }
+      sendEvent(TARGET_TYPE.ARTICLE, article.id, EVENT_TYPE.SHARE);
     },
   });
-  const {mutate: bookmarkMutation} = useBookmarkMutation(article.id, () =>
-    setBookmarked(true),
-  );
+  const {mutate: bookmarkMutation} = useBookmarkMutation(article.id, () => {
+    setBookmarked(true);
+    sendEvent(TARGET_TYPE.ARTICLE, article.id, EVENT_TYPE.ARCHIVE);
+  });
   const {mutate: cancelBookmarkMutation} = useCancelBookmarkMutation(
     article.id,
-    () => setBookmarked(false),
+    () => {
+      setBookmarked(false);
+      sendEvent(TARGET_TYPE.ARTICLE, article.id, EVENT_TYPE.ARCHIVE_CANCEL);
+    },
   );
 
   return (

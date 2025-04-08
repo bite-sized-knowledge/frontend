@@ -1,16 +1,18 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Text} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Theme, useTheme} from '../context/ThemeContext';
-import {FeedStack} from './FeedTab';
 import Icons from '@/assets/icons';
 import {elevation} from '@/styles/tokens/elevation';
 import {Bookmark} from '@/screens/Bookmark';
-import {My} from '@/screens/My';
 import {MyStack} from './MyStack';
+import {useAuth} from '@/hooks/useAuth';
+import {MAIN_SCREENS, MainTabParamList} from '@/types/constants/mainScreens';
+import {ROOT_SCREENS, RootStackParamList} from '@/types/constants/rootScreens';
+import {FeedStack} from './FeedStack';
+import {BookmarkStack} from './BookmarkStack';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<MainTabParamList & RootStackParamList>();
 
 interface TabBarIconProps {
   routeName: string;
@@ -21,13 +23,13 @@ interface TabBarIconProps {
 const TabBarIcon = React.memo(
   ({routeName, focused, theme}: TabBarIconProps) => {
     switch (routeName) {
-      case 'HOME':
+      case MAIN_SCREENS.FEED:
         return focused ? (
           <Icons.HomeFill color={theme.text} />
         ) : (
           <Icons.HomeDefault color={theme.text} />
         );
-      case 'BITE':
+      case MAIN_SCREENS.BOOKMARK:
         return focused ? (
           <Icons.CookieBoxFill
             color={theme.text}
@@ -36,7 +38,7 @@ const TabBarIcon = React.memo(
         ) : (
           <Icons.CookieBoxDefault color={theme.text} />
         );
-      case 'MY':
+      case MAIN_SCREENS.MY:
         return focused ? (
           <Icons.MyFill color={theme.text} />
         ) : (
@@ -48,13 +50,14 @@ const TabBarIcon = React.memo(
   },
 );
 
-export const BTab = () => {
+export const MainTab = () => {
   const insets = useSafeAreaInsets();
   const {theme, themeMode} = useTheme();
+  const {isLoggedIn} = useAuth();
 
   return (
     <Tab.Navigator
-      initialRouteName="HOME"
+      initialRouteName={MAIN_SCREENS.FEED}
       screenOptions={({route}) => ({
         headerShown: false,
         tabBarShowLabel: false,
@@ -63,10 +66,8 @@ export const BTab = () => {
           justifyContent: 'center',
           height: 64 + insets.bottom,
           paddingTop: 20,
-          // borderRadius: themeMode === 'light' ? 20 : 0, // 라이트 모드에서만 둥글게
           borderTopLeftRadius: themeMode === 'light' ? 20 : 0,
           borderTopRightRadius: themeMode === 'light' ? 20 : 0,
-
           borderColor: themeMode === 'dark' ? theme.background : 'transparent', // 다크 모드에서는 테두리 제거
           backgroundColor: theme.background, // 배경색 명확하게 설정
           borderWidth: themeMode === 'dark' ? 0 : 1, // 다크 모드에서 보더 제거
@@ -77,10 +78,33 @@ export const BTab = () => {
           <TabBarIcon routeName={route.name} focused={focused} theme={theme} />
         ),
       })}>
-      {/* <Tab.Screen name="HOME" component={FeedTab} /> */}
-      <Tab.Screen name="HOME" component={FeedStack} />
-      <Tab.Screen name="BITE" component={Bookmark} />
-      <Tab.Screen name="MY" component={MyStack} />
+      <Tab.Screen name={MAIN_SCREENS.FEED} component={FeedStack} />
+      <Tab.Screen
+        name={MAIN_SCREENS.BOOKMARK}
+        component={BookmarkStack}
+        listeners={({navigation}) => ({
+          tabPress: e => {
+            if (!isLoggedIn) {
+              e.preventDefault();
+              // 로그인되지 않은 경우, 회원 전용 모달을 띄움
+              navigation.navigate(ROOT_SCREENS.AUTH_MODAL);
+            }
+          },
+        })}
+      />
+      <Tab.Screen
+        name={MAIN_SCREENS.MY}
+        component={MyStack}
+        listeners={({navigation}) => ({
+          tabPress: e => {
+            if (!isLoggedIn) {
+              e.preventDefault();
+              // 로그인되지 않은 경우, 회원 전용 모달을 띄움
+              navigation.navigate(ROOT_SCREENS.AUTH_MODAL);
+            }
+          },
+        })}
+      />
     </Tab.Navigator>
   );
 };

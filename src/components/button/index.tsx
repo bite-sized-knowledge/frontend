@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: 320,
+    // minWidth: 320,
     height: 56,
     borderRadius: 8,
   },

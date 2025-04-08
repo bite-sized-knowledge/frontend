@@ -1,8 +1,9 @@
+import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
 import {Blog} from '@/screens/Blog';
 import {BlogFeed} from '@/screens/Blog/BlogFeed';
 import {Feed} from '@/screens/Feed';
 import {createStackNavigator} from '@react-navigation/stack';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useWindowDimensions} from 'react-native';
 import {TabView} from 'react-native-tab-view';
 
@@ -20,6 +21,14 @@ export const FeedTab = () => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
   const [blogId, setBlogId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!blogId) return;
+
+    if (index === 1) {
+      sendEvent(TARGET_TYPE.BLOG, blogId, EVENT_TYPE.BLOG_IN);
+    }
+  }, [blogId, index]);
 
   // onIndexChange 핸들러: blogId가 없으면 blog 탭으로 전환하지 않음
   const handleIndexChange = (newIndex: number) => {

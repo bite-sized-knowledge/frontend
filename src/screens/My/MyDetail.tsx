@@ -5,20 +5,27 @@ import {typography} from '@/styles/tokens/typography';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import Icons from '@/assets/icons';
 import {logout} from '@/api/authApi';
-import {useNavigation} from '@react-navigation/native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {ROOT_SCREENS, RootStackParamList} from '@/types/constants/rootScreens';
+import {useAuth} from '@/hooks/useAuth';
+import {MY_SCREENS, MyStackParamList} from '@/types/constants/myScreens';
 
 export const MyDetail = ({route}) => {
   const {theme} = useTheme();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NavigationProp<RootStackParamList & MyStackParamList>>();
   const {jwtPayload} = route.params;
+  const {setLoggedIn} = useAuth();
 
   const goToLogin = async () => {
     await logout();
-    navigation.navigate('login');
+
+    setLoggedIn(false);
+    navigation.navigate(ROOT_SCREENS.AUTH);
   };
 
   const goToWithdraw = async () => {
-    navigation.navigate('Withdraw');
+    navigation.navigate(MY_SCREENS.WITHDRAW);
   };
 
   return (

@@ -16,6 +16,8 @@ import CustomHeader from '@/components/common/CustomHeader';
 import {WebViewDrawer} from '@/components/common/WebViewDrawer';
 import {Article} from '@/types/Article';
 import {SkeletonCard} from '@/components/card/CardSkeleton';
+import {EVENT_TYPE, sendEvent, TARGET_TYPE, TargetType} from '@/api/eventApi';
+import {mergeWithoutDuplicates} from '@/util/utils';
 
 export const BOTTOM_TAB_HEIGHT = 56;
 export const HEADER_HEIGHT = 64;
@@ -78,6 +80,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
   const handleCardBodyClick = useCallback((data: string) => {
     setVisible(true);
     setArticleId(data);
+    sendEvent(TARGET_TYPE.ARTICLE, data, EVENT_TYPE.ARTICLE_IN);
   }, []);
 
   // 전체 아이템 높이를 계산 (피드 아이템과 스켈레톤 UI 모두 동일하게 사용)
@@ -105,7 +108,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     if (feed) {
       setArticle(prev => {
         setIsFetchingNewAriticles(false);
-        return [...prev, ...(feed.data ?? [])];
+        return mergeWithoutDuplicates(prev, feed.data ?? []);
       });
     }
   }, [feed]);
@@ -120,6 +123,12 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
         setBlogId(viewableItems[0].item.blog.id);
       }
 
+      sendEvent(
+        TARGET_TYPE.ARTICLE,
+        viewableItems[0].item.id,
+        EVENT_TYPE.F_IMP,
+      );
+
       const lastVisibleIndex = viewableItems[viewableItems.length - 1].index;
 
       if (
@@ -133,6 +142,11 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     },
     [article, isFetchingNewAriticles, refetch, setBlogId],
   );
+
+  const onWebViewClose = () => {
+    setVisible(false);
+    sendEvent(TARGET_TYPE.ARTICLE, articleId!, EVENT_TYPE.ARTICLE_OUT);
+  };
 
   // 로딩 중에는 피드 아이템과 동일한 레이아웃의 스켈레톤 UI들을 렌더링
   if (isLoading) {
@@ -203,7 +217,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
       />
       <WebViewDrawer
         visible={visible}
-        onClose={() => setVisible(false)}
+        onClose={onWebViewClose}
         uri={articleId}
       />
     </View>

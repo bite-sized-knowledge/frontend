@@ -10,7 +10,6 @@ import {Article} from '@/types/Article';
 import {SkeletonCard} from '@/components/card/CardSkeleton';
 import {ROWS_PER_PAGE} from '.';
 import {getBlogArticle} from '@/api/blogApi';
-import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
 
 export const BOTTOM_TAB_HEIGHT = 56;
 export const HEADER_HEIGHT = 64;
@@ -48,7 +47,7 @@ const FeedItem = ({item, handleCardBodyClick}: FeedItemProps) => {
   );
 };
 
-export const BlogFeed: React.FC = ({route}) => {
+export const BookmarkFeed: React.FC = ({route}) => {
   const flatListRef = useRef<FlatList>(null); // FlatList에 대한 ref
   const {totalArticles, currentIndex, next} = route.params;
   const [article, setArticle] = useState<Article[]>(totalArticles);
@@ -95,8 +94,6 @@ export const BlogFeed: React.FC = ({route}) => {
       if (!viewableItems.length) {
         return;
       }
-
-      sendEvent(TARGET_TYPE.BLOG, viewableItems[0].item.id, EVENT_TYPE.B_IMP);
 
       const lastVisibleIndex = viewableItems[viewableItems.length - 1].index;
 

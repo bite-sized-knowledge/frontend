@@ -6,17 +6,18 @@ import {My} from '@/screens/My';
 import {MyDetail} from '@/screens/My/MyDetail';
 import {Withdraw} from '@/screens/My/Withdraw';
 import {WithdrawDetail} from '@/screens/My/Withdraw/WithDrawDetail';
-import {MY_SCREENS, MyStackParamList} from '@/types/constants/myScreens';
+import {Bookmark} from '@/screens/Bookmark';
+import {BookmarkFeed} from '@/screens/Bookmark/BookmarkFeed';
 
-const Stack = createStackNavigator<MyStackParamList>();
+const Stack = createStackNavigator();
 
-export const MyStack = () => {
+export const BookmarkStack = () => {
   const insets = useSafeAreaInsets();
   const {theme} = useTheme();
 
   return (
     <Stack.Navigator
-      initialRouteName={MY_SCREENS.MY_PROFILE}
+      initialRouteName={'bookmark'}
       screenOptions={{
         headerStyle: {
           height: 56 + insets.top,
@@ -25,23 +26,13 @@ export const MyStack = () => {
         headerTintColor: theme.text,
       }}>
       <Stack.Screen
-        name={MY_SCREENS.MY_PROFILE}
-        component={My}
+        name={'bookmark'}
+        component={Bookmark}
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name={MY_SCREENS.MY_DETAIL}
-        component={MyDetail}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name={MY_SCREENS.WITHDRAW}
-        component={Withdraw}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name={MY_SCREENS.WITHDRAW_DETAIL}
-        component={WithdrawDetail}
+        name={'bookmarkFeed'}
+        component={BookmarkFeed}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

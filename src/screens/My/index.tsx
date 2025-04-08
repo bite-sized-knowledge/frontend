@@ -4,11 +4,12 @@ import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useTheme} from '@/context/ThemeContext';
 import {typography} from '@/styles/tokens/typography';
 import Icons from '@/assets/icons';
-import {useNavigation} from '@react-navigation/native';
-import {jwtDecode, JwtPayload} from 'jwt-decode';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {jwtDecode} from 'jwt-decode';
 import {getAccessToken} from '@/api/authApi';
+import {MY_SCREENS, MyStackParamList} from '@/types/constants/myScreens';
 
-interface aa {
+export interface JWT {
   sub: string;
   name: string;
   birth: number;
@@ -18,8 +19,8 @@ interface aa {
 
 export const My = () => {
   const {theme} = useTheme();
-  const navigation = useNavigation();
-  const [jwtPayload, setJwtPayload] = useState<aa>();
+  const navigation = useNavigation<NavigationProp<MyStackParamList>>();
+  const [jwtPayload, setJwtPayload] = useState<JWT>();
 
   useEffect(() => {
     const fetchAndDecodeJWT = async () => {
@@ -41,7 +42,9 @@ export const My = () => {
   }, []);
 
   const navigateToDetail = () => {
-    navigation.navigate('MyDetail', {jwtPayload});
+    if (jwtPayload) {
+      navigation.navigate(MY_SCREENS.MY_DETAIL, {jwtPayload});
+    }
   };
 
   return (
