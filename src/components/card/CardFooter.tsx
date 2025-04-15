@@ -12,6 +12,9 @@ import {
   useCancelBookmarkMutation,
 } from '@hooks/useArticleMutations';
 import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
+import {useAuth} from '@/hooks/useAuth';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {ROOT_SCREENS, RootStackParamList} from '@/types/constants/rootScreens';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useToast} from 'react-native-toast-notifications';
 
@@ -26,6 +29,8 @@ export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
   const [bookmarked, setBookmarked] = useState<boolean>(article.archived);
   const [shareCount, setShareCount] = useState<number>(article.shareCount);
   const [isShared, setIsShared] = useState<boolean>(false);
+  const {isLoggedIn} = useAuth();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const toast = useToast();
 
   // 훅을 통한 API 호출
@@ -65,6 +70,15 @@ export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
     },
   );
 
+  const onClickBookmark = async () => {
+    if (!isLoggedIn) {
+      navigation.navigate(ROOT_SCREENS.AUTH_MODAL);
+      return;
+    }
+
+    bookmarked ? cancelBookmarkMutation() : bookmarkMutation();
+  };
+
   return (
     <View style={styles.bottomContainer}>
       <View style={styles.leftSection}>
@@ -82,9 +96,7 @@ export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
       <View style={styles.rightSection}>
         <ReactionButton
           icon={bookmarked ? <Icons.CookieFill /> : <Icons.CookieDefault />}
-          handlePress={async () =>
-            bookmarked ? cancelBookmarkMutation() : bookmarkMutation()
-          }
+          handlePress={onClickBookmark}
         />
       </View>
     </View>
