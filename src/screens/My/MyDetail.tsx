@@ -9,6 +9,7 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {ROOT_SCREENS, RootStackParamList} from '@/types/constants/rootScreens';
 import {useAuth} from '@/hooks/useAuth';
 import {MY_SCREENS, MyStackParamList} from '@/types/constants/myScreens';
+import {AUTH_SCREENS} from '@/types/constants/authScreens';
 
 export const MyDetail = ({route}) => {
   const {theme} = useTheme();
@@ -21,7 +22,33 @@ export const MyDetail = ({route}) => {
     await logout();
 
     setLoggedIn(false);
-    navigation.navigate(ROOT_SCREENS.AUTH);
+
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: ROOT_SCREENS.AUTH, // AuthStack
+          params: {
+            screen: AUTH_SCREENS.LOGIN, // AuthStack 안에 진입할 screen
+            params: {
+              showBackButton: false, // Login이 받을 값
+            },
+          },
+        },
+      ],
+    });
+
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [
+    //     {
+    //       name: ROOT_SCREENS.AUTH,
+    //       params: {showBackButton: false},
+    //     },
+    //   ],
+    // });
+
+    // navigation.navigate(ROOT_SCREENS.AUTH);
   };
 
   const goToWithdraw = async () => {

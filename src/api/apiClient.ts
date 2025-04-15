@@ -70,7 +70,7 @@ class ApiClient {
 
       const data = (await response.json().catch(() => null)) as ApiResponse<T>;
 
-      console.log(url);
+      console.log(`url: ${url}, data: ${data.result}`);
 
       if (data) {
         return {

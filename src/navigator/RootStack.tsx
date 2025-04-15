@@ -37,13 +37,16 @@ export const RootStack = () => {
           setInitialRouteName(ROOT_SCREENS.INTEREST);
           return;
         }
+
         const decoded = jwtDecode(accessToken);
 
+        // 비회원/회원 판별
         if (decoded.role !== 'ROLE_GUEST') {
           setLoggedIn(true);
         } else {
           setLoggedIn(false);
         }
+
         setInitialRouteName(ROOT_SCREENS.MAIN);
       } catch (e) {
         setLoggedIn(false);

@@ -7,7 +7,12 @@ import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
 import Sso from '@/assets/sso';
 import {BaseInput} from '@/components/input';
 import {BaseButton} from '@/components/button';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {
+  NavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {login} from '@/api/authApi';
 import {ROOT_SCREENS, RootStackParamList} from '@/types/constants/rootScreens';
 import {useAuth} from '@/hooks/useAuth';
@@ -16,6 +21,10 @@ import {AUTH_SCREENS, AuthStackParamList} from '@/types/constants/authScreens';
 interface LoginProps {
   onBackPress?: () => void;
 }
+type LoginScreenRouteProp = RouteProp<
+  RootStackParamList & AuthStackParamList,
+  typeof ROOT_SCREENS.AUTH
+>;
 
 export const Login = ({onBackPress}: LoginProps) => {
   const {theme, themeMode} = useTheme();
@@ -23,6 +32,11 @@ export const Login = ({onBackPress}: LoginProps) => {
   const [password, setPassword] = useState<string>('');
   const navigation =
     useNavigation<NavigationProp<RootStackParamList & AuthStackParamList>>();
+  const route = useRoute<LoginScreenRouteProp>();
+
+  const showBackButton =
+    route.params?.showBackButton != null ? route.params.showBackButton : true;
+
   const {setLoggedIn} = useAuth();
 
   const handleLoginButtonClick = async () => {
@@ -39,13 +53,11 @@ export const Login = ({onBackPress}: LoginProps) => {
     navigation.navigate(ROOT_SCREENS.MAIN);
   };
 
-  console.log(navigation.getState());
-
   return (
     <View style={[styles.loginWrapper, {backgroundColor: theme.background}]}>
       <CustomHeader
         title={'로그인'}
-        showBackButton={navigation.canGoBack()}
+        showBackButton={showBackButton}
         onBackPress={onBackPress}
       />
       <View style={styles.loginContainer}>

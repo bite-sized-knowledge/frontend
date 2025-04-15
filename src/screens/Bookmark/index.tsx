@@ -21,6 +21,10 @@ interface ArticleProps {
   blogArticle: Article;
 }
 
+interface ArticleWithPlaceholder extends Article {
+  isPlaceholder?: boolean;
+}
+
 const BookmarkedArticle = ({
   blogArticle,
   totalArticles,
@@ -46,6 +50,8 @@ const BookmarkedArticle = ({
           {
             backgroundColor:
               themeMode === 'light' ? theme.background : theme.gray4,
+            // 아래 css에서 card에서 정의한 border-radius 엎어침
+            borderRadius: 8,
           },
         ]}>
         <View style={styles.article}>
@@ -74,7 +80,9 @@ export const Bookmark = () => {
   const {theme} = useTheme();
   // 해당 쿼리키만 따로 관리하는 이유는 블로그 ID가 바뀔 때 next를 초기화시키고 재조회하기 위해 따로 관리함. 그냥 사용하면 재조회 이후 next값이 수정됨.
   const [queryKey, setQueryKey] = useState(['bookmarkArticles']);
-  const [blogArticles, setBlogArticles] = useState<Article[]>([]);
+  const [blogArticles, setBlogArticles] = useState<ArticleWithPlaceholder[]>(
+    [],
+  );
   const [next, setNext] = useState<string | null>(null);
 
   const [jwtPayload, setJwtPayload] = useState();
@@ -111,9 +119,18 @@ export const Bookmark = () => {
   // 새로운 데이터가 로드되면 기존 데이터에 추가
   useEffect(() => {
     if (newBookmarkedArticles) {
-      setBlogArticles(
-        mergeWithoutDuplicates(blogArticles, newBookmarkedArticles.articles),
+      const data = mergeWithoutDuplicates(
+        blogArticles,
+        newBookmarkedArticles.articles,
       );
+
+      if (data.length % 2 === 1) {
+        data.push({
+          id: data.length + 1,
+          isPlaceholder: true,
+        });
+      }
+      setBlogArticles(data);
       setNext(newBookmarkedArticles?.next ?? null);
     }
   }, [newBookmarkedArticles]);
@@ -122,6 +139,30 @@ export const Bookmark = () => {
     if (!isRefetching && !isLoading && next) {
       refetch();
     }
+  };
+
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: ArticleWithPlaceholder;
+    index: number;
+  }) => {
+    if (item.isPlaceholder) {
+      return (
+        <View style={{flex: 1}}>
+          <View style={[styles.article, {backgroundColor: 'transparent'}]} />
+        </View>
+      );
+    }
+    return (
+      <BookmarkedArticle
+        blogArticle={item}
+        totalArticles={blogArticles.filter(article => !article.isPlaceholder)}
+        currentIndex={index}
+        next={next}
+      />
+    );
   };
 
   return (
@@ -134,22 +175,12 @@ export const Bookmark = () => {
         </Text>
       </View>
       <FlatList
-        style={styles.articleSection}
         keyExtractor={item => item.id}
         data={blogArticles}
         numColumns={2}
-        contentContainerStyle={styles.gap}
+        contentContainerStyle={[styles.gap, {padding: 16}]}
         columnWrapperStyle={styles.gap}
-        renderItem={article => (
-          <BookmarkedArticle
-            blogArticle={article.item}
-            totalArticles={blogArticles.map(article => {
-              return {...article};
-            })}
-            currentIndex={article.index}
-            next={next}
-          />
-        )}
+        renderItem={renderItem}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.6}
         decelerationRate="fast"
@@ -173,14 +204,9 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     backgroundColor: '#d9d9d9',
   },
-  articleSection: {
-    padding: 16,
-    paddingBottom: 0,
-    flex: 1,
-  },
   article: {
     minWidth: 160,
-    minHeight: 160,
+    minHeight: 148,
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -190,12 +216,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   articleImage: {
-    height: 80,
+    flex: 1,
+    flexGrow: 1,
+    flexDirection: 'column',
+    minHeight: 80,
     overflow: 'hidden',
   },
   articleTitle: {
-    flex: 1,
     padding: 8,
+    height: 68,
     justifyContent: 'center',
   },
   gap: {
