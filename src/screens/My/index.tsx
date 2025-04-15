@@ -51,7 +51,10 @@ export const My = () => {
     <View style={[styles.container, {backgroundColor: theme.background}]}>
       <CustomHeader title={'MY'} showBackButton={false} />
       <View style={styles.profileSection}>
-        <Image style={styles.profileImage} />
+        <Image
+          style={styles.profileImage}
+          source={require('@assets/image/profileImage.png')}
+        />
         <Text
           style={[typography.head, {color: theme.text}, styles.profileName]}>
           {/* {blog?.data?.title} */}

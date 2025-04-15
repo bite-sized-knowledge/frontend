@@ -169,7 +169,10 @@ export const Bookmark = () => {
     <View style={{backgroundColor: theme.background, flex: 1}}>
       <CustomHeader title={'Bookmark'} showBackButton={false} />
       <View style={styles.blogSection}>
-        <Image style={styles.blogImage} />
+        <Image
+          style={styles.blogImage}
+          source={require('@assets/image/profileImage.png')}
+        />
         <Text style={[typography.head, {color: theme.text}]}>
           {jwtPayload?.name}
         </Text>
