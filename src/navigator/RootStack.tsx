@@ -10,6 +10,7 @@ import {ScreenName, ROOT_SCREENS} from '@/types/constants/rootScreens';
 import MemberModal from '@/screens/MemberModal';
 import {refreshAccessToken} from '@/api/authApi';
 import {useAuth} from '@/hooks/useAuth';
+import {jwtDecode} from 'jwt-decode';
 
 const Stack = createStackNavigator();
 
@@ -32,15 +33,20 @@ export const RootStack = () => {
         if (accessToken && refreshToken) {
           await refreshAccessToken();
         } else {
-          // setLoggedIn(false);
+          setLoggedIn(false);
           setInitialRouteName(ROOT_SCREENS.INTEREST);
           return;
         }
+        const decoded = jwtDecode(accessToken);
 
-        // setLoggedIn(true);
+        if (decoded.role !== 'ROLE_GUEST') {
+          setLoggedIn(true);
+        } else {
+          setLoggedIn(false);
+        }
         setInitialRouteName(ROOT_SCREENS.MAIN);
       } catch (e) {
-        // setLoggedIn(false);
+        setLoggedIn(false);
         setInitialRouteName(ROOT_SCREENS.INTEREST);
       } finally {
         setIsLoading(false);
@@ -54,8 +60,8 @@ export const RootStack = () => {
 
   return (
     <Stack.Navigator
-      // initialRouteName={initialRouteName}
-      initialRouteName={ROOT_SCREENS.INTEREST}
+      initialRouteName={initialRouteName}
+      // initialRouteName={ROOT_SCREENS.INTEREST}
       screenOptions={{
         headerStyle: {
           height: 56 + insets.top,
