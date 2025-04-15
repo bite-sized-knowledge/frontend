@@ -65,8 +65,7 @@ export const EmailInput = () => {
 
   const {mutate: sendEmailMutation} = useAuthenticateEmail(
     email,
-    ({data}) => {
-      console.log(data);
+    data => {
       if (!data.status) {
         setErrMsg(data.message);
         return;

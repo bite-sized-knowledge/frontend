@@ -1,43 +1,43 @@
 export type 관심주제선택 = {
   email?: string;
   password?: string;
-  name?: string;
+  // name?: string;
   birthYear?: number;
 };
 export type 이메일입력 = {
   email?: string;
   password?: string;
-  name?: string;
+  // name?: string;
   birthYear?: number;
 };
 export type 비밀번호입력 = {
   email: string;
   password?: string;
-  name?: string;
+  // name?: string;
   birthYear?: number;
 };
 export type 이름입력 = {
   email: string;
   password: string;
-  name?: string;
+  // name?: string;
   birthYear?: number;
 };
 export type 생년입력 = {
   email: string;
   password: string;
-  name: string;
+  // name: string;
   birthYear?: number;
 };
 export type 약관동의 = {
   email: string;
   password: string;
-  name: string;
+  // name: string;
   birthYear?: number;
 };
 export type 가입환영 = {
   email: string;
   password: string;
-  name: string;
+  // name: string;
   birthYear: number;
 };
 

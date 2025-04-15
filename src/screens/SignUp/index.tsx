@@ -56,7 +56,7 @@ export const SignUp = () => {
     관심주제선택: 관심주제선택;
     이메일입력: 이메일입력;
     비밀번호입력: 비밀번호입력;
-    이름입력: 이름입력;
+    // 이름입력: 이름입력;
     생년입력: 생년입력;
     가입환영: 가입환영;
   }>({
@@ -81,20 +81,20 @@ export const SignUp = () => {
       )}
       비밀번호입력={({history}) => (
         <Password
-          onNext={(password: string) => history.push('이름입력', {password})}
+          onNext={(password: string) => history.push('생년입력', {password})}
           onBack={context => history.push('이메일입력', context)}
         />
       )}
-      이름입력={({history}) => (
-        <Name
-          onNext={(name: string) => history.push('생년입력', {name})}
-          onBack={context => history.push('비밀번호입력', context)}
-        />
-      )}
+      // 이름입력={({history}) => (
+      //   <Name
+      //     onNext={(name: string) => history.push('생년입력', {name})}
+      //     onBack={context => history.push('비밀번호입력', context)}
+      //   />
+      // )}
       생년입력={({history}) => (
         <BirthYear
           onNext={(birthYear: number) => history.push('가입환영', {birthYear})}
-          onBack={context => history.push('이름입력', context)}
+          onBack={context => history.push('비밀번호입력', context)}
         />
       )}
       가입환영={() => <Welcome />}

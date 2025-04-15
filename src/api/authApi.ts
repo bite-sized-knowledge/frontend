@@ -125,16 +125,16 @@ export const checkNameDuplication = async (name: string) => {
 interface signUpParam {
   email: string;
   password: string;
-  name: string;
+  // name: string;
   birth: number;
 }
 
-export const signUp = async ({email, password, name, birth}: signUpParam) => {
+export const signUp = async ({email, password, birth}: signUpParam) => {
   try {
     const {data, error} = await api.post('/v1/members/join', {
       email,
       password,
-      name,
+      // name,
       birth,
     });
 

@@ -34,7 +34,7 @@ export const BirthYear = ({onNext, onBack}: BirthYearProps) => {
     onBack({
       email: useFunnelState.email,
       password: '',
-      name: useFunnelState.name,
+      // name: useFunnelState.name,
     });
   };
 
