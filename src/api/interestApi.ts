@@ -5,7 +5,7 @@ import {IToken, setAccessToken, setRefreshToken} from './authApi';
 interface Interest {
   id: number;
   name: string;
-  url: string;
+  image: string;
 }
 
 export const getInterests = async () => {

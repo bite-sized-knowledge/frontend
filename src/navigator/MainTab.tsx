@@ -4,7 +4,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Theme, useTheme} from '../context/ThemeContext';
 import Icons from '@/assets/icons';
 import {elevation} from '@/styles/tokens/elevation';
-import {Bookmark} from '@/screens/Bookmark';
+
 import {MyStack} from './MyStack';
 import {useAuth} from '@/hooks/useAuth';
 import {MAIN_SCREENS, MainTabParamList} from '@/types/constants/mainScreens';
