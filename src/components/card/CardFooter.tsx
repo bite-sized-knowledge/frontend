@@ -12,6 +12,8 @@ import {
   useCancelBookmarkMutation,
 } from '@hooks/useArticleMutations';
 import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
+import Clipboard from '@react-native-clipboard/clipboard';
+import {useToast} from 'react-native-toast-notifications';
 
 interface CardBottomProps {
   article: Article;
@@ -24,6 +26,7 @@ export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
   const [bookmarked, setBookmarked] = useState<boolean>(article.archived);
   const [shareCount, setShareCount] = useState<number>(article.shareCount);
   const [isShared, setIsShared] = useState<boolean>(false);
+  const toast = useToast();
 
   // 훅을 통한 API 호출
   const {mutate: likeMutation} = useLikeMutation(article.id, () => {
@@ -38,6 +41,11 @@ export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
   });
   const {mutate: shareMutation} = useShareMutation(article.id, {
     onSuccess: () => {
+      Clipboard.setString(article.url);
+
+      toast.hideAll();
+      toast.show('클립보드에 주소가 복사되었습니다.');
+
       if (!isShared) {
         setShareCount(prev => prev + 1);
         setIsShared(true);
