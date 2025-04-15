@@ -47,16 +47,17 @@ export const Interest = ({onNext}: InterestProps) => {
       return;
     }
 
-    if (onNext) {
-      onNext();
-      return;
-    }
-
-    setLoading(true);
     try {
       // 서버로 데이터 전송 (예시 URL 사용)
       await getGuestAccount(selectedItem);
       await AsyncStorage.setItem('interestIds', JSON.stringify(selectedItem));
+
+      if (onNext) {
+        onNext();
+        return;
+      }
+
+      setLoading(true);
 
       // 2초 후에 로딩 종료 및 화면 전환
       setTimeout(() => {
