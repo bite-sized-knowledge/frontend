@@ -154,7 +154,7 @@ export const Interest = ({onNext}: InterestProps) => {
 };
 
 interface ItemBoxProps {
-  interest: {id: number; name: string; url: string};
+  interest: {id: number; name: string; image: string};
   onPress: () => void;
   isSelected: boolean;
 }
@@ -167,7 +167,6 @@ const ItemBox = ({interest, onPress, isSelected}: ItemBoxProps) => {
   return (
     <Pressable
       onPress={onPress}
-      // style={[styles.itemBox, {backgroundColor: theme.gray4}]}
       style={[
         styles.itemBox,
         {
@@ -178,13 +177,7 @@ const ItemBox = ({interest, onPress, isSelected}: ItemBoxProps) => {
         <Text style={[styles.text]}>{interest.name}</Text>
       </View>
 
-      {/* 아이콘 */}
-      {/* <Image source={{uri: interest.url}} style={styles.icon} /> */}
-      <Image
-        src={interest.url}
-        // source={require('@/assets/image/frontend.png')}
-        style={styles.icon}
-      />
+      <Image src={interest.image} style={styles.icon} />
 
       {/* 선택 시 오버레이 (흐림 처리) */}
       {isSelected && <View style={styles.overlay} />}

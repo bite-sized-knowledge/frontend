@@ -49,9 +49,9 @@ const BookmarkedArticle = ({
           },
         ]}>
         <View style={styles.article}>
-          <View style={styles.articleHeader}>
+          {/* <View style={styles.articleHeader}>
             <Text style={[typography.body]}>{blogArticle.blog.title}</Text>
-          </View>
+          </View> */}
           <Image
             style={styles.articleImage}
             source={{uri: blogArticle.thumbnail}}
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   },
   article: {
     minWidth: 160,
-    minHeight: 192,
+    minHeight: 160,
     borderRadius: 8,
     overflow: 'hidden',
   },

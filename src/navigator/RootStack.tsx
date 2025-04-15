@@ -54,7 +54,8 @@ export const RootStack = () => {
 
   return (
     <Stack.Navigator
-      initialRouteName={initialRouteName}
+      // initialRouteName={initialRouteName}
+      initialRouteName={ROOT_SCREENS.INTEREST}
       screenOptions={{
         headerStyle: {
           height: 56 + insets.top,
