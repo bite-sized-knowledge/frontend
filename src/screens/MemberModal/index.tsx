@@ -51,7 +51,7 @@ export default function MemberModal() {
             style={{paddingBottom: 16}}
             source={require('../../assets/image/login.png')}
           />
-          <Text style={[typography.body]}>
+          <Text style={[typography.body, {color: theme.text}]}>
             로그인하고 더 많은
             {'\n'}
             기능을 이용해보세요!

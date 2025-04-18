@@ -88,7 +88,7 @@ export const Interest = ({onNext}: InterestProps) => {
           안녕하세요!{'\n'}
           관심있는 주제는 무엇인가요?
         </Text>
-        <Text style={[typography.label, {paddingTop: 8}]}>
+        <Text style={[typography.label, {color: theme.text, paddingTop: 8}]}>
           *중복 선택 할 수 있어요.
         </Text>
       </View>
@@ -163,8 +163,6 @@ interface ItemBoxProps {
 const ItemBox = ({interest, onPress, isSelected}: ItemBoxProps) => {
   const {theme} = useTheme();
 
-  console.log(interest);
-
   return (
     <Pressable
       onPress={onPress}
@@ -175,7 +173,7 @@ const ItemBox = ({interest, onPress, isSelected}: ItemBoxProps) => {
         },
       ]}>
       <View>
-        <Text style={[styles.text]}>{interest.name}</Text>
+        <Text style={[styles.text, {color: theme.text}]}>{interest.name}</Text>
       </View>
 
       <Image src={interest.image} style={styles.icon} />
@@ -243,9 +241,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   icon: {
-    width: 80,
-    height: 80,
     resizeMode: 'contain',
+    width: 40,
+    height: 40,
     position: 'absolute',
     bottom: 4,
     right: 4,
