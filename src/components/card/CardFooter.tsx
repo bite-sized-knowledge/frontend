@@ -24,9 +24,9 @@ interface CardBottomProps {
 
 export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
   // 로컬 상태(낙관적 업데이트 용)
-  const [liked, setLiked] = useState<boolean>(article.liked);
+  const [liked, setLiked] = useState<boolean>(article.isLiked);
   const [likeCount, setLikeCount] = useState<number>(article.likeCount);
-  const [bookmarked, setBookmarked] = useState<boolean>(article.archived);
+  const [bookmarked, setBookmarked] = useState<boolean>(article.isArchived);
   const [shareCount, setShareCount] = useState<number>(article.shareCount);
   const [isShared, setIsShared] = useState<boolean>(false);
   const {isLoggedIn} = useAuth();

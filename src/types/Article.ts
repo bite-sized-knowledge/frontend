@@ -11,7 +11,7 @@ export interface Article {
   shareCount: number;
   publishedAt: string;
   keywords: string[];
-  liked: boolean;
-  archived: boolean;
+  isLiked: boolean;
+  isArchived: boolean;
   blog: Blog;
 }
