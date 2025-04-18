@@ -4,52 +4,17 @@ import {useTheme} from '@/context/ThemeContext';
 import {typography} from '@/styles/tokens/typography';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import Icons from '@/assets/icons';
-import {logout} from '@/api/authApi';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {ROOT_SCREENS, RootStackParamList} from '@/types/constants/rootScreens';
+import {RootStackParamList} from '@/types/constants/rootScreens';
 import {useAuth} from '@/hooks/useAuth';
 import {MY_SCREENS, MyStackParamList} from '@/types/constants/myScreens';
-import {AUTH_SCREENS} from '@/types/constants/authScreens';
 
 export const MyDetail = ({route}) => {
   const {theme} = useTheme();
   const navigation =
     useNavigation<NavigationProp<RootStackParamList & MyStackParamList>>();
   const {jwtPayload} = route.params;
-  const {setLoggedIn} = useAuth();
-
-  const goToLogin = async () => {
-    await logout();
-
-    setLoggedIn(false);
-
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: ROOT_SCREENS.AUTH, // AuthStack
-          params: {
-            screen: AUTH_SCREENS.LOGIN, // AuthStack 안에 진입할 screen
-            params: {
-              showBackButton: false, // Login이 받을 값
-            },
-          },
-        },
-      ],
-    });
-
-    // navigation.reset({
-    //   index: 0,
-    //   routes: [
-    //     {
-    //       name: ROOT_SCREENS.AUTH,
-    //       params: {showBackButton: false},
-    //     },
-    //   ],
-    // });
-
-    // navigation.navigate(ROOT_SCREENS.AUTH);
-  };
+  const {logout} = useAuth();
 
   const goToWithdraw = async () => {
     navigation.navigate(MY_SCREENS.WITHDRAW);
@@ -80,7 +45,7 @@ export const MyDetail = ({route}) => {
           style={[styles.textWrapper, typography.body, {color: theme.text}]}>
           로그아웃
         </Text>
-        <Pressable onPress={goToLogin}>
+        <Pressable onPress={logout}>
           <Icons.ArrowRight />
         </Pressable>
       </View>

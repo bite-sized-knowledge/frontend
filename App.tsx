@@ -33,11 +33,11 @@ function App(): React.JSX.Element {
             <Host>
               <StatusBar />
               <QueryClientProvider client={queryClient}>
-                <AuthProvider>
-                  <NavigationContainer>
+                <NavigationContainer>
+                  <AuthProvider>
                     <RootStack />
-                  </NavigationContainer>
-                </AuthProvider>
+                  </AuthProvider>
+                </NavigationContainer>
               </QueryClientProvider>
             </Host>
           </ToastProvider>

@@ -67,10 +67,16 @@ export interface IToken {
 export const login = async (email: string, password: string) => {
   try {
     console.log(email, password);
-    const {data, error} = await api.post<IToken>('/v1/auth/login', {
-      email,
-      password,
-    });
+
+    const {data, error} = await api.post<IToken>(
+      '/v1/auth/login',
+      {
+        email,
+        password,
+      },
+      {},
+      false,
+    );
 
     if (!error && data) {
       await AsyncStorage.setItem('accessToken', data.token.accessToken);
@@ -86,12 +92,6 @@ export const login = async (email: string, password: string) => {
   } catch (e) {
     return false;
   }
-};
-
-export const logout = async () => {
-  await AsyncStorage.removeItem('accessToken');
-  await AsyncStorage.removeItem('refreshToken');
-  await AsyncStorage.removeItem('interestIds');
 };
 
 export const authenticationEmail = async (email: string) => {
@@ -147,6 +147,26 @@ export const signUp = async ({email, password, birth}: signUpParam) => {
 
     await AsyncStorage.removeItem('accessToken');
     await AsyncStorage.removeItem('refreshToken');
+
+    return false;
+  } catch (e) {
+    return false;
+  }
+};
+
+export const withDraw = async (memberId: string) => {
+  try {
+    const {error, status} = await api.delete(`/v1/members/${memberId}`);
+
+    if (status) {
+      await AsyncStorage.clear();
+
+      return true;
+    }
+
+    if (error) {
+      return false;
+    }
 
     return false;
   } catch (e) {
