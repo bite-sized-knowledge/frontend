@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* TecurationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TecurationTests.m */; };
+		00E356F31AD99517003FC87E /* BITETests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BITETests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		47A5BD760F6E067D78E3D6E3 /* libPods-Tecuration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79EFF7E5904B6B882E429484 /* libPods-Tecuration.a */; };
-		734CFC70C187E782492A2756 /* libPods-Tecuration-TecurationTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EBC1BA254F2457C7089196A4 /* libPods-Tecuration-TecurationTests.a */; };
+		47A5BD760F6E067D78E3D6E3 /* libPods-BITE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79EFF7E5904B6B882E429484 /* libPods-BITE.a */; };
+		734CFC70C187E782492A2756 /* libPods-BITE-BITETests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EBC1BA254F2457C7089196A4 /* libPods-BITE-BITETests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		F00AC3C174D76BE4F934BC3B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
@@ -23,28 +23,28 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = Tecuration;
+			remoteInfo = "BITE";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* TecurationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TecurationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* BITETests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BITETests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* TecurationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TecurationTests.m; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* Tecuration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tecuration.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Tecuration/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = Tecuration/AppDelegate.mm; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Tecuration/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tecuration/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Tecuration/main.m; sourceTree = "<group>"; };
-		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Tecuration/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		159B47AF15DAD0EFF9577261 /* Pods-Tecuration.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tecuration.release.xcconfig"; path = "Target Support Files/Pods-Tecuration/Pods-Tecuration.release.xcconfig"; sourceTree = "<group>"; };
-		1AC836EDB83F4D8092D62D8E /* Pods-Tecuration-TecurationTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tecuration-TecurationTests.release.xcconfig"; path = "Target Support Files/Pods-Tecuration-TecurationTests/Pods-Tecuration-TecurationTests.release.xcconfig"; sourceTree = "<group>"; };
-		2C746E23582551EB6D612D0F /* Pods-Tecuration-TecurationTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tecuration-TecurationTests.debug.xcconfig"; path = "Target Support Files/Pods-Tecuration-TecurationTests/Pods-Tecuration-TecurationTests.debug.xcconfig"; sourceTree = "<group>"; };
-		6506643A5310FE572A4D7BC0 /* Pods-Tecuration.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tecuration.debug.xcconfig"; path = "Target Support Files/Pods-Tecuration/Pods-Tecuration.debug.xcconfig"; sourceTree = "<group>"; };
-		79EFF7E5904B6B882E429484 /* libPods-Tecuration.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tecuration.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Tecuration/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		EBC1BA254F2457C7089196A4 /* libPods-Tecuration-TecurationTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tecuration-TecurationTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356F21AD99517003FC87E /* BITETests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "BITETests.m"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* BITE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BITE.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = "BITE/AppDelegate.h"; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = "BITE/AppDelegate.mm"; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "BITE/Images.xcassets"; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "BITE/Info.plist"; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "BITE/main.m"; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = BITE/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		159B47AF15DAD0EFF9577261 /* Pods-BITE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BITE.release.xcconfig"; path = "Target Support Files/Pods-BITE/Pods-BITE.release.xcconfig"; sourceTree = "<group>"; };
+		1AC836EDB83F4D8092D62D8E /* Pods-BITE-BITETests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BITE-BITETests.release.xcconfig"; path = "Target Support Files/Pods-BITE-BITETests/Pods-BITE-BITETests.release.xcconfig"; sourceTree = "<group>"; };
+		2C746E23582551EB6D612D0F /* Pods-BITE-BITETests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BITE-BITETests.debug.xcconfig"; path = "Target Support Files/Pods-BITE-BITETests/Pods-BITE-BITETests.debug.xcconfig"; sourceTree = "<group>"; };
+		6506643A5310FE572A4D7BC0 /* Pods-BITE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BITE.debug.xcconfig"; path = "Target Support Files/Pods-BITE/Pods-BITE.debug.xcconfig"; sourceTree = "<group>"; };
+		79EFF7E5904B6B882E429484 /* libPods-BITE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BITE.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "BITE/LaunchScreen.storyboard"; sourceTree = "<group>"; };
+		EBC1BA254F2457C7089196A4 /* libPods-BITE-BITETests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BITE-BITETests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -53,7 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				734CFC70C187E782492A2756 /* libPods-Tecuration-TecurationTests.a in Frameworks */,
+				734CFC70C187E782492A2756 /* libPods-BITE-BITETests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,20 +61,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				47A5BD760F6E067D78E3D6E3 /* libPods-Tecuration.a in Frameworks */,
+				47A5BD760F6E067D78E3D6E3 /* libPods-BITE.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* TecurationTests */ = {
+		00E356EF1AD99517003FC87E /* BITETests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* TecurationTests.m */,
+				00E356F21AD99517003FC87E /* BITETests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = TecurationTests;
+			path = "BITETests";
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -85,7 +85,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* Tecuration */ = {
+		13B07FAE1A68108700A75B9A /* BITE */ = {
 			isa = PBXGroup;
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -96,15 +96,15 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 			);
-			name = Tecuration;
+			name = "BITE";
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				79EFF7E5904B6B882E429484 /* libPods-Tecuration.a */,
-				EBC1BA254F2457C7089196A4 /* libPods-Tecuration-TecurationTests.a */,
+				79EFF7E5904B6B882E429484 /* libPods-BITE.a */,
+				EBC1BA254F2457C7089196A4 /* libPods-BITE-BITETests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -119,9 +119,9 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* Tecuration */,
+				13B07FAE1A68108700A75B9A /* BITE */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* TecurationTests */,
+				00E356EF1AD99517003FC87E /* BITETests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
@@ -134,8 +134,8 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* Tecuration.app */,
-				00E356EE1AD99517003FC87E /* TecurationTests.xctest */,
+				13B07F961A680F5B00A75B9A /* BITE.app */,
+				00E356EE1AD99517003FC87E /* BITETests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -143,10 +143,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6506643A5310FE572A4D7BC0 /* Pods-Tecuration.debug.xcconfig */,
-				159B47AF15DAD0EFF9577261 /* Pods-Tecuration.release.xcconfig */,
-				2C746E23582551EB6D612D0F /* Pods-Tecuration-TecurationTests.debug.xcconfig */,
-				1AC836EDB83F4D8092D62D8E /* Pods-Tecuration-TecurationTests.release.xcconfig */,
+				6506643A5310FE572A4D7BC0 /* Pods-BITE.debug.xcconfig */,
+				159B47AF15DAD0EFF9577261 /* Pods-BITE.release.xcconfig */,
+				2C746E23582551EB6D612D0F /* Pods-BITE-BITETests.debug.xcconfig */,
+				1AC836EDB83F4D8092D62D8E /* Pods-BITE-BITETests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -154,9 +154,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* TecurationTests */ = {
+		00E356ED1AD99517003FC87E /* BITETests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "TecurationTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "BITETests" */;
 			buildPhases = (
 				EEB981AB420647DDB23862A2 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
@@ -170,14 +170,14 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = TecurationTests;
-			productName = TecurationTests;
-			productReference = 00E356EE1AD99517003FC87E /* TecurationTests.xctest */;
+			name = "BITETests";
+			productname = "BITETests";
+			productReference = 00E356EE1AD99517003FC87E /* BITETests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* Tecuration */ = {
+		13B07F861A680F5B00A75B9A /* BITE */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Tecuration" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "BITE" */;
 			buildPhases = (
 				9EDE8A7346BF16806DC0EB2D /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -191,9 +191,9 @@
 			);
 			dependencies = (
 			);
-			name = Tecuration;
-			productName = Tecuration;
-			productReference = 13B07F961A680F5B00A75B9A /* Tecuration.app */;
+			name = "BITE";
+			productName = "BITE";
+			productReference = 13B07F961A680F5B00A75B9A /* BITE.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -213,7 +213,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Tecuration" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "BITE" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -226,8 +226,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* Tecuration */,
-				00E356ED1AD99517003FC87E /* TecurationTests */,
+				13B07F861A680F5B00A75B9A /* BITE */,
+				00E356ED1AD99517003FC87E /* BITETests */,
 			);
 		};
 /* End PBXProject section */
@@ -275,15 +275,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Tecuration-TecurationTests/Pods-Tecuration-TecurationTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-BITE-BITETests/Pods-BITE-BITETests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Tecuration-TecurationTests/Pods-Tecuration-TecurationTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-BITE-BITETests/Pods-BITE-BITETests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tecuration-TecurationTests/Pods-Tecuration-TecurationTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BITE-BITETests/Pods-BITE-BITETests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		56176837979A696726EC80AF /* [CP] Copy Pods Resources */ = {
@@ -292,15 +292,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Tecuration/Pods-Tecuration-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-BITE/Pods-BITE-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Tecuration/Pods-Tecuration-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-BITE/Pods-BITE-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tecuration/Pods-Tecuration-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BITE/Pods-BITE-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		8A409B2AB39D53138CB1A33D /* [CP] Embed Pods Frameworks */ = {
@@ -309,15 +309,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Tecuration/Pods-Tecuration-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-BITE/Pods-BITE-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Tecuration/Pods-Tecuration-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-BITE/Pods-BITE-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tecuration/Pods-Tecuration-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BITE/Pods-BITE-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		9EDE8A7346BF16806DC0EB2D /* [CP] Check Pods Manifest.lock */ = {
@@ -335,7 +335,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Tecuration-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-BITE-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -348,15 +348,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Tecuration-TecurationTests/Pods-Tecuration-TecurationTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-BITE-BITETests/Pods-BITE-BITETests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Tecuration-TecurationTests/Pods-Tecuration-TecurationTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-BITE-BITETests/Pods-BITE-BITETests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tecuration-TecurationTests/Pods-Tecuration-TecurationTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BITE-BITETests/Pods-BITE-BITETests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EEB981AB420647DDB23862A2 /* [CP] Check Pods Manifest.lock */ = {
@@ -374,7 +374,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Tecuration-TecurationTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-BITE-BITETests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -388,7 +388,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* TecurationTests.m in Sources */,
+				00E356F31AD99517003FC87E /* BITETests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,7 +406,7 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* Tecuration */;
+			target = 13B07F861A680F5B00A75B9A /* BITE */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -414,7 +414,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C746E23582551EB6D612D0F /* Pods-Tecuration-TecurationTests.debug.xcconfig */;
+			baseConfigurationReference = 2C746E23582551EB6D612D0F /* Pods-BITE-BITETests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = HPZ2HA2VCN;
@@ -422,7 +422,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = TecurationTests/Info.plist;
+				INFOPLIST_FILE = "BITETests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -436,18 +436,18 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bite.bite-sized-knowledge";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tecuration.app/Tecuration";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BITE.app/BITE";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1AC836EDB83F4D8092D62D8E /* Pods-Tecuration-TecurationTests.release.xcconfig */;
+			baseConfigurationReference = 1AC836EDB83F4D8092D62D8E /* Pods-BITE-BITETests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = HPZ2HA2VCN;
-				INFOPLIST_FILE = TecurationTests/Info.plist;
+				INFOPLIST_FILE = "BITETests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -461,20 +461,21 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bite.bite-sized-knowledge";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tecuration.app/Tecuration";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BITE.app/BITE";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6506643A5310FE572A4D7BC0 /* Pods-Tecuration.debug.xcconfig */;
+			baseConfigurationReference = 6506643A5310FE572A4D7BC0 /* Pods-BITE.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HPZ2HA2VCN;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Tecuration/Info.plist;
+				INFOPLIST_FILE = "BITE/Info.plist";
+             INFOPLIST_KEY_CFBundleDisplayName = "BITE";
 				INFOPLIST_KEY_CFBundleDisplayName = BITE;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -489,7 +490,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bite.bite-sized-knowledge";
-				PRODUCT_NAME = Tecuration;
+				PRODUCT_NAME = "BITE";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -503,13 +504,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 159B47AF15DAD0EFF9577261 /* Pods-Tecuration.release.xcconfig */;
+			baseConfigurationReference = 159B47AF15DAD0EFF9577261 /* Pods-BITE.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HPZ2HA2VCN;
-				INFOPLIST_FILE = Tecuration/Info.plist;
+				INFOPLIST_FILE = "BITE/Info.plist";
+             INFOPLIST_KEY_CFBundleDisplayName = "BITE";
 				INFOPLIST_KEY_CFBundleDisplayName = BITE;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -524,7 +526,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bite.bite-sized-knowledge";
-				PRODUCT_NAME = Tecuration;
+				PRODUCT_NAME = "BITE";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -684,7 +686,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "TecurationTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "BITETests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -693,7 +695,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Tecuration" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "BITE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -702,7 +704,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Tecuration" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "BITE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
