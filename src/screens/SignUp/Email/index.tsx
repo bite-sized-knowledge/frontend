@@ -67,7 +67,7 @@ export const EmailInput = () => {
     email,
     data => {
       if (!data.status) {
-        setErrMsg(data.message);
+        setErrMsg(data.data.message);
         return;
       }
 
