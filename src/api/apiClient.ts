@@ -38,14 +38,21 @@ class ApiClient {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
+    authRequired: boolean = true,
   ): Promise<{data: T | null; error: Error | null; status: boolean}> {
     try {
       const url = `${this.baseUrl}${endpoint}`;
-      const accessToken = await getAccessToken();
+
+      let accessToken: string | null = null;
+      if (authRequired) {
+        accessToken = await getAccessToken();
+      }
 
       const headers = {
         ...this.defaultHeaders,
-        ...(accessToken ? {Authorization: `Bearer ${accessToken}`} : {}),
+        ...(authRequired && accessToken
+          ? {Authorization: `Bearer ${accessToken}`}
+          : {}),
         ...options.headers,
       };
 
@@ -55,7 +62,7 @@ class ApiClient {
       });
 
       // 만약 토큰이 만료되었을 경우 (401 Unauthorized), 리프레시 토큰으로 새로운 액세스 토큰을 발급받고 다시 요청
-      if (response.status === 401) {
+      if (authRequired && response.status === 401) {
         const newAccessToken = await refreshAccessToken();
 
         // 새 토큰으로 재요청
@@ -68,9 +75,9 @@ class ApiClient {
         });
       }
 
-      const data = (await response.json().catch(() => null)) as ApiResponse<T>;
+      console.log(url, options);
 
-      console.log(`url: ${url}, data: ${data.result}`);
+      const data = (await response.json().catch(() => null)) as ApiResponse<T>;
 
       if (data) {
         return {
@@ -97,28 +104,58 @@ class ApiClient {
     }
   }
 
-  async get<T>(endpoint: string, options: RequestInit = {}) {
-    return this.request<T>(endpoint, {...options, method: 'GET'});
+  async get<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    authRequired = true,
+  ) {
+    return this.request<T>(endpoint, {...options, method: 'GET'}, authRequired);
   }
 
-  async post<T>(endpoint: string, body: unknown, options: RequestInit = {}) {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
+  async post<T>(
+    endpoint: string,
+    body: unknown,
+    options: RequestInit = {},
+    authRequired = true,
+  ) {
+    return this.request<T>(
+      endpoint,
+      {
+        ...options,
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      authRequired,
+    );
   }
 
-  async put<T>(endpoint: string, body: unknown, options: RequestInit = {}) {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'PUT',
-      body: JSON.stringify(body),
-    });
+  async put<T>(
+    endpoint: string,
+    body: unknown,
+    options: RequestInit = {},
+    authRequired = true,
+  ) {
+    return this.request<T>(
+      endpoint,
+      {
+        ...options,
+        method: 'PUT',
+        body: JSON.stringify(body),
+      },
+      authRequired,
+    );
   }
 
-  async delete<T>(endpoint: string, options: RequestInit = {}) {
-    return this.request<T>(endpoint, {...options, method: 'DELETE'});
+  async delete<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    authRequired = true,
+  ) {
+    return this.request<T>(
+      endpoint,
+      {...options, method: 'DELETE'},
+      authRequired,
+    );
   }
 }
 
