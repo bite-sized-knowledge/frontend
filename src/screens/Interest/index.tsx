@@ -241,12 +241,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   icon: {
-    resizeMode: 'contain',
     width: 40,
     height: 40,
+    resizeMode: 'cover',
     position: 'absolute',
-    bottom: 4,
-    right: 4,
+    bottom: 10,
+    right: 10,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
