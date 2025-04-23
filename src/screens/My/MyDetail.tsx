@@ -1,3 +1,4 @@
+/* eslint-disable curly */
 import React from 'react';
 import CustomHeader from '@/components/common/CustomHeader';
 import {useTheme} from '@/context/ThemeContext';
@@ -20,6 +21,20 @@ export const MyDetail = ({route}) => {
     navigation.navigate(MY_SCREENS.WITHDRAW);
   };
 
+  const getEmailProvider = (email: string): string => {
+    const domain = email.split('@')[1]?.toLowerCase();
+
+    if (!domain) return 'Unknown';
+
+    if (domain.includes('naver')) return 'Naver';
+    if (domain.includes('gmail')) return 'Gmail';
+    if (domain.includes('daum')) return 'Daum';
+    if (domain.includes('hotmail')) return 'Hotmail';
+    if (domain.includes('yahoo')) return 'Yahoo';
+
+    return 'Other';
+  };
+
   return (
     <View style={[styles.container, {backgroundColor: theme.background}]}>
       <CustomHeader title={''} showBackButton={true} />
@@ -32,13 +47,13 @@ export const MyDetail = ({route}) => {
       <View style={[styles.listItemWrapper, {borderBottomColor: theme.gray4}]}>
         <Text
           style={[styles.textWrapper, typography.body, {color: theme.text}]}>
-          Google
+          {getEmailProvider(jwtPayload.email)}
           {'\n'}
           <Text style={[typography.caption, {color: theme.gray3}]}>
             {jwtPayload.email}
           </Text>
         </Text>
-        <Icons.ArrowRight />
+        {/* <Icons.ArrowRight /> */}
       </View>
       <View style={[styles.listItemWrapper, {borderBottomColor: theme.gray4}]}>
         <Text
