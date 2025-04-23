@@ -13,10 +13,12 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import {login} from '@/api/authApi';
+import {getAccessToken, login} from '@/api/authApi';
 import {ROOT_SCREENS, RootStackParamList} from '@/types/constants/rootScreens';
 import {useAuth} from '@/hooks/useAuth';
 import {AUTH_SCREENS, AuthStackParamList} from '@/types/constants/authScreens';
+import {UserInfo} from '@/navigator/RootStack';
+import {jwtDecode} from 'jwt-decode';
 
 interface LoginProps {
   onBackPress?: () => void;
@@ -37,7 +39,7 @@ export const Login = ({onBackPress}: LoginProps) => {
   const showBackButton =
     route.params?.showBackButton != null ? route.params.showBackButton : true;
 
-  const {setLoggedIn} = useAuth();
+  const {setLoggedIn, setToken} = useAuth();
 
   const handleLoginButtonClick = async () => {
     if (email.trim().length <= 1 || password.trim().length <= 1) return;
@@ -50,6 +52,9 @@ export const Login = ({onBackPress}: LoginProps) => {
     }
 
     setLoggedIn(true);
+
+    const accessToken = await getAccessToken();
+    setToken(jwtDecode<UserInfo>(accessToken!));
     navigation.navigate(ROOT_SCREENS.MAIN);
   };
 

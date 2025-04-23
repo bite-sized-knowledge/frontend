@@ -10,9 +10,18 @@ import {ScreenName, ROOT_SCREENS} from '@/types/constants/rootScreens';
 import MemberModal from '@/screens/MemberModal';
 import {refreshAccessToken} from '@/api/authApi';
 import {useAuth} from '@/hooks/useAuth';
-import {jwtDecode} from 'jwt-decode';
+import {jwtDecode, JwtPayload} from 'jwt-decode';
 
 const Stack = createStackNavigator();
+
+export interface UserInfo extends JwtPayload {
+  birth?: number;
+  email?: string;
+  name?: string;
+  id?: number;
+  role?: 'ROLE_USER' | 'ROLE_GUEST';
+  status?: string;
+}
 
 export const RootStack = () => {
   const insets = useSafeAreaInsets();
@@ -21,7 +30,7 @@ export const RootStack = () => {
     ROOT_SCREENS.INTEREST,
   );
   const [isLoading, setIsLoading] = useState(true);
-  const {setLoggedIn} = useAuth();
+  const {setLoggedIn, setToken} = useAuth();
 
   useEffect(() => {
     setIsLoading(true);
@@ -38,11 +47,12 @@ export const RootStack = () => {
           return;
         }
 
-        const decoded = jwtDecode(accessToken);
+        const decoded = jwtDecode<UserInfo>(accessToken);
 
         // 비회원/회원 판별
         if (decoded.role !== 'ROLE_GUEST') {
           setLoggedIn(true);
+          setToken(decoded);
         } else {
           setLoggedIn(false);
         }
