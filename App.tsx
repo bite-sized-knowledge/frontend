@@ -20,7 +20,7 @@ function App(): React.JSX.Element {
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide();
-    }, 10000); //스플래시 활성화 시간
+    }, 2000); //스플래시 활성화 시간
   });
 
   return (
