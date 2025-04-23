@@ -44,8 +44,6 @@ export const sendEvent = (
       targetId,
       eventType,
     });
-
-    console.log(111, targetType, targetId, eventType);
   } catch (e) {
     console.log(e);
   }
