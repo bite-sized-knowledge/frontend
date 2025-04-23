@@ -4,16 +4,16 @@ import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {useTheme} from '@/context/ThemeContext';
 import {typography} from '@/styles/tokens/typography';
 import Icons from '@/assets/icons';
-import {useNavigation} from '@react-navigation/native';
 import {BaseButton} from '@/components/button';
+import {useWithdraw} from '@/hooks/useWithdraw';
 
 export const WithdrawDetail = () => {
   const {theme} = useTheme();
-  const navigation = useNavigation();
   const [checked, setChecked] = useState(false);
+  const {mutate: withdrawAccount} = useWithdraw();
 
-  const navigateToDetail = () => {
-    navigation.navigate('MyDetail', {jwtPayload});
+  const onPressWithdraw = () => {
+    withdrawAccount();
   };
 
   return (
@@ -48,6 +48,7 @@ export const WithdrawDetail = () => {
             title={'확인'}
             style={[{backgroundColor: theme.main}]}
             textStyle={{color: theme.background}}
+            onPress={onPressWithdraw}
           />
         ) : (
           <BaseButton
