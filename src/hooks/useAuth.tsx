@@ -10,7 +10,7 @@ type AuthContextType = {
   token: UserInfo | null;
   isLoggedIn: boolean;
   setLoggedIn: (status: boolean) => void;
-  setToken: (token: UserInfo) => void;
+  setToken: (token: UserInfo | null) => void;
   logout: () => Promise<void>;
 };
 
