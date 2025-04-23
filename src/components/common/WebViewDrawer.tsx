@@ -152,7 +152,9 @@ export const WebViewDrawer: React.FC<WebViewDrawerProps> = ({
 
   return (
     <Portal>
-      <View style={StyleSheet.absoluteFill}>
+      {/* ios에서는 문제가 없었는데, 안드로이드에서는 웹뷰가 피드에서의 이벤트를 인터셉트해서 display로 컨트롤함 */}
+      <View
+        style={[{display: visible ? 'flex' : 'none'}, StyleSheet.absoluteFill]}>
         {/* Overlay: 터치 시 Drawer 닫힘 (TouchableWithoutFeedback으로 터치 효과 제거) */}
         <TouchableWithoutFeedback onPress={closeDrawer}>
           <Animated.View style={[styles.overlay, overlayAnimatedStyle]} />

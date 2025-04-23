@@ -51,7 +51,10 @@ const FeedItem = ({
     <View
       style={[
         styles.feedSection,
-        {height: itemHeight, backgroundColor: theme.background},
+        {
+          height: itemHeight,
+          backgroundColor: theme.background,
+        },
       ]}>
       <Card
         article={{...item}}
@@ -82,6 +85,8 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     setArticleId(data);
     sendEvent(TARGET_TYPE.ARTICLE, data, EVENT_TYPE.ARTICLE_IN);
   }, []);
+
+  useEffect(() => {}, [visible]);
 
   // 전체 아이템 높이를 계산 (피드 아이템과 스켈레톤 UI 모두 동일하게 사용)
   const itemHeight =
@@ -211,9 +216,15 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
             </View>
           ) : null
         }
-        pagingEnabled={true}
+        snapToInterval={itemHeight}
+        snapToAlignment="start"
         showsVerticalScrollIndicator={false}
         onViewableItemsChanged={onViewableItemsChanged}
+        getItemLayout={(_, index) => ({
+          length: itemHeight,
+          offset: itemHeight * index,
+          index,
+        })}
       />
       <WebViewDrawer
         visible={visible}

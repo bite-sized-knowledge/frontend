@@ -135,10 +135,7 @@ export const BlogFeed: React.FC = ({route}) => {
       <FlatList
         ref={flatListRef}
         keyExtractor={item => item.id}
-        initialScrollIndex={currentIndex}
         data={article}
-        getItemLayout={getItemLayout} // 항목의 위치를 계산해주는 함수 추가
-        onScrollToIndexFailed={onScrollToIndexFailed} // Handling failure
         renderItem={({item}) => (
           <FeedItem item={item} handleCardBodyClick={handleCardBodyClick} />
         )}
@@ -155,9 +152,13 @@ export const BlogFeed: React.FC = ({route}) => {
             </View>
           ) : null
         }
-        pagingEnabled={true}
+        snapToInterval={itemHeight}
+        snapToAlignment="start"
         showsVerticalScrollIndicator={false}
         onViewableItemsChanged={onViewableItemsChanged}
+        getItemLayout={getItemLayout} // 항목의 위치를 계산해주는 함수 추가
+        initialScrollIndex={currentIndex}
+        onScrollToIndexFailed={onScrollToIndexFailed} // Handling failure
       />
       <WebViewDrawer
         visible={visible}
