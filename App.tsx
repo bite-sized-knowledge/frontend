@@ -13,6 +13,7 @@ import {typography} from './src/styles/tokens/typography';
 import {lightTheme} from './src/styles/themes';
 import SplashScreen from 'react-native-splash-screen';
 import {AuthProvider} from './src/hooks/useAuth';
+import 'core-js/stable/atob';
 
 const queryClient = new QueryClient();
 

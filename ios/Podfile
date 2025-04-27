@@ -19,6 +19,7 @@ target 'BITE' do
 
   use_react_native!(
     :path => config[:reactNativePath],
+    :hermes_enabled => false, # <- 명시적으로 꺼줍니다
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
