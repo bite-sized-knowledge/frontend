@@ -11,7 +11,7 @@ import {
 import React from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 
-import {NativeFunnelParamList, navigationParamName} from './signUpContext';
+import {NativeFunnelParamList} from './signUpContext';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ROOT_SCREENS, RootStackParamList} from '@/types/constants/rootScreens';
 

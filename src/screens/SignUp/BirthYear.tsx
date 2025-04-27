@@ -14,7 +14,9 @@ import {
 } from './signUpContext.ts';
 import YearSpinner from '@/components/yearSpinner/index.tsx';
 import {BaseButton} from '@/components/button/index.tsx';
-import {signUp} from '@/api/authApi.ts';
+import {getAccessToken, signUp} from '@/api/authApi.ts';
+import {useAuth} from '@/hooks/useAuth.tsx';
+import {jwtDecode} from 'jwt-decode';
 
 interface BirthYearProps {
   onNext: Function;
@@ -26,6 +28,7 @@ export const BirthYear = ({onNext, onBack}: BirthYearProps) => {
   const insets = useSafeAreaInsets();
   const [year, setYear] = useState<number>();
   const [isYearSpinnerVisible, setIsYearSpinnerVisible] = useState(false);
+  const {setLoggedIn, setToken} = useAuth();
 
   const route = useRoute<RouteProp<NativeFunnelParamList>>();
   const useFunnelState = route.params?.[navigationParamName]?.signUp?.context;
@@ -34,7 +37,6 @@ export const BirthYear = ({onNext, onBack}: BirthYearProps) => {
     onBack({
       email: useFunnelState.email,
       password: '',
-      // name: useFunnelState.name,
     });
   };
 
@@ -58,6 +60,14 @@ export const BirthYear = ({onNext, onBack}: BirthYearProps) => {
     const isSuccess = await signUp({...useFunnelState, birth: year});
     if (!isSuccess) {
       return;
+    }
+
+    const token = await getAccessToken();
+
+    if (token) {
+      setLoggedIn(true);
+      const payload = jwtDecode(token);
+      setToken(payload);
     }
 
     onNext(year);
@@ -84,7 +94,6 @@ export const BirthYear = ({onNext, onBack}: BirthYearProps) => {
               placeholder="YYYY"
               value={year?.toString()}
               autoCapitalize="none"
-              // editable={false}
               onFocus={() => {
                 Keyboard.dismiss();
                 openYearSpinner();
