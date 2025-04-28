@@ -11,6 +11,7 @@ import {useNavigation} from '@react-navigation/native';
 import {Blog as BlogType} from '@/types/Blog';
 import {mergeWithoutDuplicates} from '@/util/utils';
 import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
+import {ArticleWithPlaceholder} from '../Bookmark';
 
 export const ROWS_PER_PAGE = 10;
 
@@ -78,7 +79,9 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
   const {theme} = useTheme();
   // 해당 쿼리키만 따로 관리하는 이유는 블로그 ID가 바뀔 때 next를 초기화시키고 재조회하기 위해 따로 관리함. 그냥 사용하면 재조회 이후 next값이 수정됨.
   const [queryKey, setQueryKey] = useState(['blogArticles', blogId]);
-  const [blogArticles, setBlogArticles] = useState<Article[]>([]);
+  const [blogArticles, setBlogArticles] = useState<ArticleWithPlaceholder[]>(
+    [],
+  );
   const [next, setNext] = useState<string | null>(null);
 
   useEffect(() => {
@@ -107,9 +110,19 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
   // 새로운 데이터가 로드되면 기존 데이터에 추가
   useEffect(() => {
     if (newBlogArticles) {
-      setBlogArticles(
-        mergeWithoutDuplicates(blogArticles, newBlogArticles?.articles),
+      const data = mergeWithoutDuplicates(
+        blogArticles,
+        newBlogArticles?.articles,
       );
+
+      if (data.length % 2 === 1) {
+        data.push({
+          id: data.length + 1,
+          isPlaceholder: true,
+        });
+      }
+
+      setBlogArticles(data);
       setNext(newBlogArticles?.next ?? null);
     }
   }, [newBlogArticles]);
@@ -118,6 +131,30 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
     if (!isRefetching && !isLoading && next) {
       refetch();
     }
+  };
+
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: ArticleWithPlaceholder;
+    index: number;
+  }) => {
+    if (item.isPlaceholder) {
+      return (
+        <View style={{flex: 1}}>
+          <View style={[styles.article, {backgroundColor: 'transparent'}]} />
+        </View>
+      );
+    }
+    return (
+      <BlogArticle
+        blogArticle={item}
+        totalArticles={blogArticles.filter(article => !article.isPlaceholder)}
+        currentIndex={index}
+        next={next}
+      />
+    );
   };
 
   return (
@@ -140,14 +177,15 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
         numColumns={2}
         contentContainerStyle={styles.gap}
         columnWrapperStyle={styles.gap}
-        renderItem={article => (
-          <BlogArticle
-            blogArticle={article.item}
-            totalArticles={blogArticles}
-            currentIndex={article.index}
-            next={next}
-          />
-        )}
+        // renderItem={article => (
+        //   <BlogArticle
+        //     blogArticle={article.item}
+        //     totalArticles={blogArticles}
+        //     currentIndex={article.index}
+        //     next={next}
+        //   />
+        // )}
+        renderItem={renderItem}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.6}
         decelerationRate="fast"

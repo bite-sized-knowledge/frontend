@@ -21,7 +21,7 @@ interface ArticleProps {
   blogArticle: Article;
 }
 
-interface ArticleWithPlaceholder extends Article {
+export interface ArticleWithPlaceholder extends Article {
   isPlaceholder?: boolean;
 }
 
