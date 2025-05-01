@@ -1,6 +1,6 @@
 export const mergeWithoutDuplicates = (
-  oldValues: any[],
-  newValues: any[],
+  oldValues: any[] = [],
+  newValues: any[] = [],
 ) => {
   const map = new Map();
 
