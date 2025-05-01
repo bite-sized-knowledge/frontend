@@ -73,6 +73,15 @@
 				<key>NSExceptionRequiresForwardSecrecy</key>
 				<true/>
       </dict>
+			<key>developers-kr.googleblog.com</key>
+      <dict>
+        <key>NSIncludesSubdomains</key>
+        <true/>
+        <key>NSExceptionAllowsInsecureHTTPLoads</key>
+        <true/>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<true/>
+      </dict>
     </dict>
   </dict>
 </dict>
