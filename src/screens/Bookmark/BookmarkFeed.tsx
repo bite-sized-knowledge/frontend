@@ -1,15 +1,20 @@
-import React, {useCallback, useRef, useState} from 'react';
-import {Dimensions, FlatList, StyleSheet, View, ViewToken} from 'react-native';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import {
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  View,
+  ViewabilityConfig,
+  ViewToken,
+} from 'react-native';
 import {Card} from '@/components/card/Card';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useMutation} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
 import CustomHeader from '@/components/common/CustomHeader';
 import {WebViewDrawer} from '@/components/common/WebViewDrawer';
 import {Article} from '@/types/Article';
 import {SkeletonCard} from '@/components/card/CardSkeleton';
-import {ROWS_PER_PAGE} from '.';
-import {getBlogArticle} from '@/api/blogApi';
+import {useBookmarkedArticles} from '@/hooks/useBookmarkedArticles';
 
 export const BOTTOM_TAB_HEIGHT = 56;
 export const HEADER_HEIGHT = 64;
@@ -49,15 +54,11 @@ const FeedItem = ({item, handleCardBodyClick}: FeedItemProps) => {
 
 export const BookmarkFeed: React.FC = ({route}) => {
   const flatListRef = useRef<FlatList>(null); // FlatList에 대한 ref
-  const {totalArticles, currentIndex, next} = route.params;
-  const [article, setArticle] = useState<Article[]>(totalArticles);
+  const {currentIndex} = route.params;
   const [visible, setVisible] = useState<boolean>(false);
   const [articleId, setArticleId] = useState<null | string>(null);
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
-  const blogId = totalArticles[0].blog.id;
-  const [next2, setNext2] = useState<string | null>(next);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleCardBodyClick = useCallback((data: string) => {
     setVisible(true);
@@ -72,42 +73,33 @@ export const BookmarkFeed: React.FC = ({route}) => {
     insets.top -
     insets.bottom;
 
-  const {mutate} = useMutation({
-    mutationFn: () => getBlogArticle(blogId, ROWS_PER_PAGE, next2),
-    onSuccess: newValue => {
-      setArticle(prev => [
-        ...prev,
-        ...(newValue?.data?.articles.map(newArticle => {
-          return {
-            ...newArticle,
-            blog: totalArticles[0].blog,
-          };
-        }) ?? []),
-      ]);
-      setNext2(newValue?.data?.next ?? null);
-      setIsLoading(false);
-    },
-  });
+  const {
+    data: bookmarkedArticles,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useBookmarkedArticles();
 
-  const onViewableItemsChanged = useCallback(
-    ({viewableItems}: {viewableItems: Array<ViewToken<Article>>}) => {
-      if (!viewableItems.length) {
-        return;
-      }
-
-      const lastVisibleIndex = viewableItems[viewableItems.length - 1].index;
-
-      if (
-        lastVisibleIndex &&
-        article.length - lastVisibleIndex <= 3 &&
-        !isLoading
-      ) {
-        setIsLoading(true);
-        mutate();
-      }
-    },
-    [article.length, isLoading, mutate],
+  // pages 배열을 단일 배열로 펼치기
+  const flatData = useMemo(
+    () => bookmarkedArticles?.pages.flatMap(page => page?.articles ?? []) ?? [],
+    [bookmarkedArticles],
   );
+
+  const onViewableItemsChanged = React.useRef(
+    ({viewableItems}: {viewableItems: ViewToken[]}) => {
+      const last = viewableItems[viewableItems.length - 1];
+      if (
+        last &&
+        last.index! >= flatData.length - 2 &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
+        fetchNextPage();
+      }
+    },
+  ).current;
 
   const onScrollToIndexFailed = (info: {
     index: number;
@@ -126,13 +118,17 @@ export const BookmarkFeed: React.FC = ({route}) => {
     index, // 인덱스 값
   });
 
+  const viewabilityConfig: ViewabilityConfig = {
+    itemVisiblePercentThreshold: 80,
+  };
+
   return (
     <View style={[styles.feeds, {backgroundColor: theme.background}]}>
-      <CustomHeader title={totalArticles[0].blog.title} showBackButton={true} />
+      <CustomHeader title={'Bookmark'} showBackButton={true} />
       <FlatList
         ref={flatListRef}
         keyExtractor={item => item.id}
-        data={article}
+        data={flatData}
         renderItem={({item}) => (
           <FeedItem item={item} handleCardBodyClick={handleCardBodyClick} />
         )}
@@ -156,6 +152,7 @@ export const BookmarkFeed: React.FC = ({route}) => {
         initialScrollIndex={currentIndex}
         getItemLayout={getItemLayout} // 항목의 위치를 계산해주는 함수 추가
         onScrollToIndexFailed={onScrollToIndexFailed} // Handling failure
+        viewabilityConfig={viewabilityConfig}
       />
       <WebViewDrawer
         visible={visible}

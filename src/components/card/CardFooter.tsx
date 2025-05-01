@@ -17,12 +17,15 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {ROOT_SCREENS, RootStackParamList} from '@/types/constants/rootScreens';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useToast} from 'react-native-toast-notifications';
+import {useQueryClient} from '@tanstack/react-query';
 
 interface CardBottomProps {
   article: Article;
 }
 
 export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
+  const queryClient = useQueryClient();
+
   // 로컬 상태(낙관적 업데이트 용)
   const [liked, setLiked] = useState<boolean>(article.isLiked);
   const [likeCount, setLikeCount] = useState<number>(article.likeCount);
@@ -59,12 +62,20 @@ export const CardFooter: React.FC<CardBottomProps> = ({article}) => {
     },
   });
   const {mutate: bookmarkMutation} = useBookmarkMutation(article.id, () => {
+    queryClient.invalidateQueries({
+      queryKey: ['bookmarks'],
+      refetchType: 'inactive',
+    });
     setBookmarked(true);
     sendEvent(TARGET_TYPE.ARTICLE, article.id, EVENT_TYPE.ARCHIVE);
   });
   const {mutate: cancelBookmarkMutation} = useCancelBookmarkMutation(
     article.id,
     () => {
+      queryClient.invalidateQueries({
+        queryKey: ['bookmarks'],
+        refetchType: 'inactive',
+      });
       setBookmarked(false);
       sendEvent(TARGET_TYPE.ARTICLE, article.id, EVENT_TYPE.ARCHIVE_CANCEL);
     },

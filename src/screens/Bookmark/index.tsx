@@ -1,23 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {View, Text, Image, StyleSheet, FlatList, Pressable} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
 import {elevation} from '../../styles/tokens/elevation';
 import CustomHeader from '@/components/common/CustomHeader';
-import {useQuery} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
 import {Article} from '@/types/Article';
-import {useNavigation} from '@react-navigation/native';
-import {getBookmarkedArticles} from '@/api/articleApi';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {jwtDecode} from 'jwt-decode';
 import {getAccessToken} from '@/api/authApi';
-import {mergeWithoutDuplicates} from '@/util/utils';
+import {UserInfo} from '@/navigator/RootStack';
+import {useBookmarkedArticles} from '@/hooks/useBookmarkedArticles';
 
 export const ROWS_PER_PAGE = 10;
 
 interface ArticleProps {
-  totalArticles: Article[];
   currentIndex: number;
-  next: string | null;
   blogArticle: Article;
 }
 
@@ -25,12 +22,7 @@ export interface ArticleWithPlaceholder extends Article {
   isPlaceholder?: boolean;
 }
 
-const BookmarkedArticle = ({
-  blogArticle,
-  totalArticles,
-  currentIndex,
-  next,
-}: ArticleProps) => {
+const BookmarkedArticle = ({blogArticle, currentIndex}: ArticleProps) => {
   const navigation = useNavigation();
   const {theme, themeMode} = useTheme();
 
@@ -39,9 +31,7 @@ const BookmarkedArticle = ({
       style={{flex: 1}}
       onPress={() =>
         navigation.navigate('bookmarkFeed', {
-          totalArticles,
           currentIndex,
-          next,
         })
       }>
       <View
@@ -55,9 +45,6 @@ const BookmarkedArticle = ({
           },
         ]}>
         <View style={styles.article}>
-          {/* <View style={styles.articleHeader}>
-            <Text style={[typography.body]}>{blogArticle.blog.title}</Text>
-          </View> */}
           <Image
             style={styles.articleImage}
             source={{uri: blogArticle.thumbnail}}
@@ -78,14 +65,7 @@ const BookmarkedArticle = ({
 
 export const Bookmark = () => {
   const {theme} = useTheme();
-  // 해당 쿼리키만 따로 관리하는 이유는 블로그 ID가 바뀔 때 next를 초기화시키고 재조회하기 위해 따로 관리함. 그냥 사용하면 재조회 이후 next값이 수정됨.
-  const [queryKey, setQueryKey] = useState(['bookmarkArticles']);
-  const [blogArticles, setBlogArticles] = useState<ArticleWithPlaceholder[]>(
-    [],
-  );
-  const [next, setNext] = useState<string | null>(null);
-
-  const [jwtPayload, setJwtPayload] = useState();
+  const [jwtPayload, setJwtPayload] = useState<UserInfo | null>(null);
 
   useEffect(() => {
     const fetchAndDecodeJWT = async () => {
@@ -94,7 +74,7 @@ export const Bookmark = () => {
         const token = await getAccessToken();
         if (token) {
           // jwt-decode를 사용해 토큰 디코딩
-          const decoded = jwtDecode(token);
+          const decoded = jwtDecode<UserInfo>(token);
 
           setJwtPayload(decoded!);
         }
@@ -108,38 +88,41 @@ export const Bookmark = () => {
 
   const {
     data: newBookmarkedArticles,
-    isLoading,
-    isRefetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     refetch,
-  } = useQuery({
-    queryKey,
-    queryFn: () => getBookmarkedArticles(ROWS_PER_PAGE, next),
-  });
+  } = useBookmarkedArticles();
 
-  // 새로운 데이터가 로드되면 기존 데이터에 추가
+  const isFocused = useIsFocused();
+
+  // 화면이 포커스될 때만 재조회
   useEffect(() => {
-    if (newBookmarkedArticles) {
-      const data = mergeWithoutDuplicates(
-        blogArticles,
-        newBookmarkedArticles.articles,
-      );
-
-      if (data.length % 2 === 1) {
-        data.push({
-          id: data.length + 1,
-          isPlaceholder: true,
-        });
-      }
-      setBlogArticles(data);
-      setNext(newBookmarkedArticles?.next ?? null);
-    }
-  }, [newBookmarkedArticles]);
-
-  const onEndReached = () => {
-    if (!isRefetching && !isLoading && next) {
+    if (isFocused) {
       refetch();
     }
-  };
+  }, [isFocused, refetch]);
+
+  // pages 배열을 단일 배열로 펼치기
+  const flatData = useMemo(() => {
+    let data: ArticleWithPlaceholder[] =
+      newBookmarkedArticles?.pages.flatMap(page => page?.articles ?? []) ?? [];
+
+    if (data.length % 2 !== 0) {
+      data.push({
+        id: `${data.length + 1}`,
+        isPlaceholder: true,
+      } as ArticleWithPlaceholder);
+    }
+    return data;
+  }, [newBookmarkedArticles]);
+
+  // 끝에 다다르면 다음 페이지 요청
+  const onEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const renderItem = ({
     item,
@@ -155,14 +138,7 @@ export const Bookmark = () => {
         </View>
       );
     }
-    return (
-      <BookmarkedArticle
-        blogArticle={item}
-        totalArticles={blogArticles.filter(article => !article.isPlaceholder)}
-        currentIndex={index}
-        next={next}
-      />
-    );
+    return <BookmarkedArticle blogArticle={item} currentIndex={index} />;
   };
 
   return (
@@ -179,7 +155,7 @@ export const Bookmark = () => {
       </View>
       <FlatList
         keyExtractor={item => item.id}
-        data={blogArticles}
+        data={flatData}
         numColumns={2}
         contentContainerStyle={[styles.gap, {padding: 16}]}
         columnWrapperStyle={styles.gap}
@@ -209,7 +185,7 @@ const styles = StyleSheet.create({
   },
   article: {
     minWidth: 160,
-    minHeight: 148,
+    minHeight: 160,
     borderRadius: 8,
     overflow: 'hidden',
   },

@@ -1,5 +1,7 @@
 import {Article} from '@/types/Article';
 import {api} from './apiClient';
+import {ROWS_PER_PAGE} from '@/screens/Bookmark';
+import {QueryFunctionContext} from '@tanstack/react-query';
 
 export const like = async (articleId: string) => {
   const data = await api.post(`/v1/articles/${articleId}/likes`, {});
@@ -38,16 +40,19 @@ export const deleteBookmark = async (articleId: string) => {
 };
 
 export const getBookmarkedArticles = async (
-  limit: number,
-  from: string | null,
+  context: QueryFunctionContext<
+    readonly ['bookmarks'], // queryKey literal 타입
+    string | null // pageParam 타입
+  >,
 ) => {
-  let url = `/v1/articles/bookmarks?limit=${limit}`;
+  const {pageParam} = context; // string | null
 
-  if (from) {
-    url += `&from=${from}`;
+  let url = `/v1/articles/bookmarks?limit=${ROWS_PER_PAGE}`;
+  if (pageParam) {
+    url += `&from=${pageParam}`;
   }
 
-  const {data} = await api.get<{articles: Article[]; next: string}>(url);
+  const {data} = await api.get<{articles: Article[]; next: string | null}>(url);
 
   return data;
 };
