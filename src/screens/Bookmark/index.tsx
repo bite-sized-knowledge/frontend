@@ -15,14 +15,14 @@ export const ROWS_PER_PAGE = 10;
 
 interface ArticleProps {
   currentIndex: number;
-  blogArticle: Article;
+  bookmarkArticle: Article;
 }
 
 export interface ArticleWithPlaceholder extends Article {
   isPlaceholder?: boolean;
 }
 
-const BookmarkedArticle = ({blogArticle, currentIndex}: ArticleProps) => {
+const BookmarkedArticle = ({bookmarkArticle, currentIndex}: ArticleProps) => {
   const navigation = useNavigation();
   const {theme, themeMode} = useTheme();
 
@@ -47,14 +47,14 @@ const BookmarkedArticle = ({blogArticle, currentIndex}: ArticleProps) => {
         <View style={styles.article}>
           <Image
             style={styles.articleImage}
-            source={{uri: blogArticle.thumbnail}}
+            source={{uri: bookmarkArticle.thumbnail}}
           />
           <View style={[styles.articleTitle]}>
             <Text
               style={[typography.body, {color: theme.text}]}
               numberOfLines={2}
               ellipsizeMode="tail">
-              {blogArticle.title}
+              {bookmarkArticle.title}
             </Text>
           </View>
         </View>
@@ -64,8 +64,14 @@ const BookmarkedArticle = ({blogArticle, currentIndex}: ArticleProps) => {
 };
 
 export const Bookmark = () => {
-  const {theme} = useTheme();
+  const {theme, themeMode} = useTheme();
   const [jwtPayload, setJwtPayload] = useState<UserInfo | null>(null);
+  // themeImages.ts
+  const emptyBookmarkImages = {
+    light: require('@assets/image/empty_bookmark_light.png'),
+    dark: require('@assets/image/empty_bookmark_dark.png'),
+  } as const;
+  const imageSource = emptyBookmarkImages[themeMode];
 
   useEffect(() => {
     const fetchAndDecodeJWT = async () => {
@@ -138,33 +144,63 @@ export const Bookmark = () => {
         </View>
       );
     }
-    return <BookmarkedArticle blogArticle={item} currentIndex={index} />;
+    return <BookmarkedArticle bookmarkArticle={item} currentIndex={index} />;
   };
+
+  console.log(flatData);
 
   return (
     <View style={{backgroundColor: theme.background, flex: 1}}>
       <CustomHeader title={'Bookmark'} showBackButton={false} />
-      <View style={styles.blogSection}>
-        <Image
-          style={styles.blogImage}
-          source={require('@assets/image/profileImage.png')}
-        />
-        <Text style={[typography.head, {color: theme.text}]}>
-          {jwtPayload?.name}
-        </Text>
-      </View>
-      <FlatList
-        keyExtractor={item => item.id}
-        data={flatData}
-        numColumns={2}
-        contentContainerStyle={[styles.gap, {padding: 16}]}
-        columnWrapperStyle={styles.gap}
-        renderItem={renderItem}
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.6}
-        decelerationRate="fast"
-        showsVerticalScrollIndicator={false} // 스크롤 표시 제거
-      />
+
+      {flatData.length === 0 ? (
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Image
+            style={styles.image}
+            source={imageSource}
+            resizeMode="contain"
+          />
+          <View style={{gap: 4, alignItems: 'center'}}>
+            <Text
+              style={[typography.subHead, {color: theme.text, paddingTop: 42}]}>
+              아직 북마크한 글이 없어요.
+            </Text>
+            <Text style={[typography.label, {color: theme.text}]}>
+              메인화면에서 글을 저장해 쿠키 단지를 채워보세요!
+            </Text>
+          </View>
+        </View>
+      ) : (
+        <>
+          <View style={styles.blogSection}>
+            <Image
+              style={styles.blogImage}
+              source={require('@assets/image/profileImage.png')}
+            />
+            <Text style={[typography.head, {color: theme.text}]}>
+              {jwtPayload?.name}
+            </Text>
+          </View>
+
+          <FlatList
+            keyExtractor={item => item.id}
+            data={flatData}
+            numColumns={2}
+            contentContainerStyle={[styles.gap, {padding: 16}]}
+            columnWrapperStyle={styles.gap}
+            renderItem={renderItem}
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.6}
+            decelerationRate="fast"
+            showsVerticalScrollIndicator={false} // 스크롤 표시 제거
+          />
+        </>
+      )}
     </View>
   );
 };
@@ -208,5 +244,10 @@ const styles = StyleSheet.create({
   },
   gap: {
     gap: 10,
+  },
+  image: {
+    width: 189,
+    height: 131,
+    paddingLeft: 40,
   },
 });
