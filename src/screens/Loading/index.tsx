@@ -1,96 +1,52 @@
-import React, {useEffect, useRef} from 'react';
-import CustomHeader from '@/components/common/CustomHeader';
-import {Animated, StyleSheet, Text, View} from 'react-native';
-import Svg, {Circle, Line} from 'react-native-svg';
-import {Keyframe} from 'react-native-reanimated';
+import React from 'react';
+
+import {StyleSheet, Text, View} from 'react-native';
+import LottieView from 'lottie-react-native';
+import {useTheme} from '@/context/ThemeContext';
+import {typography} from '@/styles/tokens/typography';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 export const Loading = () => {
-  const barAnimation = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(barAnimation, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(barAnimation, {
-          toValue: 0,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, []);
-
+  const {theme} = useTheme();
+  const insets = useSafeAreaInsets();
   return (
-    <View>
-      <CustomHeader title={''} />
-      <View style={styles.wrapper}>
-        <Text>
+    <View style={[styles.container, {backgroundColor: theme.background}]}>
+      {/* 텍스트: 좌측 상단 */}
+      <View style={[styles.textWrapper, {top: insets.top + 36, left: 20}]}>
+        <Text style={[typography.title, {color: theme.text}]}>
           관심있는 주제로{'\n'}
           글을 고르고 있어요!
         </Text>
       </View>
 
-      <View style={styles.loader}>
-        <View style={styles.loaderMiniContainer}>
-          <View style={styles.barContainer}>
-            <Animated.View style={[styles.bar, {opacity: barAnimation}]} />
-            <Animated.View
-              style={[styles.bar, styles.bar2, {opacity: barAnimation}]}
-            />
-          </View>
-          <Svg width={101} height={114} viewBox="0 0 101 114" fill="none">
-            <Circle
-              cx={46.1726}
-              cy={46.1727}
-              r={29.5497}
-              stroke="black"
-              strokeWidth={7}
-              transform="rotate(36 46.1726 46.1727)"
-            />
-            <Line
-              x1={61.7089}
-              y1={67.7837}
-              x2={97.7088}
-              y2={111.784}
-              stroke="black"
-              strokeWidth={7}
-            />
-          </Svg>
-        </View>
+      {/* 로티: 화면 정중앙 */}
+      <View style={styles.lottieWrapper}>
+        <LottieView
+          source={require('@assets/lottie/search.json')}
+          autoPlay
+          loop
+          style={styles.lottie}
+        />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-  },
-  loader: {
-    justifyContent: 'center',
-    alignItems: 'center',
+  container: {
     flex: 1,
   },
-  loaderMiniContainer: {
+  textWrapper: {
+    position: 'absolute',
+  },
+  lottieWrapper: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingLeft: 46,
   },
-  barContainer: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  bar: {
-    width: 10,
-    height: 40,
-    backgroundColor: 'black',
-    marginHorizontal: 5,
-  },
-  bar2: {
-    height: 30,
+  lottie: {
+    width: 300,
+    height: 300,
   },
 });

@@ -61,9 +61,9 @@ export const Interest = ({onNext}: InterestProps) => {
 
       // 2초 후에 로딩 종료 및 화면 전환
       setTimeout(() => {
-        setLoading(false);
         navigation.navigate(ROOT_SCREENS.MAIN);
-      }, 2000);
+        setLoading(false);
+      }, 1500);
     } catch (error) {
       console.error('전송 실패:', error);
       setLoading(false);
