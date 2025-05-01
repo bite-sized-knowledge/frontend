@@ -3,18 +3,16 @@ import React, {useEffect, useState} from 'react';
 import {useFunnel} from '@use-funnel/react-navigation-native';
 import {Email} from './Email/index.tsx';
 import {Password} from './Password.tsx';
-import {Name} from './Name.tsx';
+
 import {BirthYear} from './BirthYear.tsx';
 import {
   이메일입력,
   비밀번호입력,
-  이름입력,
   생년입력,
-  // 약관동의,
   가입환영,
   관심주제선택,
 } from './signUpContext.ts';
-import {TermsAgreementDrawer} from './TermsAgreementDrawer.tsx';
+
 import {Welcome} from './Welcome.tsx';
 import Interest from '../Interest/index.tsx';
 import {
