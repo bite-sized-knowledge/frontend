@@ -46,6 +46,24 @@ export const Password = ({onNext, onBack}: PasswordProps) => {
     setIsValid(passwordRegex.test(newValue));
   };
 
+  const getPasswordMsg = () => {
+    if (secondPassword.length < 1) {
+      return '대소문자, 영문, 숫자, 특수문자를 포함해 8~16자를 입력해주세요.';
+    } else if (password.length > 0 && password === secondPassword) {
+      return '비밀번호가 일치해요:)';
+    }
+    return '';
+  };
+
+  const getPasswordError = () => {
+    if (secondPassword.length > 0 && password !== secondPassword) {
+      return '비밀번호가 일치하지 않아요.';
+    } else if (!isValid) {
+      return '대소문자, 영문, 숫자, 특수문자를 포함해 8~16자를 입력해주세요.';
+    }
+    return '';
+  };
+
   return (
     <View style={[styles.container, {backgroundColor: theme.background}]}>
       <CustomHeader
@@ -73,19 +91,8 @@ export const Password = ({onNext, onBack}: PasswordProps) => {
             onChangeText={setSecondPassword}
             autoCapitalize="none"
             secureTextEntry={true}
-            msg={
-              secondPassword.length < 1
-                ? '대소문자, 영문, 숫자, 특수문자를 포함해 8~16자를 입력해주세요.'
-                : password.length > 0 && password === secondPassword
-                ? '비밀번호가 일치해요:)'
-                : ''
-            }
-            error={
-              (secondPassword.length > 0 && password !== secondPassword) ||
-              !isValid
-                ? '비밀번호가 일치하지 않아요.'
-                : ''
-            }
+            msg={getPasswordMsg()}
+            error={getPasswordError()}
           />
         </View>
         {password.length > 0 && password === secondPassword && (
