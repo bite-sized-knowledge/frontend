@@ -49,6 +49,8 @@ const BlogArticle = ({
           {
             backgroundColor:
               themeMode === 'light' ? theme.background : theme.gray4,
+            // 아래 css에서 card에서 정의한 border-radius 엎어침
+            borderRadius: 8,
           },
         ]}>
         <View style={styles.article}>
@@ -171,11 +173,13 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
         </Text>
       </View>
       <FlatList
-        style={styles.articleSection}
+        // style={styles.articleSection}
         keyExtractor={item => item.id}
         data={blogArticles}
         numColumns={2}
-        contentContainerStyle={styles.gap}
+        // contentContainerStyle={styles.gap}
+        // columnWrapperStyle={styles.gap}
+        contentContainerStyle={[styles.gap, {padding: 16}]}
         columnWrapperStyle={styles.gap}
         // renderItem={article => (
         //   <BlogArticle
@@ -224,7 +228,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   articleImage: {
-    height: 80,
+    // height: 80,
+    // overflow: 'hidden',
+    flex: 1,
+    flexGrow: 1,
+    flexDirection: 'column',
+    minHeight: 80,
     overflow: 'hidden',
   },
   articleTitle: {
