@@ -2,10 +2,6 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTheme} from '@/context/ThemeContext.tsx';
-import {My} from '@/screens/My';
-import {MyDetail} from '@/screens/My/MyDetail';
-import {Withdraw} from '@/screens/My/Withdraw';
-import {WithdrawDetail} from '@/screens/My/Withdraw/WithDrawDetail';
 import {Bookmark} from '@/screens/Bookmark';
 import {BookmarkFeed} from '@/screens/Bookmark/BookmarkFeed';
 
