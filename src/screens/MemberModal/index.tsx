@@ -13,9 +13,6 @@ export default function MemberModal() {
   const {theme} = useTheme();
 
   const handleLogin = () => {
-    // navigation.reset({
-    //   routes: [{name: ROOT_SCREENS.AUTH}],
-    // });
     navigation.goBack();
 
     navigation.navigate(ROOT_SCREENS.AUTH);
@@ -48,7 +45,7 @@ export default function MemberModal() {
         </View>
         <View style={styles.container}>
           <Image
-            style={{paddingBottom: 16}}
+            style={styles.image}
             source={require('../../assets/image/login.png')}
           />
           <Text style={[typography.body, {color: theme.text}]}>
@@ -76,5 +73,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  image: {
+    paddingBottom: 16,
+    width: 120,
+    height: 120,
   },
 });
