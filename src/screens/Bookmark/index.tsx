@@ -147,8 +147,6 @@ export const Bookmark = () => {
     return <BookmarkedArticle bookmarkArticle={item} currentIndex={index} />;
   };
 
-  console.log(flatData);
-
   return (
     <View style={{backgroundColor: theme.background, flex: 1}}>
       <CustomHeader title={'Bookmark'} showBackButton={false} />
