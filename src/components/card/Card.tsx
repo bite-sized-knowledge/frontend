@@ -46,6 +46,7 @@ export const Card: React.FC<CardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
+    width: '100%',
     minWidth: 320,
     minHeight: 396,
     borderRadius: 16,
