@@ -8,7 +8,8 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --platform='ios'"
+    "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --platform='ios'",
+    "ios-device:jyh": "react-native run-ios --device '전용후의 iPhone' --mode Debug"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.1",
