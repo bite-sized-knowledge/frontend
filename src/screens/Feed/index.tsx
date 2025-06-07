@@ -18,6 +18,7 @@ import {Article} from '@/types/Article';
 import {SkeletonCard} from '@/components/card/CardSkeleton';
 import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
 import {mergeWithoutDuplicates} from '@/util/utils';
+import {FeedHeader} from './Header';
 
 export const BOTTOM_TAB_HEIGHT = 56;
 export const HEADER_HEIGHT = 64;
@@ -79,6 +80,10 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
   const [articleId, setArticleId] = useState<null | string>(null);
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
+
+  const [selectedTab, setSelectedTab] = useState<'latest' | 'recommend'>(
+    'latest',
+  );
 
   const handleCardBodyClick = useCallback((data: string) => {
     setVisible(true);
@@ -189,7 +194,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
 
   return (
     <View style={[styles.feeds, {backgroundColor: theme.background}]}>
-      <CustomHeader title={'Feed'} />
+      <FeedHeader selectedTab={selectedTab} onPressTab={setSelectedTab} />
       <FlatList
         keyExtractor={item => item.id}
         data={article}
