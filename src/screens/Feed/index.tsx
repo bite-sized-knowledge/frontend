@@ -11,7 +11,7 @@ import {Card} from '@/components/card/Card';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useQuery} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
-import {getFeed} from '@/api/feedApi';
+import {getRecentFeed, getRecommendedFeed} from '@/api/feedApi';
 import CustomHeader from '@/components/common/CustomHeader';
 import {WebViewDrawer} from '@/components/common/WebViewDrawer';
 import {Article} from '@/types/Article';
@@ -73,13 +73,20 @@ interface FeedProps {
 }
 
 export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
-  const [article, setArticle] = useState<Article[]>([]);
+  const [recommendedArticle, setRecommendedArticle] = useState<Article[]>([]);
+  const [recentArticle, setRecentArticle] = useState<Article[]>([]);
+
   const [isFetchingNewAriticles, setIsFetchingNewAriticles] =
     useState<boolean>(false);
+  const [isFetchingNewRecentAriticles, setIsFetchingNewRecentAriticles] =
+    useState<boolean>(false);
+
   const [visible, setVisible] = useState<boolean>(false);
   const [articleId, setArticleId] = useState<null | string>(null);
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
+
+  const [from, setFrom] = useState<string | null>(null);
 
   const [selectedTab, setSelectedTab] = useState<'latest' | 'recommend'>(
     'latest',
@@ -103,25 +110,47 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
 
   // React Query로 데이터 가져오기
   const {
-    data: feed,
+    data: recommendedFeed,
     isLoading,
     isError,
     error,
     refetch,
   } = useQuery({
-    queryKey: ['feed'],
-    queryFn: getFeed,
+    queryKey: ['recommendedFeed'],
+    queryFn: getRecommendedFeed,
+    enabled: selectedTab === 'recommend',
+  });
+
+  const {
+    data: recentFeedData,
+    // isLoading,
+    // isError,
+    // error,
+    // refetch,
+  } = useQuery({
+    queryKey: ['recentFeed', from],
+    queryFn: () => getRecentFeed(from),
+    enabled: selectedTab === 'latest',
   });
 
   // 새로운 데이터가 로드되면 기존 데이터에 추가
   useEffect(() => {
-    if (feed) {
-      setArticle(prev => {
+    if (recommendedFeed) {
+      setRecommendedArticle(prev => {
         setIsFetchingNewAriticles(false);
-        return mergeWithoutDuplicates(prev, feed.data ?? []);
+        return mergeWithoutDuplicates(prev, recommendedFeed.data ?? []);
       });
     }
-  }, [feed]);
+  }, [recommendedFeed]);
+
+  useEffect(() => {
+    if (recentFeedData) {
+      setRecentArticle(prev => {
+        setIsFetchingNewRecentAriticles(false);
+        return mergeWithoutDuplicates(prev, recentFeedData.articles ?? []);
+      });
+    }
+  }, [recentFeedData]);
 
   const onViewableItemsChanged = useCallback(
     ({viewableItems}: {viewableItems: Array<ViewToken<Article>>}) => {
@@ -143,14 +172,44 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
 
       if (
         lastVisibleIndex &&
-        article.length - lastVisibleIndex <= 3 &&
+        recommendedArticle.length - lastVisibleIndex <= 3 &&
         !isFetchingNewAriticles
       ) {
         setIsFetchingNewAriticles(true);
         refetch();
       }
     },
-    [article, isFetchingNewAriticles, refetch, setBlogId],
+    [recommendedArticle, isFetchingNewAriticles, refetch, setBlogId],
+  );
+
+  const onViewableItemsChangedRecentArticle = useCallback(
+    ({viewableItems}: {viewableItems: Array<ViewToken<Article>>}) => {
+      if (!viewableItems.length) {
+        setBlogId(null);
+        return;
+      }
+      if (viewableItems[0].item) {
+        setBlogId(viewableItems[0].item.blog.id);
+      }
+
+      sendEvent(
+        TARGET_TYPE.ARTICLE,
+        viewableItems[0].item.id,
+        EVENT_TYPE.F_IMP,
+      );
+
+      const lastVisibleIndex = viewableItems[viewableItems.length - 1].index;
+
+      if (
+        lastVisibleIndex &&
+        recentArticle.length - lastVisibleIndex <= 3 &&
+        !isFetchingNewRecentAriticles
+      ) {
+        setIsFetchingNewRecentAriticles(true);
+        setFrom(recentFeedData?.next ?? null);
+      }
+    },
+    [recentArticle, isFetchingNewRecentAriticles, setBlogId, recentFeedData],
   );
 
   const onWebViewClose = () => {
@@ -195,42 +254,82 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
   return (
     <View style={[styles.feeds, {backgroundColor: theme.background}]}>
       <FeedHeader selectedTab={selectedTab} onPressTab={setSelectedTab} />
-      <FlatList
-        keyExtractor={item => item.id}
-        data={article}
-        renderItem={({item}) => (
-          <FeedItem
-            item={item}
-            handleCardBodyClick={handleCardBodyClick}
-            handleCardHeaderClick={() => {
-              setBlogId(item.blog.id);
-              navigateToBlog();
-            }}
-          />
-        )}
-        decelerationRate="fast"
-        // 스크롤이 끝나면 스켈레톤 UI가 하단에 표시되어 새로운 데이터를 로딩 중임을 보여줍니다.
-        ListFooterComponent={
-          isFetchingNewAriticles ? (
-            <View
-              style={[
-                styles.feedSection,
-                {height: itemHeight, backgroundColor: theme.background},
-              ]}>
-              <SkeletonCard />
-            </View>
-          ) : null
-        }
-        snapToInterval={itemHeight}
-        snapToAlignment="start"
-        showsVerticalScrollIndicator={false}
-        onViewableItemsChanged={onViewableItemsChanged}
-        getItemLayout={(_, index) => ({
-          length: itemHeight,
-          offset: itemHeight * index,
-          index,
-        })}
-      />
+      {selectedTab === 'latest' && (
+        <FlatList
+          keyExtractor={item => item.id}
+          data={recentArticle}
+          renderItem={({item}) => (
+            <FeedItem
+              item={item}
+              handleCardBodyClick={handleCardBodyClick}
+              handleCardHeaderClick={() => {
+                setBlogId(item.blog.id);
+                navigateToBlog();
+              }}
+            />
+          )}
+          decelerationRate="fast"
+          // 스크롤이 끝나면 스켈레톤 UI가 하단에 표시되어 새로운 데이터를 로딩 중임을 보여줍니다.
+          ListFooterComponent={
+            isFetchingNewAriticles ? (
+              <View
+                style={[
+                  styles.feedSection,
+                  {height: itemHeight, backgroundColor: theme.background},
+                ]}>
+                <SkeletonCard />
+              </View>
+            ) : null
+          }
+          snapToInterval={itemHeight}
+          snapToAlignment="start"
+          showsVerticalScrollIndicator={false}
+          onViewableItemsChanged={onViewableItemsChangedRecentArticle}
+          getItemLayout={(_, index) => ({
+            length: itemHeight,
+            offset: itemHeight * index,
+            index,
+          })}
+        />
+      )}
+      {selectedTab === 'recommend' && (
+        <FlatList
+          keyExtractor={item => item.id}
+          data={recommendedArticle}
+          renderItem={({item}) => (
+            <FeedItem
+              item={item}
+              handleCardBodyClick={handleCardBodyClick}
+              handleCardHeaderClick={() => {
+                setBlogId(item.blog.id);
+                navigateToBlog();
+              }}
+            />
+          )}
+          decelerationRate="fast"
+          // 스크롤이 끝나면 스켈레톤 UI가 하단에 표시되어 새로운 데이터를 로딩 중임을 보여줍니다.
+          ListFooterComponent={
+            isFetchingNewAriticles ? (
+              <View
+                style={[
+                  styles.feedSection,
+                  {height: itemHeight, backgroundColor: theme.background},
+                ]}>
+                <SkeletonCard />
+              </View>
+            ) : null
+          }
+          snapToInterval={itemHeight}
+          snapToAlignment="start"
+          showsVerticalScrollIndicator={false}
+          onViewableItemsChanged={onViewableItemsChanged}
+          getItemLayout={(_, index) => ({
+            length: itemHeight,
+            offset: itemHeight * index,
+            index,
+          })}
+        />
+      )}
       <WebViewDrawer
         visible={visible}
         onClose={onWebViewClose}
