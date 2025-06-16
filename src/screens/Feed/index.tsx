@@ -12,60 +12,21 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useQuery} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
 import {getRecentFeed, getRecommendedFeed} from '@/api/feedApi';
-import CustomHeader from '@/components/common/CustomHeader';
 import {WebViewDrawer} from '@/components/common/WebViewDrawer';
 import {Article} from '@/types/Article';
 import {SkeletonCard} from '@/components/card/CardSkeleton';
 import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
 import {mergeWithoutDuplicates} from '@/util/utils';
 import {FeedHeader} from './Header';
+import {FeedItem} from './FeedItem';
+import {FeedList} from './FeedList';
 
 export const BOTTOM_TAB_HEIGHT = 56;
 export const HEADER_HEIGHT = 64;
-const screenHeight = Dimensions.get('window').height;
+export const screenHeight = Dimensions.get('window').height;
 
 // 빈(no-op) 함수
 const noop = () => {};
-
-interface FeedItemProps {
-  item: Article;
-  handleCardBodyClick: (data: string) => void;
-  handleCardHeaderClick: (blog: string) => void;
-}
-
-const FeedItem = ({
-  item,
-  handleCardBodyClick,
-  handleCardHeaderClick,
-}: FeedItemProps) => {
-  const insets = useSafeAreaInsets();
-  const {theme} = useTheme();
-
-  const itemHeight =
-    screenHeight -
-    HEADER_HEIGHT -
-    BOTTOM_TAB_HEIGHT -
-    insets.top -
-    insets.bottom;
-
-  return (
-    <View
-      style={[
-        styles.feedSection,
-        {
-          height: itemHeight,
-          backgroundColor: theme.background,
-        },
-      ]}>
-      <Card
-        article={{...item}}
-        blog={item.blog}
-        handleCardBodyClick={handleCardBodyClick}
-        handleCardHeaderClick={handleCardHeaderClick}
-      />
-    </View>
-  );
-};
 
 interface FeedProps {
   navigateToBlog: () => void;
@@ -152,66 +113,6 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     }
   }, [recentFeedData]);
 
-  const onViewableItemsChanged = useCallback(
-    ({viewableItems}: {viewableItems: Array<ViewToken<Article>>}) => {
-      if (!viewableItems.length) {
-        setBlogId(null);
-        return;
-      }
-      if (viewableItems[0].item) {
-        setBlogId(viewableItems[0].item.blog.id);
-      }
-
-      sendEvent(
-        TARGET_TYPE.ARTICLE,
-        viewableItems[0].item.id,
-        EVENT_TYPE.F_IMP,
-      );
-
-      const lastVisibleIndex = viewableItems[viewableItems.length - 1].index;
-
-      if (
-        lastVisibleIndex &&
-        recommendedArticle.length - lastVisibleIndex <= 3 &&
-        !isFetchingNewAriticles
-      ) {
-        setIsFetchingNewAriticles(true);
-        refetch();
-      }
-    },
-    [recommendedArticle, isFetchingNewAriticles, refetch, setBlogId],
-  );
-
-  const onViewableItemsChangedRecentArticle = useCallback(
-    ({viewableItems}: {viewableItems: Array<ViewToken<Article>>}) => {
-      if (!viewableItems.length) {
-        setBlogId(null);
-        return;
-      }
-      if (viewableItems[0].item) {
-        setBlogId(viewableItems[0].item.blog.id);
-      }
-
-      sendEvent(
-        TARGET_TYPE.ARTICLE,
-        viewableItems[0].item.id,
-        EVENT_TYPE.F_IMP,
-      );
-
-      const lastVisibleIndex = viewableItems[viewableItems.length - 1].index;
-
-      if (
-        lastVisibleIndex &&
-        recentArticle.length - lastVisibleIndex <= 3 &&
-        !isFetchingNewRecentAriticles
-      ) {
-        setIsFetchingNewRecentAriticles(true);
-        setFrom(recentFeedData?.next ?? null);
-      }
-    },
-    [recentArticle, isFetchingNewRecentAriticles, setBlogId, recentFeedData],
-  );
-
   const onWebViewClose = () => {
     setVisible(false);
     sendEvent(TARGET_TYPE.ARTICLE, articleId!, EVENT_TYPE.ARTICLE_OUT);
@@ -222,7 +123,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     const skeletonItems = [1, 2, 3];
     return (
       <View style={[styles.feeds, {backgroundColor: theme.background}]}>
-        <CustomHeader title={'Feed'} />
+        <FeedHeader selectedTab={selectedTab} onPressTab={setSelectedTab} />
         <FlatList
           data={skeletonItems}
           keyExtractor={item => item.toString()}
@@ -255,79 +156,25 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     <View style={[styles.feeds, {backgroundColor: theme.background}]}>
       <FeedHeader selectedTab={selectedTab} onPressTab={setSelectedTab} />
       {selectedTab === 'latest' && (
-        <FlatList
-          keyExtractor={item => item.id}
-          data={recentArticle}
-          renderItem={({item}) => (
-            <FeedItem
-              item={item}
-              handleCardBodyClick={handleCardBodyClick}
-              handleCardHeaderClick={() => {
-                setBlogId(item.blog.id);
-                navigateToBlog();
-              }}
-            />
-          )}
-          decelerationRate="fast"
-          // 스크롤이 끝나면 스켈레톤 UI가 하단에 표시되어 새로운 데이터를 로딩 중임을 보여줍니다.
-          ListFooterComponent={
-            isFetchingNewAriticles ? (
-              <View
-                style={[
-                  styles.feedSection,
-                  {height: itemHeight, backgroundColor: theme.background},
-                ]}>
-                <SkeletonCard />
-              </View>
-            ) : null
-          }
-          snapToInterval={itemHeight}
-          snapToAlignment="start"
-          showsVerticalScrollIndicator={false}
-          onViewableItemsChanged={onViewableItemsChangedRecentArticle}
-          getItemLayout={(_, index) => ({
-            length: itemHeight,
-            offset: itemHeight * index,
-            index,
-          })}
+        <FeedList
+          article={recentArticle}
+          handleCardBodyClick={handleCardBodyClick}
+          setBlogId={setBlogId}
+          navigateToBlog={navigateToBlog}
+          getNextData={() => setFrom(recentFeedData?.next ?? null)}
+          isFetchingNewAriticles={isFetchingNewRecentAriticles}
+          setIsFetchingNewAriticles={setIsFetchingNewRecentAriticles}
         />
       )}
       {selectedTab === 'recommend' && (
-        <FlatList
-          keyExtractor={item => item.id}
-          data={recommendedArticle}
-          renderItem={({item}) => (
-            <FeedItem
-              item={item}
-              handleCardBodyClick={handleCardBodyClick}
-              handleCardHeaderClick={() => {
-                setBlogId(item.blog.id);
-                navigateToBlog();
-              }}
-            />
-          )}
-          decelerationRate="fast"
-          // 스크롤이 끝나면 스켈레톤 UI가 하단에 표시되어 새로운 데이터를 로딩 중임을 보여줍니다.
-          ListFooterComponent={
-            isFetchingNewAriticles ? (
-              <View
-                style={[
-                  styles.feedSection,
-                  {height: itemHeight, backgroundColor: theme.background},
-                ]}>
-                <SkeletonCard />
-              </View>
-            ) : null
-          }
-          snapToInterval={itemHeight}
-          snapToAlignment="start"
-          showsVerticalScrollIndicator={false}
-          onViewableItemsChanged={onViewableItemsChanged}
-          getItemLayout={(_, index) => ({
-            length: itemHeight,
-            offset: itemHeight * index,
-            index,
-          })}
+        <FeedList
+          article={recommendedArticle}
+          handleCardBodyClick={handleCardBodyClick}
+          setBlogId={setBlogId}
+          navigateToBlog={navigateToBlog}
+          getNextData={() => refetch()}
+          isFetchingNewAriticles={isFetchingNewAriticles}
+          setIsFetchingNewAriticles={setIsFetchingNewAriticles}
         />
       )}
       <WebViewDrawer
