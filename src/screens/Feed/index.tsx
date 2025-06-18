@@ -50,7 +50,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
   const [from, setFrom] = useState<string | null>(null);
 
   const [selectedTab, setSelectedTab] = useState<'latest' | 'recommend'>(
-    'latest',
+    'recommend',
   );
 
   const handleCardBodyClick = useCallback((data: string) => {
