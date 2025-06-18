@@ -8,7 +8,8 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --platform='ios'"
+    "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --platform='ios'",
+    "ios-device:jyh": "react-native run-ios --device '전용후의 iPhone' --mode Debug"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.1",
@@ -65,6 +66,7 @@
     "react-native-rename": "^3.2.16",
     "react-native-svg-transformer": "^1.5.0",
     "react-test-renderer": "18.3.1",
+    "reactotron-react-native": "^5.1.13",
     "typescript": "5.0.4"
   },
   "engines": {
