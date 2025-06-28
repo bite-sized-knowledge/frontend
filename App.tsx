@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StatusBar, StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {RootStack} from './src/navigator/RootStack';
@@ -11,22 +11,28 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {ToastProvider} from 'react-native-toast-notifications';
 import {typography} from './src/styles/tokens/typography';
 import {lightTheme} from './src/styles/themes';
-import SplashScreen from 'react-native-splash-screen';
 import {AuthProvider} from './src/hooks/useAuth';
+import {CustomSplashScreen} from './src/components/common/CustomSplashScreen';
 import 'core-js/stable/atob';
 
 const queryClient = new QueryClient();
 
 function App(): React.JSX.Element {
+  const [showSplash, setShowSplash] = useState(true);
+
   useEffect(() => {
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 2000); //스플래시 활성화 시간
-  });
+    // 커스텀 스플래시 표시 시간
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <SafeAreaProvider>
       <ThemeProvider>
+        <CustomSplashScreen visible={showSplash} />
         {/* portal로 웹뷰 drawer여는데 해당 컴포넌트에 PanGestureHandler사용됨. 따라서 부모에 GestureHandlerRootView 감싸줘야 에러발생 안함. */}
         <GestureHandlerRootView style={{flex: 1}}>
           {/* Portal 때문에 사용 */}
