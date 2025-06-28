@@ -1,5 +1,11 @@
-import React, {useCallback, useState} from 'react';
-import {FlatList, StyleSheet, View, ViewToken} from 'react-native';
+import React, {useCallback} from 'react';
+import {
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  View,
+  ViewToken,
+} from 'react-native';
 import {Article} from '@/types/Article';
 import {FeedItem} from './FeedItem';
 import {SkeletonCard} from '@/components/card/CardSkeleton';
@@ -16,6 +22,8 @@ type FeedListProps = {
   getNextData: () => void;
   isFetchingNewAriticles: boolean;
   setIsFetchingNewAriticles: React.Dispatch<React.SetStateAction<boolean>>;
+  refreshing: boolean;
+  handleRefresh: () => void;
 };
 
 export const FeedList = ({
@@ -26,6 +34,8 @@ export const FeedList = ({
   getNextData,
   isFetchingNewAriticles,
   setIsFetchingNewAriticles,
+  refreshing,
+  handleRefresh,
 }: FeedListProps) => {
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
@@ -77,6 +87,14 @@ export const FeedList = ({
     <FlatList
       keyExtractor={item => item.id}
       data={article}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          colors={[theme.refreshIndicator]} // 안드로이드 전용
+          tintColor={theme.refreshIndicator} // iOS 전용
+        />
+      }
       renderItem={({item}) => (
         <FeedItem
           item={item}

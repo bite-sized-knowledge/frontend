@@ -19,6 +19,7 @@ export interface Theme {
   gray4: string;
   main: string;
   sub: string;
+  refreshIndicator: string;
 }
 
 interface ThemeContextType {

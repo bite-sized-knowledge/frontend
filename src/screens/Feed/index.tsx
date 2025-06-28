@@ -1,13 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  ViewToken,
-} from 'react-native';
-import {Card} from '@/components/card/Card';
+import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useQuery} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
@@ -18,7 +10,6 @@ import {SkeletonCard} from '@/components/card/CardSkeleton';
 import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
 import {mergeWithoutDuplicates} from '@/util/utils';
 import {FeedHeader} from './Header';
-import {FeedItem} from './FeedItem';
 import {FeedList} from './FeedList';
 
 export const BOTTOM_TAB_HEIGHT = 56;
@@ -52,6 +43,8 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
   const [selectedTab, setSelectedTab] = useState<'latest' | 'recommend'>(
     'recommend',
   );
+
+  const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 나타내는 상태 변수
 
   const handleCardBodyClick = useCallback((data: string) => {
     setVisible(true);
@@ -87,11 +80,11 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     // isLoading,
     // isError,
     // error,
-    // refetch,
+    refetch: refetchRecentFeed,
   } = useQuery({
     queryKey: ['recentFeed', from],
     queryFn: () => getRecentFeed(from),
-    enabled: selectedTab === 'latest',
+    enabled: false,
   });
 
   // 새로운 데이터가 로드되면 기존 데이터에 추가
@@ -117,6 +110,25 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     setVisible(false);
     sendEvent(TARGET_TYPE.ARTICLE, articleId!, EVENT_TYPE.ARTICLE_OUT);
   };
+
+  const handleRefresh = () => {
+    // 새로고침 기능을 구현하는 함수
+    setRefreshing(true);
+    setTimeout(() => {
+      if (selectedTab === 'latest') {
+        setFrom(null);
+      } else {
+        refetch();
+      }
+      setRefreshing(false);
+    }, 1000);
+  };
+
+  useEffect(() => {
+    if (selectedTab === 'latest') {
+      refetchRecentFeed();
+    }
+  }, [from, selectedTab, refetchRecentFeed]);
 
   // 로딩 중에는 피드 아이템과 동일한 레이아웃의 스켈레톤 UI들을 렌더링
   if (isLoading) {
@@ -164,6 +176,8 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
           getNextData={() => setFrom(recentFeedData?.next ?? null)}
           isFetchingNewAriticles={isFetchingNewRecentAriticles}
           setIsFetchingNewAriticles={setIsFetchingNewRecentAriticles}
+          refreshing={refreshing}
+          handleRefresh={handleRefresh}
         />
       )}
       {selectedTab === 'recommend' && (
@@ -175,6 +189,8 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
           getNextData={() => refetch()}
           isFetchingNewAriticles={isFetchingNewAriticles}
           setIsFetchingNewAriticles={setIsFetchingNewAriticles}
+          refreshing={refreshing}
+          handleRefresh={handleRefresh}
         />
       )}
       <WebViewDrawer
