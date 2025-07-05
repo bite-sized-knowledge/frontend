@@ -8,6 +8,7 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {jwtDecode} from 'jwt-decode';
 import {getAccessToken} from '@/api/authApi';
 import {MY_SCREENS, MyStackParamList} from '@/types/constants/myScreens';
+import Switch from '@/components/Switch';
 
 export interface JWT {
   sub: string;
@@ -18,7 +19,7 @@ export interface JWT {
 }
 
 export const My = () => {
-  const {theme, toggleTheme} = useTheme();
+  const {theme, toggleTheme, themeMode} = useTheme();
   const navigation = useNavigation<NavigationProp<MyStackParamList>>();
   const [jwtPayload, setJwtPayload] = useState<JWT>();
 
@@ -66,7 +67,7 @@ export const My = () => {
       </View>
       <View style={styles.themeSection}>
         <Text style={[typography.head, {color: theme.text}]}>테마 전환</Text>
-        <Button title="테마 전환" onPress={toggleTheme} />
+        <Switch value={themeMode === 'light'} onValueChange={toggleTheme} />
       </View>
     </View>
   );
@@ -103,5 +104,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+  },
+  logo: {
+    width: 20,
+    height: 20,
   },
 });
