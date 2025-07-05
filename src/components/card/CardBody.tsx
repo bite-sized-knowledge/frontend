@@ -15,10 +15,9 @@ export const CardBody: React.FC<CardBodyProps> = ({
 }) => {
   const {theme} = useTheme();
 
-  const uri =
-    article.category.thumbnail === '' || !article.category.thumbnail
-      ? article.thumbnail
-      : article.category.image;
+  const uri = !(article.thumbnail === '' || !article.thumbnail)
+    ? article.thumbnail
+    : article.category.image;
 
   return (
     <Pressable onPress={() => handleCardBodyClick(article.id)}>
