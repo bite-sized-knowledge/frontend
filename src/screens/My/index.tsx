@@ -67,7 +67,12 @@ export const My = () => {
       </View>
       <View style={styles.themeSection}>
         <Text style={[typography.head, {color: theme.text}]}>테마 전환</Text>
-        <Switch value={themeMode === 'light'} onValueChange={toggleTheme} />
+        <Switch
+          value={themeMode === 'light'}
+          onValueChange={toggleTheme}
+          activeThumbIcon={<Icons.Sun />}
+          inactiveThumbIcon={<Icons.Moon />}
+        />
       </View>
     </View>
   );
