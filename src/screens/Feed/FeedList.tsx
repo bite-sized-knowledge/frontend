@@ -24,6 +24,7 @@ type FeedListProps = {
   setIsFetchingNewAriticles: React.Dispatch<React.SetStateAction<boolean>>;
   refreshing: boolean;
   handleRefresh: () => void;
+  flatListRef: React.RefObject<FlatList>;
 };
 
 export const FeedList = ({
@@ -36,6 +37,7 @@ export const FeedList = ({
   setIsFetchingNewAriticles,
   refreshing,
   handleRefresh,
+  flatListRef,
 }: FeedListProps) => {
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
@@ -127,6 +129,7 @@ export const FeedList = ({
         offset: itemHeight * index,
         index,
       })}
+      ref={flatListRef}
     />
   );
 };

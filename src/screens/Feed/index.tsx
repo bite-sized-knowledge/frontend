@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useQuery} from '@tanstack/react-query';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
 import {getRecentFeed, getRecommendedFeed} from '@/api/feedApi';
 import {WebViewDrawer} from '@/components/common/WebViewDrawer';
@@ -37,6 +37,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
   const [articleId, setArticleId] = useState<null | string>(null);
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
 
   const [from, setFrom] = useState<string | null>(null);
 
@@ -65,21 +66,23 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
   // React Query로 데이터 가져오기
   const {
     data: recommendedFeed,
-    isLoading,
+    isLoading: isRecommendedFeedLoading,
+    isFetching: isRecommendedFeedFetching,
     isError,
     error,
     refetch,
   } = useQuery({
     queryKey: ['recommendedFeed'],
     queryFn: getRecommendedFeed,
-    enabled: selectedTab === 'recommend',
+    enabled: false,
   });
 
   const {
     data: recentFeedData,
-    // isLoading,
-    // isError,
-    // error,
+    isLoading: isRecentFeedLoading,
+    isError: isRecentFeedError,
+    error: recentFeedError,
+    isFetching: isRecentFeedFetching,
     refetch: refetchRecentFeed,
   } = useQuery({
     queryKey: ['recentFeed', from],
@@ -95,7 +98,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
         return mergeWithoutDuplicates(prev, recommendedFeed.data ?? []);
       });
     }
-  }, [recommendedFeed]);
+  }, [recommendedFeed, isRecommendedFeedFetching]);
 
   useEffect(() => {
     if (recentFeedData) {
@@ -104,11 +107,30 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
         return mergeWithoutDuplicates(prev, recentFeedData.articles ?? []);
       });
     }
-  }, [recentFeedData]);
+  }, [recentFeedData, isRecentFeedFetching]);
 
   const onWebViewClose = () => {
     setVisible(false);
     sendEvent(TARGET_TYPE.ARTICLE, articleId!, EVENT_TYPE.ARTICLE_OUT);
+  };
+
+  const recentFeedListRef = useRef<FlatList>(null);
+  const recommendedFeedListRef = useRef<FlatList>(null);
+
+  const scrollToTop = (tab: 'latest' | 'recommend') => {
+    if (tab === 'latest' && selectedTab === 'latest') {
+      recentFeedListRef.current?.scrollToOffset({animated: true, offset: 0});
+    } else if (tab === 'recommend' && selectedTab === 'recommend') {
+      recommendedFeedListRef.current?.scrollToOffset({
+        animated: true,
+        offset: 0,
+      });
+    }
+  };
+
+  const onPressTab = (tab: 'latest' | 'recommend') => {
+    setSelectedTab(tab);
+    scrollToTop(tab);
   };
 
   const handleRefresh = () => {
@@ -116,7 +138,11 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     setRefreshing(true);
     setTimeout(() => {
       if (selectedTab === 'latest') {
-        setFrom(null);
+        if (from === null) {
+          refetchRecentFeed();
+        } else {
+          setFrom(null);
+        }
       } else {
         refetch();
       }
@@ -125,17 +151,34 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
   };
 
   useEffect(() => {
-    if (selectedTab === 'latest') {
+    refetchRecentFeed();
+    refetch();
+  }, [refetchRecentFeed, refetch]);
+
+  useEffect(() => {
+    if (from || from === null) {
       refetchRecentFeed();
     }
-  }, [from, selectedTab, refetchRecentFeed]);
+  }, [from, refetchRecentFeed]);
+
+  useEffect(() => {
+    if (refreshing) {
+      if (selectedTab === 'latest') {
+        queryClient.invalidateQueries({queryKey: ['recentFeed', from]});
+        setRecentArticle([]);
+      } else {
+        queryClient.invalidateQueries({queryKey: ['recommendedFeed']});
+        setRecommendedArticle([]);
+      }
+    }
+  }, [refreshing, selectedTab, from, queryClient]);
 
   // 로딩 중에는 피드 아이템과 동일한 레이아웃의 스켈레톤 UI들을 렌더링
-  if (isLoading) {
+  if (isRecommendedFeedLoading || isRecentFeedLoading || refreshing) {
     const skeletonItems = [1, 2, 3];
     return (
       <View style={[styles.feeds, {backgroundColor: theme.background}]}>
-        <FeedHeader selectedTab={selectedTab} onPressTab={setSelectedTab} />
+        <FeedHeader selectedTab={selectedTab} onPressTab={onPressTab} />
         <FlatList
           data={skeletonItems}
           keyExtractor={item => item.toString()}
@@ -156,17 +199,17 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     );
   }
 
-  if (isError) {
+  if (isError || isRecentFeedError) {
     return (
       <View style={styles.centered}>
-        <Text>Error: {error.message}</Text>
+        <Text>Error: {error?.message || recentFeedError?.message}</Text>
       </View>
     );
   }
 
   return (
     <View style={[styles.feeds, {backgroundColor: theme.background}]}>
-      <FeedHeader selectedTab={selectedTab} onPressTab={setSelectedTab} />
+      <FeedHeader selectedTab={selectedTab} onPressTab={onPressTab} />
       {selectedTab === 'latest' && (
         <FeedList
           article={recentArticle}
@@ -178,6 +221,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
           setIsFetchingNewAriticles={setIsFetchingNewRecentAriticles}
           refreshing={refreshing}
           handleRefresh={handleRefresh}
+          flatListRef={recentFeedListRef}
         />
       )}
       {selectedTab === 'recommend' && (
@@ -191,6 +235,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
           setIsFetchingNewAriticles={setIsFetchingNewAriticles}
           refreshing={refreshing}
           handleRefresh={handleRefresh}
+          flatListRef={recommendedFeedListRef}
         />
       )}
       <WebViewDrawer
