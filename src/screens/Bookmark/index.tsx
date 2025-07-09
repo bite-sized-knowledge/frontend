@@ -26,6 +26,11 @@ const BookmarkedArticle = ({bookmarkArticle, currentIndex}: ArticleProps) => {
   const navigation = useNavigation();
   const {theme, themeMode} = useTheme();
 
+  const uri =
+    bookmarkArticle.thumbnail ||
+    bookmarkArticle.category?.thumbnail ||
+    bookmarkArticle.category?.image;
+
   return (
     <Pressable
       style={{flex: 1}}
@@ -47,7 +52,12 @@ const BookmarkedArticle = ({bookmarkArticle, currentIndex}: ArticleProps) => {
         <View style={styles.article}>
           <Image
             style={styles.articleImage}
-            source={{uri: bookmarkArticle.thumbnail}}
+            source={
+              uri
+                ? {uri: uri}
+                : require('../../assets/image/default_thumbnail.png')
+            }
+            resizeMode="cover"
           />
           <View style={[styles.articleTitle]}>
             <Text
@@ -229,10 +239,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   articleImage: {
-    flex: 1,
-    flexGrow: 1,
-    flexDirection: 'column',
-    minHeight: 80,
+    width: '100%',
+    height: 80,
     overflow: 'hidden',
   },
   articleTitle: {

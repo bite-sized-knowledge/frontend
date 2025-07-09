@@ -24,6 +24,11 @@ const HistoryArticle = ({historyArticle, currentIndex}: ArticleProps) => {
   const navigation = useNavigation();
   const {theme, themeMode} = useTheme();
 
+  const uri =
+    historyArticle.thumbnail ||
+    historyArticle.category?.thumbnail ||
+    historyArticle.category?.image;
+
   return (
     <Pressable
       style={{flex: 1}}
@@ -45,7 +50,12 @@ const HistoryArticle = ({historyArticle, currentIndex}: ArticleProps) => {
         <View style={styles.article}>
           <Image
             style={styles.articleImage}
-            source={{uri: historyArticle.thumbnail}}
+            source={
+              uri
+                ? {uri: uri}
+                : require('../../assets/image/default_thumbnail.png')
+            }
+            resizeMode="cover"
           />
           <View style={[styles.articleTitle]}>
             <Text
@@ -181,10 +191,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   articleImage: {
-    flex: 1,
-    flexGrow: 1,
-    flexDirection: 'column',
-    minHeight: 80,
+    width: '100%',
+    height: 80,
     overflow: 'hidden',
   },
   articleTitle: {
