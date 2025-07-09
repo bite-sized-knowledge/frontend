@@ -8,6 +8,7 @@ export const lightTheme = {
   gray4: '#F0F0F0',
   main: '#FF6E1C',
   sub: '#FF7A0D',
+  refreshIndicator: '#000000',
 };
 
 export const darkTheme = {
@@ -19,4 +20,5 @@ export const darkTheme = {
   gray4: '#333333',
   main: '#FF6E1C',
   sub: '#FF7A0D',
+  refreshIndicator: '#FFFFFF',
 };

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import CustomHeader from '@/components/common/CustomHeader';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {Button, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useTheme} from '@/context/ThemeContext';
 import {typography} from '@/styles/tokens/typography';
 import Icons from '@/assets/icons';
@@ -8,6 +8,7 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {jwtDecode} from 'jwt-decode';
 import {getAccessToken} from '@/api/authApi';
 import {MY_SCREENS, MyStackParamList} from '@/types/constants/myScreens';
+import Switch from '@/components/Switch';
 
 export interface JWT {
   sub: string;
@@ -18,7 +19,7 @@ export interface JWT {
 }
 
 export const My = () => {
-  const {theme} = useTheme();
+  const {theme, toggleTheme, themeMode} = useTheme();
   const navigation = useNavigation<NavigationProp<MyStackParamList>>();
   const [jwtPayload, setJwtPayload] = useState<JWT>();
 
@@ -64,6 +65,15 @@ export const My = () => {
           <Icons.ArrowRight />
         </Pressable>
       </View>
+      <View style={styles.themeSection}>
+        <Text style={[typography.head, {color: theme.text}]}>테마 전환</Text>
+        <Switch
+          value={themeMode === 'light'}
+          onValueChange={toggleTheme}
+          activeThumbIcon={<Icons.Sun />}
+          inactiveThumbIcon={<Icons.Moon />}
+        />
+      </View>
     </View>
   );
 };
@@ -78,6 +88,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
   profileImage: {
     width: 48,
@@ -87,5 +99,19 @@ const styles = StyleSheet.create({
   },
   profileName: {
     flexGrow: 1,
+  },
+  themeSection: {
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  logo: {
+    width: 20,
+    height: 20,
   },
 });

@@ -23,6 +23,8 @@ import Eye from './eye.svg';
 import Blind from './blind.svg';
 import Box from './box.svg';
 import BoxChecked from './box_checked.svg';
+import Sun from './sun.svg';
+import Moon from './moon.svg';
 
 export default {
   ArrowLeft,
@@ -50,4 +52,6 @@ export default {
   Blind,
   Box,
   BoxChecked,
+  Sun,
+  Moon,
 };

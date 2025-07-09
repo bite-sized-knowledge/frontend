@@ -10,6 +10,12 @@ export interface Article {
   archiveCount: number;
   shareCount: number;
   publishedAt: string;
+  category: {
+    id: number;
+    name: string;
+    image: string;
+    thumbnail: string;
+  };
   keywords: string[];
   isLiked: boolean;
   isArchived: boolean;

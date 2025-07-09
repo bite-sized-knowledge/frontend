@@ -15,9 +15,41 @@ export const CardBody: React.FC<CardBodyProps> = ({
 }) => {
   const {theme} = useTheme();
 
+  const getHasThumbnail = () => {
+    if (article.thumbnail !== '' && article.thumbnail !== null) {
+      return true;
+    }
+
+    if (article.category === null) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const getThumbnail = () => {
+    if (article.thumbnail !== '' && article.thumbnail !== null) {
+      return article.thumbnail;
+    }
+
+    return article.category.thumbnail;
+  };
+
   return (
     <Pressable onPress={() => handleCardBodyClick(article.id)}>
-      <Image source={{uri: article.thumbnail}} style={styles.thumbnail} />
+      {getHasThumbnail() ? (
+        <Image
+          source={{uri: getThumbnail()}}
+          style={styles.thumbnail}
+          resizeMode="cover"
+        />
+      ) : (
+        <Image
+          source={require('../../assets/image/default_thumbnail.png')}
+          style={styles.thumbnail}
+          resizeMode="cover"
+        />
+      )}
       <View style={styles.cardContent}>
         <Text
           style={[styles.titleContainer, typography.head, {color: theme.text}]}
@@ -61,8 +93,8 @@ const HashTag = ({tagName}: HashTagProps) => {
 
 const styles = StyleSheet.create({
   thumbnail: {
-    minWidth: 320,
-    minHeight: 160,
+    width: '100%',
+    height: 160,
   },
   cardContent: {
     minWidth: 320,

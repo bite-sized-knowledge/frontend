@@ -1,31 +1,21 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  ViewToken,
-} from 'react-native';
-import {Card} from '@/components/card/Card';
+import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useQuery} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
-import {getRecentFeed, getRecommendedFeed} from '@/api/feedApi';
+import {useFeedScroll} from '@/context/FeedScrollContext';
 import {WebViewDrawer} from '@/components/common/WebViewDrawer';
-import {Article} from '@/types/Article';
 import {SkeletonCard} from '@/components/card/CardSkeleton';
 import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
-import {mergeWithoutDuplicates} from '@/util/utils';
 import {FeedHeader} from './Header';
-import {FeedItem} from './FeedItem';
 import {FeedList} from './FeedList';
+import {useFeedScrollManagement} from '@/hooks/useFeedScroll';
+import {useFeedData} from '@/hooks/useFeedData';
+import {useFeedTabs} from '@/hooks/useFeedTabs';
 
 export const BOTTOM_TAB_HEIGHT = 56;
 export const HEADER_HEIGHT = 64;
 export const screenHeight = Dimensions.get('window').height;
 
-// 빈(no-op) 함수
 const noop = () => {};
 
 interface FeedProps {
@@ -34,34 +24,75 @@ interface FeedProps {
 }
 
 export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
-  const [recommendedArticle, setRecommendedArticle] = useState<Article[]>([]);
-  const [recentArticle, setRecentArticle] = useState<Article[]>([]);
-
-  const [isFetchingNewAriticles, setIsFetchingNewAriticles] =
-    useState<boolean>(false);
-  const [isFetchingNewRecentAriticles, setIsFetchingNewRecentAriticles] =
-    useState<boolean>(false);
+  const {theme} = useTheme();
+  const insets = useSafeAreaInsets();
+  const {registerScrollFunction} = useFeedScroll();
 
   const [visible, setVisible] = useState<boolean>(false);
   const [articleId, setArticleId] = useState<null | string>(null);
-  const {theme} = useTheme();
-  const insets = useSafeAreaInsets();
 
-  const [from, setFrom] = useState<string | null>(null);
+  // 스크롤 관리 훅
+  const {
+    recentFeedListRef,
+    recommendedFeedListRef,
+    handleScroll,
+    restoreScrollPosition,
+    scrollToTop,
+  } = useFeedScrollManagement();
 
-  const [selectedTab, setSelectedTab] = useState<'latest' | 'recommend'>(
-    'recommend',
-  );
+  // 탭 관리 훅
+  const {selectedTab, handleTabPress} = useFeedTabs({
+    onTabChange: tab => {
+      restoreScrollPosition(tab);
+    },
+    onSameTabPress: tab => {
+      scrollToTop(tab);
+    },
+  });
 
+  // 피드 데이터 관리 훅
+  const {
+    recommendedArticle,
+    recentArticle,
+    recentFeedData,
+    isRecommendedFeedLoading,
+    isRecentFeedLoading,
+    isFetchingNewAriticles,
+    isFetchingNewRecentAriticles,
+    refreshing,
+    isError,
+    isRecentFeedError,
+    error,
+    recentFeedError,
+    handleRefresh,
+    setFrom,
+    setIsFetchingNewAriticles,
+    setIsFetchingNewRecentAriticles,
+    refetch,
+  } = useFeedData(selectedTab);
+
+  // 카드 클릭 핸들러
   const handleCardBodyClick = useCallback((data: string) => {
     setVisible(true);
     setArticleId(data);
     sendEvent(TARGET_TYPE.ARTICLE, data, EVENT_TYPE.ARTICLE_IN);
   }, []);
 
-  useEffect(() => {}, [visible]);
+  // WebView 닫기 핸들러
+  const onWebViewClose = useCallback(() => {
+    setVisible(false);
+    sendEvent(TARGET_TYPE.ARTICLE, articleId!, EVENT_TYPE.ARTICLE_OUT);
+  }, [articleId]);
 
-  // 전체 아이템 높이를 계산 (피드 아이템과 스켈레톤 UI 모두 동일하게 사용)
+  // 스크롤 함수를 context에 등록
+  useEffect(() => {
+    const scrollFunction = () => {
+      scrollToTop(selectedTab);
+    };
+    registerScrollFunction(scrollFunction);
+  }, [selectedTab, registerScrollFunction, scrollToTop]);
+
+  // 전체 아이템 높이 계산
   const itemHeight =
     screenHeight -
     HEADER_HEIGHT -
@@ -69,61 +100,12 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     insets.top -
     insets.bottom;
 
-  // React Query로 데이터 가져오기
-  const {
-    data: recommendedFeed,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ['recommendedFeed'],
-    queryFn: getRecommendedFeed,
-    enabled: selectedTab === 'recommend',
-  });
-
-  const {
-    data: recentFeedData,
-    // isLoading,
-    // isError,
-    // error,
-    // refetch,
-  } = useQuery({
-    queryKey: ['recentFeed', from],
-    queryFn: () => getRecentFeed(from),
-    enabled: selectedTab === 'latest',
-  });
-
-  // 새로운 데이터가 로드되면 기존 데이터에 추가
-  useEffect(() => {
-    if (recommendedFeed) {
-      setRecommendedArticle(prev => {
-        setIsFetchingNewAriticles(false);
-        return mergeWithoutDuplicates(prev, recommendedFeed.data ?? []);
-      });
-    }
-  }, [recommendedFeed]);
-
-  useEffect(() => {
-    if (recentFeedData) {
-      setRecentArticle(prev => {
-        setIsFetchingNewRecentAriticles(false);
-        return mergeWithoutDuplicates(prev, recentFeedData.articles ?? []);
-      });
-    }
-  }, [recentFeedData]);
-
-  const onWebViewClose = () => {
-    setVisible(false);
-    sendEvent(TARGET_TYPE.ARTICLE, articleId!, EVENT_TYPE.ARTICLE_OUT);
-  };
-
-  // 로딩 중에는 피드 아이템과 동일한 레이아웃의 스켈레톤 UI들을 렌더링
-  if (isLoading) {
+  // 로딩 상태 렌더링
+  if (isRecommendedFeedLoading || isRecentFeedLoading || refreshing) {
     const skeletonItems = [1, 2, 3];
     return (
       <View style={[styles.feeds, {backgroundColor: theme.background}]}>
-        <FeedHeader selectedTab={selectedTab} onPressTab={setSelectedTab} />
+        <FeedHeader selectedTab={selectedTab} onPressTab={handleTabPress} />
         <FlatList
           data={skeletonItems}
           keyExtractor={item => item.toString()}
@@ -144,17 +126,19 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
     );
   }
 
-  if (isError) {
+  // 에러 상태 렌더링
+  if (isError || isRecentFeedError) {
     return (
       <View style={styles.centered}>
-        <Text>Error: {error.message}</Text>
+        <Text>Error: {error?.message || recentFeedError?.message}</Text>
       </View>
     );
   }
 
   return (
     <View style={[styles.feeds, {backgroundColor: theme.background}]}>
-      <FeedHeader selectedTab={selectedTab} onPressTab={setSelectedTab} />
+      <FeedHeader selectedTab={selectedTab} onPressTab={handleTabPress} />
+
       {selectedTab === 'latest' && (
         <FeedList
           article={recentArticle}
@@ -164,8 +148,13 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
           getNextData={() => setFrom(recentFeedData?.next ?? null)}
           isFetchingNewAriticles={isFetchingNewRecentAriticles}
           setIsFetchingNewAriticles={setIsFetchingNewRecentAriticles}
+          refreshing={refreshing}
+          handleRefresh={handleRefresh}
+          flatListRef={recentFeedListRef}
+          onScroll={handleScroll('latest')}
         />
       )}
+
       {selectedTab === 'recommend' && (
         <FeedList
           article={recommendedArticle}
@@ -175,8 +164,13 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
           getNextData={() => refetch()}
           isFetchingNewAriticles={isFetchingNewAriticles}
           setIsFetchingNewAriticles={setIsFetchingNewAriticles}
+          refreshing={refreshing}
+          handleRefresh={handleRefresh}
+          flatListRef={recommendedFeedListRef}
+          onScroll={handleScroll('recommend')}
         />
       )}
+
       <WebViewDrawer
         visible={visible}
         onClose={onWebViewClose}
