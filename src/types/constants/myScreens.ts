@@ -6,6 +6,8 @@ export const MY_SCREENS = {
   MY_DETAIL: 'SignUp',
   WITHDRAW: 'Withdraw',
   WITHDRAW_DETAIL: 'WithdrawDetail',
+  HISTORY: 'History',
+  HISTORY_FEED: 'HistoryFeed',
 } as const;
 
 export type ScreenName = (typeof MY_SCREENS)[keyof typeof MY_SCREENS];
@@ -16,4 +18,6 @@ export type MyStackParamList = {
   [MY_SCREENS.MY_DETAIL]: {jwtPayload: JWT};
   [MY_SCREENS.WITHDRAW]: undefined;
   [MY_SCREENS.WITHDRAW_DETAIL]: undefined;
+  [MY_SCREENS.HISTORY]: undefined;
+  [MY_SCREENS.HISTORY_FEED]: {currentIndex: number};
 };

@@ -56,3 +56,21 @@ export const getBookmarkedArticles = async (
 
   return data;
 };
+
+export const getHistory = async (
+  context: QueryFunctionContext<
+    readonly ['history'], // queryKey literal 타입
+    string | null // pageParam 타입
+  >,
+) => {
+  const {pageParam} = context; // string | null
+
+  let url = `/v1/articles/history?limit=${ROWS_PER_PAGE}`;
+  if (pageParam) {
+    url += `&from=${pageParam}`;
+  }
+
+  const {data} = await api.get<{articles: Article[]; next: string | null}>(url);
+
+  return data;
+};

@@ -7,6 +7,8 @@ import {MyDetail} from '@/screens/My/MyDetail';
 import {Withdraw} from '@/screens/My/Withdraw';
 import {WithdrawDetail} from '@/screens/My/Withdraw/WithDrawDetail';
 import {MY_SCREENS, MyStackParamList} from '@/types/constants/myScreens';
+import {History} from '@/screens/History';
+import {HistoryFeed} from '@/screens/History/HistoryFeed';
 
 const Stack = createStackNavigator<MyStackParamList>();
 
@@ -27,6 +29,16 @@ export const MyStack = () => {
       <Stack.Screen
         name={MY_SCREENS.MY_PROFILE}
         component={My}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name={MY_SCREENS.HISTORY}
+        component={History}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name={MY_SCREENS.HISTORY_FEED}
+        component={HistoryFeed}
         options={{headerShown: false}}
       />
       <Stack.Screen

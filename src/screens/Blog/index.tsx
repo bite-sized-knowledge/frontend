@@ -8,7 +8,6 @@ import {useQuery} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
 import {Article} from '@/types/Article';
 import {useNavigation} from '@react-navigation/native';
-import {Blog as BlogType} from '@/types/Blog';
 import {mergeWithoutDuplicates} from '@/util/utils';
 import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
 import {ArticleWithPlaceholder} from '../Bookmark';
@@ -30,6 +29,11 @@ const BlogArticle = ({
 }: ArticleProps) => {
   const navigation = useNavigation();
   const {theme, themeMode} = useTheme();
+
+  const uri =
+    blogArticle.thumbnail ||
+    blogArticle.category?.thumbnail ||
+    blogArticle.category?.image;
 
   const navigateToFeed = () => {
     navigation.navigate('BlogFeed', {
@@ -56,7 +60,12 @@ const BlogArticle = ({
         <View style={styles.article}>
           <Image
             style={styles.articleImage}
-            source={{uri: blogArticle.thumbnail}}
+            source={
+              uri
+                ? {uri: uri}
+                : require('../../assets/image/default_thumbnail.png')
+            }
+            resizeMode="cover"
           />
           <View style={[styles.articleTitle]}>
             <Text
@@ -173,22 +182,11 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
         </Text>
       </View>
       <FlatList
-        // style={styles.articleSection}
         keyExtractor={item => item.id}
         data={blogArticles}
         numColumns={2}
-        // contentContainerStyle={styles.gap}
-        // columnWrapperStyle={styles.gap}
         contentContainerStyle={[styles.gap, {padding: 16}]}
         columnWrapperStyle={styles.gap}
-        // renderItem={article => (
-        //   <BlogArticle
-        //     blogArticle={article.item}
-        //     totalArticles={blogArticles}
-        //     currentIndex={article.index}
-        //     next={next}
-        //   />
-        // )}
         renderItem={renderItem}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.6}
@@ -228,12 +226,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   articleImage: {
-    // height: 80,
-    // overflow: 'hidden',
-    flex: 1,
-    flexGrow: 1,
-    flexDirection: 'column',
-    minHeight: 80,
+    width: '100%',
+    height: 80,
     overflow: 'hidden',
   },
   articleTitle: {

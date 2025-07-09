@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {View, Text, Image, StyleSheet, FlatList, Pressable} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
 import {elevation} from '../../styles/tokens/elevation';
@@ -6,36 +6,34 @@ import CustomHeader from '@/components/common/CustomHeader';
 import {useTheme} from '@/context/ThemeContext';
 import {Article} from '@/types/Article';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {jwtDecode} from 'jwt-decode';
-import {getAccessToken} from '@/api/authApi';
-import {UserInfo} from '@/navigator/RootStack';
-import {useBookmarkedArticles} from '@/hooks/useBookmarkedArticles';
+import {useHistory} from '@/hooks/useHistory';
+import {MY_SCREENS} from '@/types/constants/myScreens';
 
 export const ROWS_PER_PAGE = 10;
 
 interface ArticleProps {
   currentIndex: number;
-  bookmarkArticle: Article;
+  historyArticle: Article;
 }
 
 export interface ArticleWithPlaceholder extends Article {
   isPlaceholder?: boolean;
 }
 
-const BookmarkedArticle = ({bookmarkArticle, currentIndex}: ArticleProps) => {
+const HistoryArticle = ({historyArticle, currentIndex}: ArticleProps) => {
   const navigation = useNavigation();
   const {theme, themeMode} = useTheme();
 
   const uri =
-    bookmarkArticle.thumbnail ||
-    bookmarkArticle.category?.thumbnail ||
-    bookmarkArticle.category?.image;
+    historyArticle.thumbnail ||
+    historyArticle.category?.thumbnail ||
+    historyArticle.category?.image;
 
   return (
     <Pressable
       style={{flex: 1}}
       onPress={() =>
-        navigation.navigate('bookmarkFeed', {
+        navigation.navigate(MY_SCREENS.HISTORY_FEED, {
           currentIndex,
         })
       }>
@@ -64,7 +62,7 @@ const BookmarkedArticle = ({bookmarkArticle, currentIndex}: ArticleProps) => {
               style={[typography.body, {color: theme.text}]}
               numberOfLines={2}
               ellipsizeMode="tail">
-              {bookmarkArticle.title}
+              {historyArticle.title}
             </Text>
           </View>
         </View>
@@ -73,42 +71,16 @@ const BookmarkedArticle = ({bookmarkArticle, currentIndex}: ArticleProps) => {
   );
 };
 
-export const Bookmark = () => {
-  const {theme, themeMode} = useTheme();
-  const [jwtPayload, setJwtPayload] = useState<UserInfo | null>(null);
-  // themeImages.ts
-  const emptyBookmarkImages = {
-    light: require('@assets/image/empty_bookmark_light.png'),
-    dark: require('@assets/image/empty_bookmark_dark.png'),
-  } as const;
-  const imageSource = emptyBookmarkImages[themeMode];
-
-  useEffect(() => {
-    const fetchAndDecodeJWT = async () => {
-      try {
-        // AsyncStorage에 저장된 JWT 토큰 가져오기 (저장 키는 'jwtToken'으로 가정)
-        const token = await getAccessToken();
-        if (token) {
-          // jwt-decode를 사용해 토큰 디코딩
-          const decoded = jwtDecode<UserInfo>(token);
-
-          setJwtPayload(decoded!);
-        }
-      } catch (error) {
-        console.error('JWT 디코딩 에러:', error);
-      }
-    };
-
-    fetchAndDecodeJWT();
-  }, []);
+export const History = () => {
+  const {theme} = useTheme();
 
   const {
-    data: newBookmarkedArticles,
+    data: newHistoryArticles,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     refetch,
-  } = useBookmarkedArticles();
+  } = useHistory();
 
   const isFocused = useIsFocused();
 
@@ -122,7 +94,7 @@ export const Bookmark = () => {
   // pages 배열을 단일 배열로 펼치기
   const flatData = useMemo(() => {
     let data: ArticleWithPlaceholder[] =
-      newBookmarkedArticles?.pages.flatMap(page => page?.articles ?? []) ?? [];
+      newHistoryArticles?.pages.flatMap(page => page?.articles ?? []) ?? [];
 
     if (data.length % 2 !== 0) {
       data.push({
@@ -131,7 +103,7 @@ export const Bookmark = () => {
       } as ArticleWithPlaceholder);
     }
     return data;
-  }, [newBookmarkedArticles]);
+  }, [newHistoryArticles]);
 
   // 끝에 다다르면 다음 페이지 요청
   const onEndReached = useCallback(() => {
@@ -154,12 +126,12 @@ export const Bookmark = () => {
         </View>
       );
     }
-    return <BookmarkedArticle bookmarkArticle={item} currentIndex={index} />;
+    return <HistoryArticle historyArticle={item} currentIndex={index} />;
   };
 
   return (
     <View style={{backgroundColor: theme.background, flex: 1}}>
-      <CustomHeader title={'Bookmark'} showBackButton={false} />
+      <CustomHeader title={'History'} showBackButton={false} />
 
       {flatData.length === 0 ? (
         <View
@@ -168,30 +140,21 @@ export const Bookmark = () => {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          <Image
-            style={styles.image}
-            source={imageSource}
-            resizeMode="contain"
-          />
           <View style={{gap: 4, alignItems: 'center'}}>
             <Text
               style={[typography.subHead, {color: theme.text, paddingTop: 42}]}>
-              아직 북마크한 글이 없어요.
+              최근 본 글이 없어요.
             </Text>
             <Text style={[typography.label, {color: theme.text}]}>
-              메인화면에서 글을 저장해 쿠키 단지를 채워보세요!
+              메인화면에서 여러 글을 확인해보세요!
             </Text>
           </View>
         </View>
       ) : (
         <>
-          <View style={styles.blogSection}>
-            <Image
-              style={styles.blogImage}
-              source={require('@assets/image/profileImage.png')}
-            />
+          <View style={styles.historySection}>
             <Text style={[typography.head, {color: theme.text}]}>
-              {jwtPayload?.name}
+              최근 본 글
             </Text>
           </View>
 
@@ -214,29 +177,18 @@ export const Bookmark = () => {
 };
 
 const styles = StyleSheet.create({
-  blogSection: {
+  historySection: {
     paddingHorizontal: 16,
     paddingVertical: 20,
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
   },
-  blogImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 60,
-    backgroundColor: '#d9d9d9',
-  },
   article: {
     minWidth: 160,
     minHeight: 160,
     borderRadius: 8,
     overflow: 'hidden',
-  },
-  articleHeader: {
-    minHeight: 32,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
   },
   articleImage: {
     width: '100%',
@@ -250,10 +202,5 @@ const styles = StyleSheet.create({
   },
   gap: {
     gap: 10,
-  },
-  image: {
-    width: 189,
-    height: 131,
-    paddingLeft: 40,
   },
 });
