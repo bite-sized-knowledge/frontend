@@ -25,6 +25,7 @@ type FeedListProps = {
   refreshing: boolean;
   handleRefresh: () => void;
   flatListRef: React.RefObject<FlatList>;
+  onScroll?: (offset: number) => void;
 };
 
 export const FeedList = ({
@@ -38,6 +39,7 @@ export const FeedList = ({
   refreshing,
   handleRefresh,
   flatListRef,
+  onScroll,
 }: FeedListProps) => {
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
@@ -129,6 +131,11 @@ export const FeedList = ({
         offset: itemHeight * index,
         index,
       })}
+      onScroll={onScroll ? (event) => {
+        const offset = event.nativeEvent.contentOffset.y;
+        onScroll(offset);
+      } : undefined}
+      scrollEventThrottle={16}
       ref={flatListRef}
     />
   );

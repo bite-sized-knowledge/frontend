@@ -48,6 +48,15 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
 
   const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 나타내는 상태 변수
 
+  // 각 탭의 스크롤 위치를 저장하는 상태
+  const [scrollPositions, setScrollPositions] = useState<{
+    latest: number;
+    recommend: number;
+  }>({
+    latest: 0,
+    recommend: 0,
+  });
+
   const handleCardBodyClick = useCallback((data: string) => {
     setVisible(true);
     setArticleId(data);
@@ -118,15 +127,46 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
   const recentFeedListRef = useRef<FlatList>(null);
   const recommendedFeedListRef = useRef<FlatList>(null);
 
+  // 스크롤 위치를 실시간으로 저장하는 함수
+  const handleScroll = (tab: 'latest' | 'recommend') => (offset: number) => {
+    setScrollPositions(prev => ({
+      ...prev,
+      [tab]: offset,
+    }));
+  };
+
+  // 현재 스크롤 위치를 저장하는 함수 (탭 변경 시 사용)
+  const saveScrollPosition = (_tab: 'latest' | 'recommend') => {
+    // 이미 handleScroll에서 실시간으로 저장되고 있으므로 별도 작업 불필요
+  };
+
+  // 저장된 스크롤 위치로 복원하는 함수
+  const restoreScrollPosition = (tab: 'latest' | 'recommend') => {
+    const ref = tab === 'latest' ? recentFeedListRef : recommendedFeedListRef;
+    const savedPosition = scrollPositions[tab];
+
+    setTimeout(() => {
+      ref.current?.scrollToOffset({
+        offset: savedPosition,
+        animated: false,
+      });
+    }, 100);
+  };
+
   const scrollToTop = (tab: 'latest' | 'recommend') => {
-    if (tab === 'latest' && selectedTab === 'latest') {
+    if (tab === 'latest') {
       recentFeedListRef.current?.scrollToOffset({animated: true, offset: 0});
-    } else if (tab === 'recommend' && selectedTab === 'recommend') {
+    } else if (tab === 'recommend') {
       recommendedFeedListRef.current?.scrollToOffset({
         animated: true,
         offset: 0,
       });
     }
+    // 스크롤 위치를 0으로 업데이트
+    setScrollPositions(prev => ({
+      ...prev,
+      [tab]: 0,
+    }));
   };
 
   const {registerScrollFunction} = useFeedScroll();
@@ -147,8 +187,16 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
   }, [selectedTab, registerScrollFunction]);
 
   const onPressTab = (tab: 'latest' | 'recommend') => {
-    setSelectedTab(tab);
-    scrollToTop(tab);
+    if (selectedTab === tab) {
+      // 같은 탭을 다시 누르면 맨 위로 스크롤
+      scrollToTop(tab);
+    } else {
+      // 다른 탭을 누르면 현재 스크롤 위치를 저장하고 탭 변경
+      saveScrollPosition(selectedTab);
+      setSelectedTab(tab);
+      // 새로운 탭의 스크롤 위치를 복원
+      restoreScrollPosition(tab);
+    }
   };
 
   const handleRefresh = () => {
@@ -240,6 +288,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
           refreshing={refreshing}
           handleRefresh={handleRefresh}
           flatListRef={recentFeedListRef}
+          onScroll={handleScroll('latest')}
         />
       )}
       {selectedTab === 'recommend' && (
@@ -254,6 +303,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
           refreshing={refreshing}
           handleRefresh={handleRefresh}
           flatListRef={recommendedFeedListRef}
+          onScroll={handleScroll('recommend')}
         />
       )}
       <WebViewDrawer
