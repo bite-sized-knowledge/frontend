@@ -48,6 +48,10 @@ export const My = () => {
     }
   };
 
+  const navigateToHistory = () => {
+    navigation.navigate(MY_SCREENS.HISTORY);
+  };
+
   return (
     <View style={[styles.container, {backgroundColor: theme.background}]}>
       <CustomHeader title={'MY'} showBackButton={false} />
@@ -62,6 +66,15 @@ export const My = () => {
           {jwtPayload?.name}
         </Text>
         <Pressable onPress={navigateToDetail}>
+          <Icons.ArrowRight />
+        </Pressable>
+      </View>
+      <View style={styles.profileSection}>
+        <Text
+          style={[typography.head, {color: theme.text}, styles.profileName]}>
+          최근 본 글
+        </Text>
+        <Pressable onPress={navigateToHistory}>
           <Icons.ArrowRight />
         </Pressable>
       </View>
