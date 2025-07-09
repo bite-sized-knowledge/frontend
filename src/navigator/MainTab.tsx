@@ -2,6 +2,7 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Theme, useTheme} from '../context/ThemeContext';
+import {useFeedScroll, FeedScrollProvider} from '@/context/FeedScrollContext';
 import Icons from '@/assets/icons';
 import {elevation} from '@/styles/tokens/elevation';
 
@@ -50,10 +51,11 @@ const TabBarIcon = React.memo(
   },
 );
 
-export const MainTab = () => {
+const MainTabNavigator = () => {
   const insets = useSafeAreaInsets();
   const {theme, themeMode} = useTheme();
   const {isLoggedIn} = useAuth();
+  const {scrollToTop} = useFeedScroll();
 
   return (
     <Tab.Navigator
@@ -78,7 +80,15 @@ export const MainTab = () => {
           <TabBarIcon routeName={route.name} focused={focused} theme={theme} />
         ),
       })}>
-      <Tab.Screen name={MAIN_SCREENS.FEED} component={FeedStack} />
+      <Tab.Screen
+        name={MAIN_SCREENS.FEED}
+        component={FeedStack}
+        listeners={{
+          tabPress: () => {
+            scrollToTop();
+          },
+        }}
+      />
       <Tab.Screen
         name={MAIN_SCREENS.BOOKMARK}
         component={BookmarkStack}
@@ -106,5 +116,13 @@ export const MainTab = () => {
         })}
       />
     </Tab.Navigator>
+  );
+};
+
+export const MainTab = () => {
+  return (
+    <FeedScrollProvider>
+      <MainTabNavigator />
+    </FeedScrollProvider>
   );
 };

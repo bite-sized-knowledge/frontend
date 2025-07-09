@@ -3,6 +3,7 @@ import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
+import {useFeedScroll} from '@/context/FeedScrollContext';
 import {getRecentFeed, getRecommendedFeed} from '@/api/feedApi';
 import {WebViewDrawer} from '@/components/common/WebViewDrawer';
 import {Article} from '@/types/Article';
@@ -127,6 +128,23 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
       });
     }
   };
+
+  const {registerScrollFunction} = useFeedScroll();
+
+  // 스크롤 함수를 context에 등록
+  useEffect(() => {
+    const scrollFunction = () => {
+      if (selectedTab === 'latest') {
+        recentFeedListRef.current?.scrollToOffset({animated: true, offset: 0});
+      } else {
+        recommendedFeedListRef.current?.scrollToOffset({
+          animated: true,
+          offset: 0,
+        });
+      }
+    };
+    registerScrollFunction(scrollFunction);
+  }, [selectedTab, registerScrollFunction]);
 
   const onPressTab = (tab: 'latest' | 'recommend') => {
     setSelectedTab(tab);

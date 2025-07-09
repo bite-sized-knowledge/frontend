@@ -23,7 +23,7 @@ export const FeedTab = () => {
   const [blogId, setBlogId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!blogId) return;
+    if (!blogId) {return;}
 
     if (index === 1) {
       sendEvent(TARGET_TYPE.BLOG, blogId, EVENT_TYPE.BLOG_IN);
