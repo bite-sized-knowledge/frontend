@@ -20,6 +20,8 @@ export interface Theme {
   main: string;
   sub: string;
   refreshIndicator: string;
+  error: string;
+  green: string;
 }
 
 interface ThemeContextType {

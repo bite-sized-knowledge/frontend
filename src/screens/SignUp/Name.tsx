@@ -31,7 +31,7 @@ export const Name = ({onNext, onBack}: NameProps) => {
   const [errMsg, setErrMsg] = useState<string>('');
 
   const handleBackPress = () => {
-    onBack({email: useFunnelState.email, name: ''});
+    onBack({email: useFunnelState.email});
   };
 
   const {mutate} = useCheckNameDuplication(
@@ -61,10 +61,11 @@ export const Name = ({onNext, onBack}: NameProps) => {
             value={name}
             onChangeText={setName}
             autoCapitalize="none"
-            msg={
-              '2~16글자를 입력해주세요.\n사람들에게 보여지는 이름으로, 불쾌함을 줄 수 있는 이름은 경고없이 변경돼요.'
-            }
-            error={errMsg}
+            // 사용안하는 화면, baseinput 수정하면서 아래 주석처리
+            // msg={
+            //   '2~16글자를 입력해주세요.\n사람들에게 보여지는 이름으로, 불쾌함을 줄 수 있는 이름은 경고없이 변경돼요.'
+            // }
+            // error={errMsg}
           />
         </View>
         {name.length > 0 && (

@@ -9,6 +9,8 @@ export const lightTheme = {
   main: '#FF6E1C',
   sub: '#FF7A0D',
   refreshIndicator: '#000000',
+  error: '#FB3939',
+  green: '#34C759',
 };
 
 export const darkTheme = {
@@ -21,4 +23,6 @@ export const darkTheme = {
   main: '#FF6E1C',
   sub: '#FF7A0D',
   refreshIndicator: '#FFFFFF',
+  error: '#FB3939',
+  green: '#34C759',
 };

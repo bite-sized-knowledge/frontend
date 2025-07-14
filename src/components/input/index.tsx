@@ -5,8 +5,8 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, TextInput, TextInputProps, View} from 'react-native';
 
 interface BaseInputProps extends TextInputProps {
-  error?: string;
   msg?: string;
+  msgColor?: string;
 }
 
 export const BaseInput = ({
@@ -16,8 +16,8 @@ export const BaseInput = ({
   keyboardType,
   autoCapitalize,
   secureTextEntry = false,
-  error,
   msg,
+  msgColor,
   ...props
 }: BaseInputProps) => {
   const {theme} = useTheme();
@@ -58,11 +58,13 @@ export const BaseInput = ({
           )
         ) : null}
       </View>
-      {error && error.length > 0 && (
-        <Text style={[typography.label, styles.errorMsg]}>{error}</Text>
-      )}
       {msg && (
-        <Text style={[typography.label, {color: theme.gray1}, styles.infoMsg]}>
+        <Text
+          style={[
+            typography.label,
+            {color: msgColor ?? theme.gray1},
+            styles.infoMsg,
+          ]}>
           {msg}
         </Text>
       )}
@@ -84,9 +86,5 @@ const styles = StyleSheet.create({
   },
   infoMsg: {
     paddingTop: 4,
-  },
-  errorMsg: {
-    paddingTop: 4,
-    color: 'red',
   },
 });

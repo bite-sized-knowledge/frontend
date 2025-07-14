@@ -46,22 +46,44 @@ export const Password = ({onNext, onBack}: PasswordProps) => {
     setIsValid(passwordRegex.test(newValue));
   };
 
-  const getPasswordMsg = () => {
-    if (secondPassword.length < 1) {
-      return '대소문자, 영문, 숫자, 특수문자를 포함해 8~16자를 입력해주세요.';
-    } else if (password.length > 0 && password === secondPassword) {
-      return '비밀번호가 일치해요:)';
+  const getPasswordStatus = () => {
+    // 입력 전: 안내 문구, 일반 색상
+    if (password.length === 0 && secondPassword.length === 0) {
+      return {
+        msg: '대소문자, 영문, 숫자, 특수문자를 포함해 8~16자를 입력해주세요.',
+        color: undefined, // undefined면 BaseInput에서 기본 색상 사용
+      };
     }
-    return '';
-  };
-
-  const getPasswordError = () => {
+    // 입력 후: 조건 불만족, 빨간색
+    if (!passwordRegex.test(password)) {
+      return {
+        msg: '대소문자, 영문, 숫자, 특수문자를 포함해 8~16자를 입력해주세요.',
+        color: theme.error, // Red_Bite
+      };
+    }
+    // 조건 만족, 일치하지 않음
     if (secondPassword.length > 0 && password !== secondPassword) {
-      return '비밀번호가 일치하지 않아요.';
-    } else if (!isValid) {
-      return '대소문자, 영문, 숫자, 특수문자를 포함해 8~16자를 입력해주세요.';
+      return {
+        msg: '비밀번호가 일치하지 않아요.',
+        color: theme.error, // Red_Bite
+      };
     }
-    return '';
+    // 조건 만족, 일치
+    if (
+      passwordRegex.test(password) &&
+      secondPassword.length > 0 &&
+      password === secondPassword
+    ) {
+      return {
+        msg: '사용 가능한 비밀번호입니다.',
+        color: theme.green,
+      };
+    }
+    // 그 외(입력 중 등): 안내 문구, 일반 색상
+    return {
+      msg: '대소문자, 영문, 숫자, 특수문자를 포함해 8~16자를 입력해주세요.',
+      color: undefined,
+    };
   };
 
   return (
@@ -91,8 +113,8 @@ export const Password = ({onNext, onBack}: PasswordProps) => {
             onChangeText={setSecondPassword}
             autoCapitalize="none"
             secureTextEntry={true}
-            msg={getPasswordMsg()}
-            error={getPasswordError()}
+            msg={getPasswordStatus().msg}
+            msgColor={getPasswordStatus().color}
           />
         </View>
         {password.length > 0 && password === secondPassword && (

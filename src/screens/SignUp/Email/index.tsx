@@ -48,19 +48,27 @@ export const EmailInput = () => {
   const emailRegEx =
     /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
 
-  const changeEmail = (changeValue: string) => {
-    setEmail(changeValue);
-    const isValid = emailCheck(changeValue);
-
-    if (!isValid) {
-      setErrMsg('이메일을 다시 확인해주세요.');
-    } else {
-      setErrMsg('');
+  const getEmailStatus = () => {
+    // 입력 전
+    if (email.length === 0) {
+      return {
+        msg: '',
+        color: undefined, // undefined면 BaseInput에서 기본 색상 사용
+      };
     }
-  };
+    // 입력 후: 조건 불만족, 빨간색
+    if (!emailRegEx.test(email)) {
+      return {
+        msg: '이메일을 다시 확인해주세요.',
+        color: theme.error, // Red_Bite
+      };
+    }
 
-  const emailCheck = (changeValue: string) => {
-    return emailRegEx.test(changeValue); //형식에 맞을 경우, true 리턴
+    // 그 외
+    return {
+      msg: '',
+      color: undefined,
+    };
   };
 
   const {mutate: sendEmailMutation} = useAuthenticateEmail(
@@ -90,12 +98,12 @@ export const EmailInput = () => {
           </Text>
           <BaseInput
             placeholder="이메일을 입력해주세요."
-            // value={'0510antonio@naver.com'}
             value={email}
-            onChangeText={changeEmail}
+            onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
-            error={errMsg}
+            msg={getEmailStatus().msg}
+            msgColor={getEmailStatus().color}
           />
         </View>
         {email.trim().length > 0 && !errMsg && (
