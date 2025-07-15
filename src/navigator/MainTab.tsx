@@ -83,11 +83,13 @@ const MainTabNavigator = () => {
       <Tab.Screen
         name={MAIN_SCREENS.FEED}
         component={FeedStack}
-        listeners={{
+        listeners={({navigation}) => ({
           tabPress: () => {
-            scrollToTop();
+            if (navigation.isFocused()) {
+              scrollToTop();
+            }
           },
-        }}
+        })}
       />
       <Tab.Screen
         name={MAIN_SCREENS.BOOKMARK}
