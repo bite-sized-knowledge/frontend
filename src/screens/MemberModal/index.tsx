@@ -15,7 +15,7 @@ export default function MemberModal() {
   const handleLogin = () => {
     navigation.goBack();
 
-    navigation.navigate(ROOT_SCREENS.AUTH);
+    navigation.navigate(ROOT_SCREENS.AUTH, {showBackButton: true});
   };
 
   const handleCancel = () => {

@@ -39,7 +39,12 @@ export const Interest = ({onNext}: InterestProps) => {
   };
 
   const navigateLogin = () => {
-    navigation.navigate(ROOT_SCREENS.AUTH);
+    // navigation.navigate(ROOT_SCREENS.AUTH);
+    // navigation.replace(ROOT_SCREENS.AUTH, {showBackButton: false});
+    navigation.reset({
+      index: 0,
+      routes: [{name: ROOT_SCREENS.AUTH}],
+    });
   };
 
   const startWithGuest = async () => {
