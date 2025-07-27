@@ -1,78 +1,23 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
-import {View, Text, Image, StyleSheet, FlatList, Pressable} from 'react-native';
+import {View, Text, StyleSheet, FlatList} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
-import {elevation} from '../../styles/tokens/elevation';
 import CustomHeader from '@/components/common/CustomHeader';
 import {useTheme} from '@/context/ThemeContext';
 import {Article} from '@/types/Article';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {useHistory} from '@/hooks/useHistory';
 import {MY_SCREENS} from '@/types/constants/myScreens';
+import {MiniCard} from '@/components/MiniCard';
 
 export const ROWS_PER_PAGE = 10;
-
-interface ArticleProps {
-  currentIndex: number;
-  historyArticle: Article;
-}
 
 export interface ArticleWithPlaceholder extends Article {
   isPlaceholder?: boolean;
 }
 
-const HistoryArticle = ({historyArticle, currentIndex}: ArticleProps) => {
-  const navigation = useNavigation();
-  const {theme, themeMode} = useTheme();
-
-  const uri =
-    historyArticle.thumbnail ||
-    historyArticle.category?.thumbnail ||
-    historyArticle.category?.image;
-
-  return (
-    <Pressable
-      style={{flex: 1}}
-      onPress={() =>
-        navigation.navigate(MY_SCREENS.HISTORY_FEED, {
-          currentIndex,
-        })
-      }>
-      <View
-        style={[
-          elevation.card,
-          {
-            backgroundColor:
-              themeMode === 'light' ? theme.background : theme.gray4,
-            // 아래 css에서 card에서 정의한 border-radius 엎어침
-            borderRadius: 8,
-          },
-        ]}>
-        <View style={styles.article}>
-          <Image
-            style={styles.articleImage}
-            source={
-              uri
-                ? {uri: uri}
-                : require('../../assets/image/default_thumbnail.png')
-            }
-            resizeMode="cover"
-          />
-          <View style={[styles.articleTitle]}>
-            <Text
-              style={[typography.body, {color: theme.text}]}
-              numberOfLines={2}
-              ellipsizeMode="tail">
-              {historyArticle.title}
-            </Text>
-          </View>
-        </View>
-      </View>
-    </Pressable>
-  );
-};
-
 export const History = () => {
   const {theme} = useTheme();
+  const navigation = useNavigation();
 
   const {
     data: newHistoryArticles,
@@ -119,14 +64,18 @@ export const History = () => {
     item: ArticleWithPlaceholder;
     index: number;
   }) => {
-    if (item.isPlaceholder) {
-      return (
-        <View style={{flex: 1}}>
-          <View style={[styles.article, {backgroundColor: 'transparent'}]} />
-        </View>
-      );
-    }
-    return <HistoryArticle historyArticle={item} currentIndex={index} />;
+    return (
+      <MiniCard
+        key={index}
+        article={item}
+        isPlaceholder={item.isPlaceholder}
+        onPress={() =>
+          navigation.navigate(MY_SCREENS.HISTORY_FEED, {
+            currentIndex: index,
+          })
+        }
+      />
+    );
   };
 
   return (

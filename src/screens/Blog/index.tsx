@@ -1,92 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Image, StyleSheet, FlatList, Pressable} from 'react-native';
+import {View, Text, Image, StyleSheet, FlatList} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
-import {elevation} from '../../styles/tokens/elevation';
 import CustomHeader from '@/components/common/CustomHeader';
 import {getBlog, getBlogArticle} from '@/api/blogApi';
 import {useQuery} from '@tanstack/react-query';
 import {useTheme} from '@/context/ThemeContext';
-import {Article} from '@/types/Article';
 import {useNavigation} from '@react-navigation/native';
 import {mergeWithoutDuplicates} from '@/util/utils';
 import {EVENT_TYPE, sendEvent, TARGET_TYPE} from '@/api/eventApi';
 import {ArticleWithPlaceholder} from '../Bookmark';
+import {MiniCard} from '@/components/MiniCard';
 
 export const ROWS_PER_PAGE = 10;
-
-interface ArticleProps {
-  totalArticles: Article[];
-  currentIndex: number;
-  next: string | null;
-  blogArticle: Article;
-}
-
-const BlogArticle = ({
-  blogArticle,
-  totalArticles,
-  currentIndex,
-  next,
-}: ArticleProps) => {
-  const navigation = useNavigation();
-  const {theme, themeMode} = useTheme();
-
-  const uri =
-    blogArticle.thumbnail ||
-    blogArticle.category?.thumbnail ||
-    blogArticle.category?.image;
-
-  const navigateToFeed = () => {
-    navigation.navigate('BlogFeed', {
-      totalArticles,
-      currentIndex,
-      next,
-    });
-
-    sendEvent(TARGET_TYPE.BLOG, blogArticle.id, EVENT_TYPE.BLOG_TO_ARTICLE);
-  };
-
-  return (
-    <Pressable style={styles.flex1} onPress={navigateToFeed}>
-      <View
-        style={[
-          elevation.card,
-          {
-            backgroundColor:
-              themeMode === 'light' ? theme.background : theme.gray4,
-            // 아래 css에서 card에서 정의한 border-radius 엎어침
-            borderRadius: 8,
-          },
-        ]}>
-        <View style={styles.article}>
-          <Image
-            style={styles.articleImage}
-            source={
-              uri
-                ? {uri: uri}
-                : require('../../assets/image/default_thumbnail.png')
-            }
-            resizeMode="cover"
-          />
-          <View style={[styles.articleTitle]}>
-            <Text
-              style={[typography.body, {color: theme.text}]}
-              numberOfLines={2}
-              ellipsizeMode="tail">
-              {blogArticle.title}
-            </Text>
-          </View>
-        </View>
-      </View>
-    </Pressable>
-  );
-};
 
 interface BlogProps {
   blogId: string;
   navigateToFeed: Function;
 }
 
-export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
+export const Blog = ({navigateToFeed: backPress, blogId}: BlogProps) => {
   const {theme} = useTheme();
   // 해당 쿼리키만 따로 관리하는 이유는 블로그 ID가 바뀔 때 next를 초기화시키고 재조회하기 위해 따로 관리함. 그냥 사용하면 재조회 이후 next값이 수정됨.
   const [queryKey, setQueryKey] = useState(['blogArticles', blogId]);
@@ -94,6 +26,7 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
     [],
   );
   const [next, setNext] = useState<string | null>(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     setNext(null);
@@ -151,19 +84,22 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
     item: ArticleWithPlaceholder;
     index: number;
   }) => {
-    if (item.isPlaceholder) {
-      return (
-        <View style={{flex: 1}}>
-          <View style={[styles.article, {backgroundColor: 'transparent'}]} />
-        </View>
-      );
-    }
     return (
-      <BlogArticle
-        blogArticle={item}
-        totalArticles={blogArticles.filter(article => !article.isPlaceholder)}
-        currentIndex={index}
-        next={next}
+      <MiniCard
+        key={index}
+        article={item}
+        isPlaceholder={item.isPlaceholder}
+        onPress={() => {
+          navigation.navigate('BlogFeed', {
+            totalArticles: blogArticles.filter(
+              article => !article.isPlaceholder,
+            ),
+            currentIndex: index,
+            next,
+          });
+
+          sendEvent(TARGET_TYPE.BLOG, item.id, EVENT_TYPE.BLOG_TO_ARTICLE);
+        }}
       />
     );
   };
@@ -173,7 +109,7 @@ export const Blog = ({navigateToFeed, blogId}: BlogProps) => {
       <CustomHeader
         title={'작성자 게시글'}
         showBackButton={true}
-        onBackPress={() => navigateToFeed()}
+        onBackPress={() => backPress()}
       />
       <View style={styles.blogSection}>
         <Image style={styles.blogImage} source={{uri: blog?.data?.favicon}} />

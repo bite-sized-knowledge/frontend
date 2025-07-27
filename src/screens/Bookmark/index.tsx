@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {View, Text, Image, StyleSheet, FlatList, Pressable} from 'react-native';
+import {View, Text, Image, StyleSheet, FlatList} from 'react-native';
 import {typography} from '../../styles/tokens/typography';
-import {elevation} from '../../styles/tokens/elevation';
 import CustomHeader from '@/components/common/CustomHeader';
 import {useTheme} from '@/context/ThemeContext';
 import {Article} from '@/types/Article';
@@ -10,68 +9,13 @@ import {jwtDecode} from 'jwt-decode';
 import {getAccessToken} from '@/api/authApi';
 import {UserInfo} from '@/navigator/RootStack';
 import {useBookmarkedArticles} from '@/hooks/useBookmarkedArticles';
+import {MiniCard} from '@/components/MiniCard';
 
 export const ROWS_PER_PAGE = 10;
-
-interface ArticleProps {
-  currentIndex: number;
-  bookmarkArticle: Article;
-}
 
 export interface ArticleWithPlaceholder extends Article {
   isPlaceholder?: boolean;
 }
-
-const BookmarkedArticle = ({bookmarkArticle, currentIndex}: ArticleProps) => {
-  const navigation = useNavigation();
-  const {theme, themeMode} = useTheme();
-
-  const uri =
-    bookmarkArticle.thumbnail ||
-    bookmarkArticle.category?.thumbnail ||
-    bookmarkArticle.category?.image;
-
-  return (
-    <Pressable
-      style={{flex: 1}}
-      onPress={() =>
-        navigation.navigate('bookmarkFeed', {
-          currentIndex,
-        })
-      }>
-      <View
-        style={[
-          elevation.card,
-          {
-            backgroundColor:
-              themeMode === 'light' ? theme.background : theme.gray4,
-            // 아래 css에서 card에서 정의한 border-radius 엎어침
-            borderRadius: 8,
-          },
-        ]}>
-        <View style={styles.article}>
-          <Image
-            style={styles.articleImage}
-            source={
-              uri
-                ? {uri: uri}
-                : require('../../assets/image/default_thumbnail.png')
-            }
-            resizeMode="cover"
-          />
-          <View style={[styles.articleTitle]}>
-            <Text
-              style={[typography.body, {color: theme.text}]}
-              numberOfLines={2}
-              ellipsizeMode="tail">
-              {bookmarkArticle.title}
-            </Text>
-          </View>
-        </View>
-      </View>
-    </Pressable>
-  );
-};
 
 export const Bookmark = () => {
   const {theme, themeMode} = useTheme();
@@ -82,6 +26,7 @@ export const Bookmark = () => {
     dark: require('@assets/image/empty_bookmark_dark.png'),
   } as const;
   const imageSource = emptyBookmarkImages[themeMode];
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchAndDecodeJWT = async () => {
@@ -147,14 +92,18 @@ export const Bookmark = () => {
     item: ArticleWithPlaceholder;
     index: number;
   }) => {
-    if (item.isPlaceholder) {
-      return (
-        <View style={{flex: 1}}>
-          <View style={[styles.article, {backgroundColor: 'transparent'}]} />
-        </View>
-      );
-    }
-    return <BookmarkedArticle bookmarkArticle={item} currentIndex={index} />;
+    return (
+      <MiniCard
+        key={index}
+        article={item}
+        isPlaceholder={item.isPlaceholder}
+        onPress={() =>
+          navigation.navigate('bookmarkFeed', {
+            currentIndex: index,
+          })
+        }
+      />
+    );
   };
 
   return (
