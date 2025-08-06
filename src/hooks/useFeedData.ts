@@ -9,8 +9,10 @@ type TabType = 'latest' | 'recommend';
 export const useFeedData = (selectedTab: TabType) => {
   const [recommendedArticle, setRecommendedArticle] = useState<Article[]>([]);
   const [recentArticle, setRecentArticle] = useState<Article[]>([]);
-  const [isFetchingNewAriticles, setIsFetchingNewAriticles] = useState<boolean>(false);
-  const [isFetchingNewRecentAriticles, setIsFetchingNewRecentAriticles] = useState<boolean>(false);
+  const [isFetchingNewAriticles, setIsFetchingNewAriticles] =
+    useState<boolean>(false);
+  const [isFetchingNewRecentAriticles, setIsFetchingNewRecentAriticles] =
+    useState<boolean>(false);
   const [refreshing, setRefreshing] = useState(false);
   const [from, setFrom] = useState<string | null>(null);
 
@@ -39,7 +41,7 @@ export const useFeedData = (selectedTab: TabType) => {
     isFetching: isRecentFeedFetching,
     refetch: refetchRecentFeed,
   } = useQuery({
-    queryKey: ['recentFeed', from],
+    queryKey: ['recentFeed'],
     queryFn: () => getRecentFeed(from),
     enabled: false,
   });
