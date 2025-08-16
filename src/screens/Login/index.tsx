@@ -115,16 +115,16 @@ export const Login = ({onBackPress}: LoginProps) => {
                 회원가입
               </Text>
             </Pressable>
-            <Text style={[typography.label, {color: theme.gray3}]}>|</Text>
+            {/* <Text style={[typography.label, {color: theme.gray3}]}>|</Text>
             <Pressable>
               <Text style={[typography.label, {color: theme.gray3}]}>
                 비밀번호를 잊어버렸어요
               </Text>
-            </Pressable>
+            </Pressable> */}
           </View>
         </View>
         <View style={styles.ssoSection}>
-          <Text style={(typography.label, {color: theme.gray3})}>
+          {/* <Text style={(typography.label, {color: theme.gray3})}>
             SNS 간편 로그인
           </Text>
           <View style={styles.ssoImageWrapper}>
@@ -145,7 +145,7 @@ export const Login = ({onBackPress}: LoginProps) => {
               ]}>
               <Sso.Github width={25} height={25} />
             </Pressable>
-          </View>
+          </View> */}
           <Pressable onPress={() => navigation.navigate(ROOT_SCREENS.INTEREST)}>
             <Text
               style={[
