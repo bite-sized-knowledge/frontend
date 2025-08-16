@@ -86,6 +86,7 @@ export const FeedList = ({
       getNextData,
       setBlogId,
       setIsFetchingNewAriticles,
+      selectedTab,
     ],
   );
 
