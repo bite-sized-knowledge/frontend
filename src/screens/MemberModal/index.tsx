@@ -1,6 +1,6 @@
 import React from 'react';
 import Icons from '@/assets/icons';
-import {View, StyleSheet, Pressable, Image, Text} from 'react-native';
+import {View, StyleSheet, Pressable, Image, Text, Platform} from 'react-native';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 
 import {useTheme} from '@/context/ThemeContext';
@@ -23,7 +23,7 @@ export default function MemberModal() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.overlay}>
       <View
         style={{
           backgroundColor: theme.background,
@@ -69,6 +69,14 @@ export default function MemberModal() {
 }
 
 const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    // 반투명 배경, IOS 에서는 오버레이 안줘도 자동으로 적용되는데 안드로이드는 안되서 따로 줘야함
+    backgroundColor:
+      Platform.OS === 'android' ? 'rgba(0,0,0,0.5)' : 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
