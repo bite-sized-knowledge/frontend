@@ -24,7 +24,7 @@ const YearSpinner: React.FC<YearSpinnerProps> = ({
   const [selectedYear, setSelectedYear] = useState<number>(initialYear);
 
   // 예시로 1998 ~ 2002까지 생성 (필요에 따라 범위 조정 가능)
-  const years = Array.from({length: 50}, (_, i) => 1998 + i);
+  const years = Array.from({length: 200}, (_, i) => 1900 + i);
 
   const handlePressSelect = () => {
     onSelect(selectedYear);
