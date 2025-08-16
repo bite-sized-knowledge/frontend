@@ -6,7 +6,15 @@ import {typography} from '@/styles/tokens/typography';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {useQuery} from '@tanstack/react-query';
 import React, {useState} from 'react';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+// ScrollView를 import 합니다.
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {Loading} from '../Loading';
 import {RootStackParamList, ROOT_SCREENS} from '@/types/constants/rootScreens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -39,8 +47,6 @@ export const Interest = ({onNext}: InterestProps) => {
   };
 
   const navigateLogin = () => {
-    // navigation.navigate(ROOT_SCREENS.AUTH);
-    // navigation.replace(ROOT_SCREENS.AUTH, {showBackButton: false});
     navigation.reset({
       index: 0,
       routes: [{name: ROOT_SCREENS.AUTH}],
@@ -86,7 +92,9 @@ export const Interest = ({onNext}: InterestProps) => {
   }
 
   return (
+    // styles.container에 flex: 1이 적용되어 있어 전체 화면을 차지합니다.
     <View style={[styles.container, {backgroundColor: theme.background}]}>
+      {/* --- 상단 고정 컨텐츠 --- */}
       <CustomHeader title={''} style={{height: 20, paddingVertical: 0}} />
       <View style={styles.wrapper}>
         <Text style={[typography.title, {color: theme.text}]}>
@@ -98,38 +106,42 @@ export const Interest = ({onNext}: InterestProps) => {
         </Text>
       </View>
 
-      {/* 행(row) 단위로 감싸기 */}
-      <View style={[styles.contentWrapper, styles.row]}>
-        {interests &&
-          Array.from({length: numRows}).map((_, rowIndex) => (
-            <View key={rowIndex} style={styles.col}>
-              {Array.from({length: numColumns}).map((_, colIndex) => {
-                const itemIndex = rowIndex * numColumns + colIndex;
-                if (itemIndex < interests.length) {
-                  return (
-                    <ItemBox
-                      key={itemIndex}
-                      interest={interests[itemIndex]}
-                      onPress={() => selectItem(interests[itemIndex].id)}
-                      isSelected={selectedItem.includes(
-                        interests[itemIndex].id,
-                      )}
-                    />
-                  );
-                } else {
-                  // 빈 아이템 처리 (아이템 개수가 numColumns의 배수가 아닐 경우)
-                  return (
-                    <View
-                      key={colIndex}
-                      style={[styles.itemBox, styles.emptyBox]}
-                    />
-                  );
-                }
-              })}
-            </View>
-          ))}
-      </View>
+      {/* --- 중앙 스크롤 컨텐츠 --- */}
+      {/* ScrollView에 flex: 1을 적용하여 상단과 하단을 제외한 모든 공간을 차지하게 합니다. */}
+      <ScrollView style={{flex: 1}}>
+        <View style={[styles.contentWrapper, styles.row]}>
+          {interests &&
+            Array.from({length: numRows}).map((_, rowIndex) => (
+              <View key={rowIndex} style={styles.col}>
+                {Array.from({length: numColumns}).map((_, colIndex) => {
+                  const itemIndex = rowIndex * numColumns + colIndex;
+                  if (itemIndex < interests.length) {
+                    return (
+                      <ItemBox
+                        key={itemIndex}
+                        interest={interests[itemIndex]}
+                        onPress={() => selectItem(interests[itemIndex].id)}
+                        isSelected={selectedItem.includes(
+                          interests[itemIndex].id,
+                        )}
+                      />
+                    );
+                  } else {
+                    return (
+                      <View
+                        key={colIndex}
+                        style={[styles.itemBox, styles.emptyBox]}
+                      />
+                    );
+                  }
+                })}
+              </View>
+            ))}
+        </View>
+      </ScrollView>
 
+      {/* --- 하단 고정 컨텐츠 --- */}
+      {/* 버튼 영역을 ScrollView 밖으로 이동시켜 하단에 고정시킵니다. */}
       <View style={styles.wrapper}>
         <BaseButton
           title={'이미 계정이 있나요? 로그인'}
@@ -183,7 +195,6 @@ const ItemBox = ({interest, onPress, isSelected}: ItemBoxProps) => {
 
       <Image src={interest.image} style={styles.icon} />
 
-      {/* 선택 시 오버레이 (흐림 처리) */}
       {isSelected && <View style={styles.overlay} />}
 
       {isSelected && (
@@ -200,7 +211,7 @@ const ItemBox = ({interest, onPress, isSelected}: ItemBoxProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1, // 이 속성이 전체 레이아웃의 핵심입니다.
   },
   wrapper: {
     paddingVertical: 16,
@@ -210,7 +221,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 20,
   },
-  // 각 행(row)은 가로로 아이템 3개를 배치합니다.
   col: {
     flexDirection: 'row',
     gap: 10,
@@ -224,9 +234,8 @@ const styles = StyleSheet.create({
     minHeight: 100,
     borderRadius: 10,
     aspectRatio: 1 / 1,
-    position: 'relative', // 체크 표시 배치를 위해 필요
+    position: 'relative',
   },
-  // 빈 박스 스타일 (아이템이 없는 경우)
   emptyBox: {
     backgroundColor: 'transparent',
     borderWidth: 0,
@@ -246,16 +255,24 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   icon: {
-    width: 40,
-    height: 40,
-    resizeMode: 'cover',
+    // width: 40,
+    // height: 40,
+    // resizeMode: 'cover',
+    // position: 'absolute',
+    // bottom: 10,
+    // right: 10,
+    // [수정] 고정 픽셀 크기에서 비율 크기로 변경
+    width: '40%',
+    height: '40%',
+    // [수정] 이미지가 잘리지 않고 비율에 맞게 조절되도록 'contain'으로 변경
+    resizeMode: 'contain',
     position: 'absolute',
     bottom: 10,
     right: 10,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 110, 28, 0.9)', // 어두운 반투명 효과
+    backgroundColor: 'rgba(255, 110, 28, 0.9)',
     borderRadius: 10,
   },
 });
