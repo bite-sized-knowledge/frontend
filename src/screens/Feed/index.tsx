@@ -152,6 +152,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
           handleRefresh={handleRefresh}
           flatListRef={recentFeedListRef}
           onScroll={handleScroll('latest')}
+          selectedTab={'latest'}
         />
       )}
 
@@ -168,6 +169,7 @@ export const Feed: React.FC<FeedProps> = ({navigateToBlog, setBlogId}) => {
           handleRefresh={handleRefresh}
           flatListRef={recommendedFeedListRef}
           onScroll={handleScroll('recommend')}
+          selectedTab={'recommend'}
         />
       )}
 

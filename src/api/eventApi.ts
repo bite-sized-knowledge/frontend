@@ -10,6 +10,7 @@ export type TargetType = (typeof TARGET_TYPE)[keyof typeof TARGET_TYPE];
 export const EVENT_TYPE = {
   // 피드 노출
   F_IMP: 'F_IMP',
+  R_IMP: 'R_IMP', // 추천 게시글 노출
   ARTICLE_IN: 'ARTICLE_IN',
   ARTICLE_OUT: 'ARTICLE_OUT',
   LIKE: 'LIKE',

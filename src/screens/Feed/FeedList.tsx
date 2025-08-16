@@ -26,6 +26,7 @@ type FeedListProps = {
   handleRefresh: () => void;
   flatListRef: React.RefObject<FlatList>;
   onScroll?: (offset: number) => void;
+  selectedTab: 'latest' | 'recommend';
 };
 
 export const FeedList = ({
@@ -40,6 +41,7 @@ export const FeedList = ({
   handleRefresh,
   flatListRef,
   onScroll,
+  selectedTab,
 }: FeedListProps) => {
   const {theme} = useTheme();
   const insets = useSafeAreaInsets();
@@ -64,7 +66,7 @@ export const FeedList = ({
       sendEvent(
         TARGET_TYPE.ARTICLE,
         viewableItems[0].item.id,
-        EVENT_TYPE.F_IMP,
+        selectedTab === 'latest' ? EVENT_TYPE.F_IMP : EVENT_TYPE.R_IMP,
       );
 
       const lastVisibleIndex = viewableItems[viewableItems.length - 1].index;
@@ -131,10 +133,14 @@ export const FeedList = ({
         offset: itemHeight * index,
         index,
       })}
-      onScroll={onScroll ? (event) => {
-        const offset = event.nativeEvent.contentOffset.y;
-        onScroll(offset);
-      } : undefined}
+      onScroll={
+        onScroll
+          ? event => {
+              const offset = event.nativeEvent.contentOffset.y;
+              onScroll(offset);
+            }
+          : undefined
+      }
       scrollEventThrottle={16}
       ref={flatListRef}
     />
